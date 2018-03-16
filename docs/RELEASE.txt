@@ -3,7 +3,10 @@ UTStatsDB
 
 Release Notes:
 
-Unreleased
+Unrealeased (3.08)
+  Rewrite DB interface to use PDO, rather than mysql/sqlite/mssql directly.
+
+Version 3.07
   Fixed not being able to select to display bots or all players in player list.
   Added Microsoft SQL support.
   Added server activity by weekday.

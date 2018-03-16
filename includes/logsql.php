@@ -19,152 +19,42 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-function sql_query($query) {
-  global $SQLhost, $SQLport, $SQLdb, $SQLus, $SQLpw, $dbtype;
+function sql_connect() {
+  global $SQLdb, $SQLus, $SQLpw, $dbtype;
 
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      if (!function_exists("mysql_connect"))
-        die("No MySQL support found!");
-      if (!isset($SQLport) || $SQLport == "")
-        $SQLport = 3306;
-      $link = @mysql_connect("$SQLhost:$SQLport","$SQLus","$SQLpw");
-      if (!$link) {
-        echo "Database access error.\n";
-        exit;
-      }
-      $result = @mysql_select_db("$SQLdb");
-      if (!$result) {
-        echo "Error selecting database '$SQLdb'.\n";
-        exit;
-      }
-      $result = @mysql_query("$query");
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        $err = mysql_errno($link) . ": " . mysql_error($link);
-        error_log($err);
-      }
-      @mysql_close($link);
-      break;
-    case "mysqli":
-      if (!function_exists("mysqli_connect"))
-        die("No MySQLi support found!");
-      if (!isset($SQLport) || $SQLport == "")
-        $SQLport = 3306;
-      $link = @mysqli_connect("$SQLhost:$SQLport","$SQLus","$SQLpw","$SQLdb");
-      if (mysqli_connect_errno()) {
-        echo "Database access error.\n";
-        exit;
-      }
-      $result = @mysqli_query($link, $query);
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        $err = mysqli_errno($link) . ": " . mysqli_error($link);
-        error_log($err);
-      }
-      @mysqli_close($link);
-      break;
-    case "sqlite":
-      if (!function_exists("sqlite_open"))
-        die("No SQLite support found!");
-      $link = @sqlite_open("$SQLdb", 0640, $sqlite_err);
-      if (!$link) {
-        echo "Database access error.\n";
-        die($sqlite_err);
-      }
-      $result = @sqlite_query($link, "$query");
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        error_log(sqlite_error_string(sqlite_last_error($link)));
-      }
-      @sqlite_close($link);
-      break;
-    case "mssql":
-      if (!function_exists("mssql_connect"))
-        die("No MS SQL support found!");
-      $link = @mssql_connect("$SQLhost","$SQLus","$SQLpw");
-      if (!$link) {
-        echo "Database access error.\n";
-        exit;
-      }
-      $result = @mssql_select_db("$SQLdb");
-      if (!$result) {
-      	echo "Error selecting database '$SQLdb'.\n";
-      	exit;
-      }
-
-      $query = mssql_queryfix($query);
-      $result = @mssql_query("$query");
-      if ($result == FALSE) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-      }
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
+  try {
+    $link = new PDO($SQLdb, $SQLus, $SQLpw);
+    return $link;
+  } catch(PDOException $e) {
+    print 'Database connection failure: '.$e->getMessage();
   }
-
-  return $result;
 }
 
-function sql_connect() {
-  global $SQLhost, $SQLport, $SQLdb, $SQLus, $SQLpw, $dbtype;
+function sql_query($query) {
+  global $dbtype;
 
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      if (!isset($SQLport) || $SQLport == "")
-        $SQLport = 3306;
-      $link = @mysql_connect("$SQLhost:$SQLport","$SQLus","$SQLpw");
-      if (!$link) {
-        echo "Database access error.\n";
+  try {
+    $link = sql_connect();
+
+    switch (strtolower($dbtype)) {
+      case "mssql":
+        $query = mssql_queryfix($query);
+      case "mysql":
+      case "mysqli":
+      case "sqlite":
+        $result = $link->query($query);
+        break;
+      default:
+        echo "Database type error.";
         exit;
-      }
-      $result = @mysql_select_db("$SQLdb");
-      if (!$result) {
-        echo "Error selecting database '$SQLdb'.\n";
-        exit;
-      }
-      break;
-    case "mysqli":
-      if (!isset($SQLport) || $SQLport == "")
-        $SQLport = 3306;
-      $link = @mysqli_connect("$SQLhost:$SQLport","$SQLus","$SQLpw","$SQLdb");
-      if (!$link) {
-        echo "Database access error.\n";
-        exit;
-      }
-      break;
-    case "sqlite":
-      $link = @sqlite_open("$SQLdb", 0640, $sqlite_err);
-      if (!$link) {
-        echo "Database access error.\n";
-        die($sqlite_err);
-      }
-      @sqlite_create_function($link, 'FROM_UNIXTIME', 'from_unixtime', 1);
-      @sqlite_unbuffered_query($link, "BEGIN");
-      break;
-    case "mssql":
-      $link = @mssql_connect("$SQLhost","$SQLus","$SQLpw");
-      if (!$link) {
-        echo "Database access error.\n";
-        exit;
-      }
-      $result = @mssql_select_db("$SQLdb");
-      if (!$result) {
-        echo "Error selecting database '$SQLdb'.\n";
-        exit;
-      }
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
+    }
+
+    $link = NULL;
+
+    return $result;
+  } catch(PDOException $e) {
+    print "Database query failure for query: \n" . $query . " \n". $e->getMessage();
   }
-
-  return $link;
 }
 
 function sql_queryn($link, $query) {
@@ -174,50 +64,29 @@ function sql_queryn($link, $query) {
     if (!strcmp(substr($query, 0, 6), "UPDATE") && !strcmp(substr($query, -7), "LIMIT 1"))
       $query = substr($query, 0, -7);
   }
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $result = @mysql_unbuffered_query("$query", $link);
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        $err = mysql_errno($link) . ": " . mysql_error($link);
-        error_log($err);
-      }
-      break;
-    case "mysqli":
-      $result = @mysqli_query($link, $query);
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        $err = mysqli_errno($link) . ": " . mysqli_error($link);
-        error_log($err);
-      }
-      break;
-    case "sqlite":
-      $query = ereg_replace(" USE INDEX \(.*\)", "", $query);
-      $query = str_replace("\'", "&#39;", $query);
-      $result = @sqlite_unbuffered_query($link, "$query");
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        error_log(sqlite_error_string(sqlite_last_error($link)));
-      }
-      break;
-    case "mssql":
-      $query = mssql_queryfix($query);
-      $query = str_replace("\'", "' + char(39) + '", $query);
-      $result = @mssql_query("$query");
-      if ($result == FALSE) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-      }
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
+
+  // NOTE previously used unbuffered queries
+
+  try {
+    switch (strtolower($dbtype)) {
+      case "mssql":
+        $query = mssql_queryfix($query);
+        $query = str_replace("\'", "' + char(39) + '", $query);
+      case "sqlite":
+        $query = preg_replace("(USE INDEX \(.*\))", "", $query);
+        $query = str_replace("\'", "&#39;", $query);
+      case "mysql":
+      case "mysqli":
+        $result = $link->query("$query");
+        break;
+      default:
+        echo "Database type error.\n";
+        exit;
+    }
+    return $result;
+  } catch(PDOException $e) {
+    print "Database query failure for query: \n" . $query . " \n". $e->getMessage();
   }
-  return $result;
 }
 
 function sql_querynb($link, $query) {
@@ -227,262 +96,61 @@ function sql_querynb($link, $query) {
     if (!strcmp(substr($query, 0, 6), "UPDATE") && !strcmp(substr($query, -7), "LIMIT 1"))
       $query = substr($query, 0, -7);
   }
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $result = @mysql_query("$query", $link);
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        $err = mysql_errno($link) . ": " . mysql_error($link);
-        error_log($err);
-      }
-      break;
-    case "mysqli":
-      $result = @mysqli_query($link, $query);
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        $err = mysqli_errno($link) . ": " . mysqli_error($link);
-        error_log($err);
-      }
-      break;
-    case "sqlite":
-      $query = ereg_replace(" USE INDEX \(.*\)", "", $query);
-      $result = @sqlite_query($link, "$query");
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-        error_log(sqlite_error_string(sqlite_last_error($link)));
-      }
-      break;
-    case "mssql":
-      $query = mssql_queryfix($query);
-      $result = @mssql_query("$query");
-      if (!$result) {
-      	$err = "*Error in database query: '$query'";
-      	error_log($err);
-      }
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
+
+  // NOTE previous implementation differed from `sql_querynb` by not using buffered queries
+
+  try {
+    switch (strtolower($dbtype)) {
+      case "mssql":
+        $query = mssql_queryfix($query);
+        $query = str_replace("\'", "' + char(39) + '", $query);
+      case "sqlite":
+        $query = preg_replace("(USE INDEX \(.*\))", "", $query);
+        $query = str_replace("\'", "&#39;", $query);
+      case "mysql":
+      case "mysqli":
+        $result = $link->query("$query");
+        break;
+      default:
+        echo "Database type error.\n";
+        exit;
+    }
+    return $result;
+  } catch(PDOException $e) {
+    print "Database query failure for query: \n" . $query . " \n". $e->getMessage();
   }
-  return $result;
 }
 
 function sql_fetch_row($result) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $row = @mysql_fetch_row($result);
-      break;
-    case "mysqli":
-      $row = @mysqli_fetch_row($result);
-      break;
-    case "sqlite":
-      $row = @sqlite_fetch_array($result, SQLITE_NUM);
-      break;
-    case "mssql":
-      if ($result != FALSE) {
-        $row = @mssql_fetch_row($result);
-        $i = 0;
-        while (isset($row[$i])) {
-          if (is_string($row[$i]) && $row[$i] == " ")
-            $row[$i] = "";
-          $i++;
-        }
-      }
-      else
-        $row = NULL;
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
-  return $row;
+  return $result->fetch(PDO::FETCH_NUM);
 }
 
 function sql_fetch_assoc($result) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $row = @mysql_fetch_assoc($result);
-      break;
-    case "mysqli":
-      $row = @mysqli_fetch_assoc($result);
-      break;
-    case "sqlite":
-      $row = @sqlite_fetch_array($result, SQLITE_ASSOC);
-      break;
-    case "mssql":
-      if ($result != FALSE)
-        $row = @mssql_fetch_assoc($result);
-      else
-        $row = NULL;
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
-  return $row;
+  return $result->fetch(PDO::FETCH_ASSOC);
 }
 
 function sql_fetch_array($result) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $row = @mysql_fetch_array($result);
-      break;
-    case "mysqli":
-      $row = @mysqli_fetch_array($result);
-      break;
-    case "sqlite":
-      $row = @sqlite_fetch_array($result, SQLITE_BOTH);
-      break;
-    case "mssql":
-      if ($result != FALSE)
-        $row = @mssql_fetch_array($result);
-      else
-        $row = NULL;
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
-  return $row;
+  return $result->fetch(PDO::FETCH_BOTH);
 }
 
 function sql_free_result($result) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      @mysql_free_result($result);
-      break;
-    case "mysqli":
-      @mysqli_stmt_free_result($result);
-      break;
-    case "sqlite":
-      break;
-    case "mssql":
-      if ($result != FALSE)
-        @mssql_free_result($result);
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
+  $result->closeCursor();
 }
 
 function sql_insert_id($link) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $num = @mysql_insert_id();
-      break;
-    case "mysqli":
-      $num = @mysqli_insert_id();
-      break;
-    case "sqlite":
-      $num = @sqlite_last_insert_rowid($link);
-      break;
-    case "mssql":
-      $result = @mssql_query("SELECT @@IDENTITY");
-      if ($result) {
-        $num = reset(mssql_fetch_row($result));
-        if (!is_numeric($num))
-          $num = 0;
-      }
-      else
-        $num = 0;
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
-  return $num;
+  return $link->lastInsertId();
 }
 
 function sql_num_rows($result) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql": // Not available in unbuffered mode
-      $num = mysql_num_rows($result);
-      break;
-    case "mysqli": // Not available in unbuffered mode
-      $num = mysqli_num_rows($result);
-      break;
-    case "sqlite": // Not available in unbuffered mode
-      $num = sqlite_num_rows($result);
-      break;
-    case "mssql":
-      $num = mssql_num_rows($result);
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
-  return $num;
+  return $result->rowCount();
 }
 
 function sql_affected_rows($link) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $num = mysql_affected_rows($link);
-      break;
-    case "mysqli":
-      $num = mysqli_affected_rows($link);
-      break;
-    case "sqlite":
-      $num = sqlite_changes($link);
-      break;
-    case "mssql":
-      $num = mssql_rows_affected($link);
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
-  return $num;
+  return $result->rowCount();
 }
 
 function sql_close($link) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      mysql_close($link);
-      break;
-    case "mysqli":
-      mysqli_close($link);
-      break;
-    case "sqlite":
-      sqlite_unbuffered_query($link, "COMMIT");
-      sqlite_close($link);
-      break;
-    case "mssql":
-      mssql_close($link);
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
+  $link = NULL;
 }
 
 function sql_addslashes($str) {
@@ -490,13 +158,9 @@ function sql_addslashes($str) {
 
   switch (strtolower($dbtype)) {
     case "mysql":
-      $str = addslashes($str);
-      break;
     case "mysqli":
-      $str = addslashes($str);
-      break;
     case "sqlite":
-      $str = sqlite_escape_string($str);
+      $str = addslashes($str);
       break;
     case "mssql":
       $str = str_replace("'", "''", $str);
@@ -510,101 +174,19 @@ function sql_addslashes($str) {
 }
 
 function sql_error($link) {
-  global $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $err = mysql_error($link);
-      break;
-    case "mysqli":
-      $err = mysqli_error($link);
-      break;
-    case "mssql":
-      $err = "";
-      break;
-    case "sqlite":
-      $err = sqlite_error_string(sqlite_last_error($link));
-      break;
-    case "pgsql":
-      $err = pg_last_error($link);
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-      break;
-  }
-  return $err;
+  return $link->errorInfo(); // TODO turn into string
 }
 
-function from_unixtime($unixtime)
-{
+function from_unixtime($unixtime) {
   return "'".date('Y-m-d H:i:s', $unixtime)."'";
 }
 
 function sql_show_tables($query) {
-  global $SQLhost, $SQLport, $SQLdb, $SQLus, $SQLpw, $dbtype;
-
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      if (!isset($SQLport) || $SQLport == "")
-        $SQLport = 3306;
-      $link = @mysql_connect("$SQLhost:$SQLport","$SQLus","$SQLpw");
-      if (!$link) {
-        echo "Database access error.\n";
-        exit;
-      }
-      $result = mysql_select_db("$SQLdb");
-      if (!$result) {
-        echo "Error selecting database '$SQLdb'.\n";
-        exit;
-      }
-      $result = mysql_query("$query");
-      mysql_close($link);
-      break;
-    case "mysqli":
-      if (!isset($SQLport) || $SQLport == "")
-        $SQLport = 3306;
-      $link = @mysqli_connect("$SQLhost:$SQLport","$SQLus","$SQLpw","$SQLdb");
-      if (!$link) {
-        echo "Database access error.\n";
-        exit;
-      }
-      $result = @mysqli_query($link, $query);
-      mysqli_close($link);
-      break;
-    case "sqlite":
-      $link = sqlite_open("$SQLdb", 0640, $sqlite_err);
-      if (!$link) {
-        echo "Database access error.\n";
-        die($sqlite_err);
-      }
-      $result = sqlite_query($link, "$query");
-      sqlite_close($link);
-      break;
-    case "mssql":
-      $link = @mssql_connect("$SQLhost","$SQLus","$SQLpw");
-      if (!$link) {
-        echo "Database access error.\n";
-        exit;
-      }
-      $result = @mssql_select_db("$SQLdb");
-      if (!$result) {
-      	echo "Error selecting database '$SQLdb'.\n";
-      	exit;
-      }
-      $result = @mssql_query("$query");
-      mssql_close($link);
-      break;
-    default:
-      echo "Database type error.\n";
-      exit;
-  }
-  return $result;
+  return sql_query($query);
 }
 
 // Modified from code by Jon Jensen
-function sqlite_alter_table($link, $table, $alterdefs)
-{
+function sqlite_alter_table($link, $table, $alterdefs) {
   $result = sqlite_query($link, "SELECT sql,name,type FROM sqlite_master WHERE tbl_name = '".$table."' ORDER BY type DESC");
 
   if (sqlite_num_rows($result) > 0) {
@@ -785,8 +367,7 @@ function sqlite_alter_table($link, $table, $alterdefs)
   return true;
 }
 
-function mssql_queryfix($query)
-{
+function mssql_queryfix($query) {
   // Convert from LIMIT to TOP in SELECT queries
   if (!strcmp(substr($query, 0, 6), "SELECT") && strstr($query, " LIMIT ") !== false) {
   	if (($pl = strpos($query, " LIMIT ")) !== false) {

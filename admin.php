@@ -26,7 +26,7 @@ $magic = get_magic_quotes_gpc();
 $magicrt = get_magic_quotes_runtime();
 $adminver = new AdminVer;
 $adminver->major = 3;
-$adminver->minor = 07;
+$adminver->minor = 8;
 $adminver->extra = "";
 $updatereq = 0;
 
@@ -578,6 +578,19 @@ function updatedb() {
     update307();
   }
 
+  $ver = currentver();
+  if ($ver == -1) {
+    $versioncheck = "Version check error!<br />\n";
+    menu_bottom();
+    exit;
+  }
+  list($vermajor, $verminor, $verextra) = $ver;
+  if ($vermajor == 3 && $verminor == 7) {
+    echo "Updating database to version 3.08....<br /><br />\n";
+    include_once("includes/adminupdate.php");
+    update308();
+  }
+
   menu_bottom();
   exit;
 }
@@ -610,11 +623,6 @@ function currentver() {
 function loadpass() {
   global $SQLdb, $dbtype, $dbpre, $AdmPass;
 
-  if (strtolower($dbtype) == "sqlite" && !file_exists("$SQLdb")) {
-    include_once("includes/admininit.php");
-    initcheck(3);
-  }
-
   $result = sql_query("SELECT value FROM {$dbpre}config WHERE conf='AdminPass' LIMIT 1");
   if ($result) {
     $row = sql_fetch_row($result);
@@ -622,6 +630,7 @@ function loadpass() {
     $AdmPass = $row[0];
     return;
   }
+
   include_once("includes/admininit.php");
   initcheck(3);
 }
@@ -667,7 +676,7 @@ function login() {
     .sidebox {border: 1px #000000 solid}
   </style>
   <script language="Javascript" type="text/JavaScript">
-    function setFocus() { 
+    function setFocus() {
       document.login_form.Pass.focus();
     }
   </script>
