@@ -35,12 +35,12 @@ else if ($statview == 'servers')
 else if ($statview == 'help')
   require("includes/help.php");
 else {
-  $result = sql_query("SELECT tl_score,tl_kills,tl_suicides,tl_teamkills,tl_players,tl_matches,tl_playertime,tl_headshots FROM {$dbpre}totals LIMIT 1");
+  $result = sql_query("SELECT tl_score,tl_kills,tl_suicides,tl_teamkills,tl_players,tl_matches,tl_playertime FROM {$dbpre}totals LIMIT 1");
   if (!$result) {
     echo "{$LANG_STATSDATABASEERROR}<br />\n";
     exit;
   }
-  list($tl_score,$tl_kills,$tl_suicides,$tl_teamkills,$tl_players,$tl_matches,$tl_playertime,$tl_headshots) = sql_fetch_row($result);
+  list($tl_score,$tl_kills,$tl_suicides,$tl_teamkills,$tl_players,$tl_matches,$tl_playertime) = sql_fetch_row($result);
   sql_free_result($result);
   $frags = $tl_kills - $tl_suicides;
   $time = sprintf("%0.1f", $tl_playertime / 360000.0);
@@ -56,14 +56,13 @@ else {
   echo <<<EOF
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>
-    <td class="heading" colspan="9" align="center">{$LANG_UTSTATSDATABASE} v{$Version}</td>
+    <td class="heading" colspan="8" align="center">{$LANG_UTSTATSDATABASE} v{$Version}</td>
   </tr>
   <tr>
     <td class="smheading" align="center">{$LANG_TOTALSCORE}</td>
     <td class="smheading" align="center">{$LANG_TOTALFRAGS}</td>
     <td class="smheading" align="center">{$LANG_TOTALKILLS}</td>
     <td class="smheading" align="center">{$LANG_TEAMKILLS}</td>
-    <td class="smheading" align="center">{$LANG_TOTALHEADSHOTS}</td>
     <td class="smheading" align="center">{$LANG_HUMANPLAYERS}</td>
     <td class="smheading" align="center">{$LANG_SERVERS}</td>
     <td class="smheading" align="center">{$LANG_MATCHESLOGGED}</td>
@@ -74,7 +73,6 @@ else {
     <td class="grey" align="center">$frags</td>
     <td class="grey" align="center">$tl_kills</td>
     <td class="grey" align="center">$tl_teamkills</td>
-    <td class="grey" align="center">$tl_headshots</td>
     <td class="grey" align="center">$tl_players</td>
     <td class="grey" align="center">$servers</td>
     <td class="grey" align="center">$tl_matches</td>
