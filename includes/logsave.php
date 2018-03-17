@@ -292,7 +292,7 @@ function storedata()
             echo "Error updating player match specials data.{$break}\n";
             exit;
           }
-          if (!sql_affected_rows($link)) {
+          if (sql_affected_rows($result) == 0) {
             $result = sql_queryn($link, "INSERT INTO {$dbpre}gspecials (gs_match,gs_player,gs_stype,gs_total) VALUES($matchnum,$pnum,$spectype,$specnum)");
             if (!$result) {
               echo "Error adding player match specials data.{$break}\n";

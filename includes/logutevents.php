@@ -1093,8 +1093,6 @@ function tagut_translocate_fail($i, $data)
   $plr = check_player($data[2]);
 }
 
-// Add TransGib
-
 // Powerup Activate
 function tagut_item_activate($i, $data)
 {

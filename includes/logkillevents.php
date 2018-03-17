@@ -110,13 +110,27 @@ function tag_k ($i, $data)
 
     // Check for special event
     for ($i = 0; $i < $numspectypes; $i++) {
-      if (stristr($killweapon, $specialtypes[$i][1]) && $special[$specialtypes[$i][0]][2] == 0 && $special[$specialtypes[$i][0]][3] > 0) {
-        $player[$killer]->specialcount[$specialtypes[$i][0]]++;
-        if ($player[$killer]->specialcount[$specialtypes[$i][0]] == $specialtypes[$i][3]) {
-          $player[$killer]->specialevents[$specialtypes[$i][0]]++;
-          $match->specialevents[$specialtypes[$i][0]]++;
-          weaponspecial($killtime, $killer, $specialtypes[$i][0], 0);
-          $player[$killer]->specialcount[$specialtypes[$i][0]] = 0;
+
+      if (stristr($killweapon, $specialtypes[$i][0]) && $specialtypes[$i][2] > 0) {
+        if (!array_key_exists($specialtypes[$i][1], $player[$killer]->specialcount)) {
+          $player[$killer]->specialcount[$specialtypes[$i][1]] = 1;
+        } else {
+          $player[$killer]->specialcount[$specialtypes[$i][1]]++;
+        }
+
+        if ($player[$killer]->specialcount[$specialtypes[$i][1]] == $specialtypes[$i][2]) {
+          if (!array_key_exists($specialtypes[$i][1], $player[$killer]->specialevents)) {
+            $player[$killer]->specialevents[$specialtypes[$i][1]] = 1;
+          } else {
+            $player[$killer]->specialevents[$specialtypes[$i][1]]++;
+          }
+          if (!array_key_exists($specialtypes[$i][1], $match->specialevents)) {
+            $match->specialevents[$specialtypes[$i][1]] = 1;
+          } else {
+            $match->specialevents[$specialtypes[$i][1]]++;
+          }
+          weaponspecial($killtime, $killer, $specialtypes[$i][1], 0);
+          $player[$killer]->specialcount[$specialtypes[$i][1]] = 0;
         }
       }
     }
@@ -124,7 +138,7 @@ function tag_k ($i, $data)
     // Check for road kill
     if ($killweapsec == 4) {
       for ($i = 0, $roadkill = -1; $i < $numspectypes; $i++) {
-        if (stristr("Road Kill", $specialtypes[$i][1]) && $specialtypes[$i][3] == 2) {
+        if (stristr("Road Kill", $specialtypes[$i][0]) && $specialtypes[$i][3] == 2) {
           $roadkill = $i;
           break;
         }

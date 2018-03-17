@@ -155,7 +155,7 @@ function sql_num_rows($result) {
   return $count;
 }
 
-function sql_affected_rows($link) {
+function sql_affected_rows($result) {
   return $result->rowCount();
 }
 

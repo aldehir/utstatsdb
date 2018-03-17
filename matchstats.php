@@ -962,7 +962,7 @@ if ($gametval == 10 || $gametval == 19) {
   for ($r = 1; $r <= $gm_numplayers; $r++) {
     if ($gplayer[$ranks[$r]]["gp_pickup0"] > 0)
       $displaylms = true;
-  }    
+  }
 
   if ($displaylms) {
     echo <<<EOF
@@ -1321,7 +1321,7 @@ EOF;
           $sph = "0.0";
         else
           $sph = sprintf("%0.1f", $score * (3600 / $ptime));
-    
+
         $ttl = sprintf("%0.1f", $ptime / ($deaths + $suicides + 1));
         $time = sprintf("%0.1f", $ptime / 60.0);
 
@@ -1763,7 +1763,9 @@ if ($gametval != 9 && $gametval != 18) {
 
   for ($i = 0; $i <= $maxplayer; $i++) {
     if (isset($gplayer[$i])) {
-      $transgib += $gplayer[$i]["gp_transgib"];
+      if (array_key_exists("gp_transgib", $gplayer[$i])) {
+        $transgib += $gplayer[$i]["gp_transgib"];
+      }
       $multi1 += $gplayer[$i]["gp_multi1"];
       $multi2 += $gplayer[$i]["gp_multi2"];
       $multi3 += $gplayer[$i]["gp_multi3"];
@@ -2232,13 +2234,13 @@ if ($numweapons > 0) {
       $held = $wskills[2][$i];
       $suicides = $wskills[3][$i];
       $frags = $wskills[5][$i];
-  
+
       if (($kills || $skills || $held || $suicides) && strcmp($weapon, "{$LANG_NONE}")) {
         if ($kills + $skills + $held + $suicides == 0)
           $eff = "0.0";
         else
           $eff = sprintf("%0.1f", (($kills + $skills) / ($kills + $skills + $held + $suicides)) * 100.0);
-  
+
         echo <<< EOF
   <tr>
     <td class="dark" align="center">$weapon</td>
@@ -2400,7 +2402,7 @@ EOF;
       $suicides = $wskills[3][$i];
       $frags = $wskills[5][$i];
       $roadkills = $wskills[7][$i];
-  
+
       if ($kills || $skills || $roadkills || $held || $suicides) {
         if ($kills + $skills + $roadkills + $held + $suicides == 0)
           $eff = "0.0";
@@ -2471,7 +2473,7 @@ EOF;
       $suicides = $wskills[3][$i];
       $frags = $wskills[5][$i];
       $roadkills = $wskills[7][$i];
-  
+
       if ($kills || $skills || $roadkills || $suicides) {
         echo <<< EOF
   <tr>
@@ -2533,7 +2535,7 @@ EOF;
       $weapon = $wskills[4][$i];
       $kills = $wskills[0][$i] + $wskills[1][$i];
       $deaths = $wskills[2][$i];
-  
+
       if ($kills || $deaths) {
         echo <<< EOF
   <tr>

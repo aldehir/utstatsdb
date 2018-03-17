@@ -84,7 +84,7 @@ function parselog($file,$chatfile)
     $special[$numspec++][3] = intval($row[3]);
   }
   sql_free_result($result);
-  $result = sql_queryn($link, "SELECT st_type,st_snum FROM {$dbpre}specialtypes");
+  $result = sql_queryn($link, "SELECT st_type,st_snum,se_trignum FROM {$dbpre}specialtypes, {$dbpre}special WHERE se_num = st_snum");
   if (!$result) {
     echo "Special event type database error.<br />\n";
     exit;
@@ -93,7 +93,8 @@ function parselog($file,$chatfile)
   $specialtypes = array(array());
   while ($row = sql_fetch_row($result)) {
     $specialtypes[$numspectypes][0] = $row[0];
-    $specialtypes[$numspectypes++][1] = intval($row[1]);
+    $specialtypes[$numspectypes][1] = intval($row[1]);
+    $specialtypes[$numspectypes++][2] = $row[2];
   }
   sql_free_result($result);
 

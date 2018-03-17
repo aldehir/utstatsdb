@@ -480,7 +480,7 @@ EOF;
 //========== Special Events ===================================================
 //=============================================================================
 if ($gametval != 9) {
-  $result = sql_queryn($link, "SELECT se_num,se_title,se_desc,gs_total FROM {$dbpre}special LEFT JOIN {$dbpre}gspecials ON gs_stype=se_num WHERE gs_match=$matchnum AND gs_player=$plr ORDER BY se_num");
+  $result = sql_queryn($link, "SELECT se_num,se_title,se_desc,gs_total FROM {$dbpre}special LEFT JOIN {$dbpre}gspecials ON gs_stype=se_num WHERE gs_match=$matchnum AND gs_player=$gp_pnum ORDER BY se_num");
   if (!$result) {
     echo "Player database error.<br />\n";
     exit;
@@ -517,32 +517,28 @@ if ($gametval != 9) {
   <tr>
     <td class="dark" align="center" style="white-space:nowrap">First Blood</td>
     <td class="grey" align="center">$fb</td>
-    <td class="dark" align="center" style="white-space:nowrap">Head Shots</td>
-    <td class="grey" align="center">$gp_headshots</td>
     <td class="dark" align="center" style="white-space:nowrap">Double Kills</td>
     <td class="grey" align="center">$gp_multi1</td>
     <td class="dark" align="center" style="white-space:nowrap">Multi Kills</td>
     <td class="grey" align="center">$gp_multi2</td>
-  </tr>
-  <tr>
     <td class="dark" align="center" style="white-space:nowrap">Mega Kills</td>
     <td class="grey" align="center">$gp_multi3</td>
+  </tr>
+  <tr>
     <td class="dark" align="center" style="white-space:nowrap">Ultra Kills</td>
     <td class="grey" align="center">$gp_multi4</td>
     <td class="dark" align="center" style="white-space:nowrap">Monster Kills</td>
     <td class="grey" align="center">$gp_multi5</td>
     <td class="dark" align="center" style="white-space:nowrap">Ludicrous Kills</td>
     <td class="grey" align="center">$gp_multi6</td>
-  </tr>
-  <tr>
     <td class="dark" align="center" style="white-space:nowrap">Holy Shit Kills</td>
     <td class="grey" align="center">$gp_multi7</td>
-    <td class="dark" align="center" style="white-space:nowrap">Failed Transloc</td>
-    <td class="grey" align="center">$gp_transgib</td>
+  </tr>
+  <tr>
 
 EOF;
 
-  $col = 2;
+  $col = 0;
   for ($i = 0; $i < $numspec; $i++) {
     if ($col == 0)
       echo "  <tr>\n";
@@ -754,13 +750,13 @@ if ($numweapons > 0) {
     $held = $wskills[3][$i];
     $suic = $wskills[4][$i];
     $frags = $wskills[6][$i];
-  
+
     if (($kills || $skills || $deaths || $held) && strcmp($weapon, "None")) {
       if ($kills + $skills + $held + $suic == 0)
         $eff = "0.0";
       else
         $eff = sprintf("%0.1f", (($kills + $skills) / ($kills + $skills + $held + $suic)) * 100.0);
-  
+
       echo <<< EOF
   <tr>
     <td class="dark" align="center">$weapon</td>
@@ -925,7 +921,7 @@ EOF;
       $suic = $wskills[4][$i];
       $frags = $wskills[6][$i];
       $roadkills = $wskills[8][$i];
-  
+
       if ($kills || $skills || $roadkills || $deaths || $held) {
         if ($kills + $skills + $roadkills + $held + $suic == 0)
           $eff = "0.0";
@@ -1000,7 +996,7 @@ EOF;
       $suic = $wskills[4][$i];
       $frags = $wskills[6][$i];
       $roadkills = $wskills[8][$i];
-  
+
       if ($kills || $skills || $roadkills || $deaths) {
         echo <<< EOF
   <tr>
@@ -1064,7 +1060,7 @@ EOF;
       $weapon = $wskills[5][$i];
       $kills = $wskills[0][$i] + $wskills[1][$i];
       $deaths = $wskills[2][$i];
-  
+
       if ($kills || $deaths) {
         echo <<< EOF
   <tr>
@@ -1566,7 +1562,7 @@ while ($row = sql_fetch_assoc($result)) {
       <td class="dark" align="center">$time</td>
       <td class="$rclass" align="center">$reason</td>
     </tr>
-  
+
 EOF;
   }
 }

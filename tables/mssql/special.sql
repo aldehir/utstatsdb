@@ -23,7 +23,7 @@ INSERT INTO %dbpre%special (se_title,se_desc,se_trignum) VALUES('Headhunter','15
 INSERT INTO %dbpre%special (se_title,se_desc,se_trignum) VALUES('Big Game Hunter','15 kills with the Longbow AVRiL',15);
 INSERT INTO %dbpre%special (se_title,se_desc,se_trigtype,se_trignum) VALUES('Road Kill','Running someone over with a vehicle.',2,1);
 INSERT INTO %dbpre%special (se_title,se_desc,se_trigtype,se_trignum) VALUES('Road Rampage','Running over 15 people with a vehicle.',3,15);
-INSERT INTO %dbpre%special (se_title,se_desc,se_trigtype,se_trignum) VALUES('TransGib','Gibbing someone with a translocator.',4,1);
+INSERT INTO %dbpre%special (se_title,se_desc,se_trigtype,se_trignum) VALUES('Telefrag','Gibbing someone with a translocator.',4,1);
 INSERT INTO %dbpre%special (se_title,se_desc,se_trigtype,se_trignum) VALUES('Headshot','Delivering a killing shot to the head.',5,1);
 INSERT INTO %dbpre%special (se_title,se_desc,se_trignum) VALUES('Eagle Eye','Destroying a flying vehicle (Raptor, Cicada, Fury), a speeding Scorpion, or a Viper ready to self-destruct with the Goliath or Paladin.',1);
 INSERT INTO %dbpre%special (se_title,se_desc,se_trignum) VALUES('Bullseye','Killing an enemy with the kamikaze feature of the Scorpion or Viper.',1);

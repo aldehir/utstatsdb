@@ -29,3 +29,5 @@ INSERT INTO %dbpre%specialtypes (st_type,st_snum) SELECT 'UTDmgType_AvrilRocket'
 INSERT INTO %dbpre%specialtypes (st_type,st_snum) SELECT 'DamTypeONSAVRiLRocket',se_num FROM %dbpre%special WHERE se_title='Big Game Hunter';
 INSERT INTO %dbpre%specialtypes (st_type,st_snum) SELECT 'Pancake',se_num FROM %dbpre%special WHERE se_title='Pancake';
 INSERT INTO %dbpre%specialtypes (st_type,st_snum) SELECT 'RanOver',se_num FROM %dbpre%special WHERE se_title='Road Rampage';
+INSERT INTO %dbpre%specialtypes (st_type,st_snum) SELECT 'DamTypeSniperHeadShot',se_num FROM %dbpre%special WHERE se_title='Headshot';
+INSERT INTO %dbpre%specialtypes (st_type,st_snum) SELECT 'DamTypeTeleFrag',se_num FROM %dbpre%special WHERE se_title='Telefrag';
