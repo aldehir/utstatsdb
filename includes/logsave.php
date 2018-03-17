@@ -462,7 +462,7 @@ function storedata()
 
       // Save player stats
       if (strtolower($dbtype) == "mssql") { // @&$#^*! MsSQL
-        $result = sql_queryn($link, "UPDATE {$dbpre}players SET 
+        $result = sql_queryn($link, "UPDATE {$dbpre}players SET
 plr_name='$plr_name',
 plr_bot=$plr_bot,
 plr_frags=$plr_frags,plr_score=$plr_score,plr_kills=$plr_kills,plr_deaths=$plr_deaths,plr_suicides=$plr_suicides,
@@ -487,7 +487,7 @@ plr_combo1=$plr_combo1,plr_combo2=$plr_combo2,plr_combo3=$plr_combo3,plr_combo4=
 plr_flagcapture=$plr_flagcapture,plr_flagreturn=$plr_flagreturn,plr_flagkill=$plr_flagkill,
 plr_cpcapture=$plr_cpcapture,
 plr_bombcarried=$plr_bombcarried,plr_bombtossed=$plr_bombtossed,plr_bombkill=$plr_bombkill,
-plr_nodeconstructed=$plr_nodeconstructed,plr_nodedestroyed=$plr_nodedestroyed,plr_nodeconstdestroyed=$plr_nodeconstdestroyed 
+plr_nodeconstructed=$plr_nodeconstructed,plr_nodedestroyed=$plr_nodedestroyed,plr_nodeconstdestroyed=$plr_nodeconstdestroyed
 WHERE pnum=$pnum");
       }
       else {
@@ -526,7 +526,7 @@ $plr_nodeconstructed,$plr_nodedestroyed,$plr_nodeconstdestroyed)");
 
       // Save player gametype data
       if (strtolower($dbtype) == "mssql") {
-        $result = sql_queryn($link, "UPDATE {$dbpre}playersgt SET 
+        $result = sql_queryn($link, "UPDATE {$dbpre}playersgt SET
 gt_pnum=$gt_pnum,
 gt_tnum=$gt_tnum,
 gt_type=$gt_type,
@@ -538,7 +538,7 @@ gt_time=$gt_time,
 gt_rank=$gt_rank,
 gt_capcarry=$gt_capcarry,gt_tossed=$gt_tossed,gt_drop=$gt_drop,gt_pickup=$gt_pickup,gt_return=$gt_return,gt_taken=$gt_taken,
 gt_typekill=$gt_typekill,gt_assist=$gt_assist,gt_holdtime=$gt_holdtime,
-gt_extraa=$gt_extraa,gt_extrab=$gt_extrab,gt_extrac=$gt_extrac 
+gt_extraa=$gt_extraa,gt_extrab=$gt_extrab,gt_extrac=$gt_extrac
 WHERE gt_num=$gt_num");
       }
       else {
@@ -1135,7 +1135,7 @@ plr_transgib=$plr_transgib,
   $tl_gametime += $match->length / ($match->timeoffset / 100.0);
 
   if (strtolower($dbtype) == "mssql") {
-    $result = sql_queryn($link, "UPDATE {$dbpre}totals SET 
+    $result = sql_queryn($link, "UPDATE {$dbpre}totals SET
 tl_score=$tl_score,tl_kills=$tl_kills,tl_deaths=$tl_deaths,tl_suicides=$tl_suicides,
 tl_teamkills=$tl_teamkills,tl_teamdeaths=$tl_teamdeaths,
 tl_players=$tl_players,
@@ -1205,7 +1205,7 @@ tl_chbombtossedsg=$tl_chbombtossedsg,tl_chbombtossedsg_plr=$tl_chbombtossedsg_pl
 tl_chbombkillsg=$tl_chbombkillsg,tl_chbombkillsg_plr=$tl_chbombkillsg_plr,tl_chbombkillsg_tm=$tl_chbombkillsg_tm,tl_chbombkillsg_map=$tl_chbombkillsg_map,tl_chbombkillsg_date='$tl_chbombkillsg_date',
 tl_chnodeconstructedsg=$tl_chnodeconstructedsg,tl_chnodeconstructedsg_plr=$tl_chnodeconstructedsg_plr,tl_chnodeconstructedsg_tm=$tl_chnodeconstructedsg_tm,tl_chnodeconstructedsg_map=$tl_chnodeconstructedsg_map,tl_chnodeconstructedsg_date='$tl_chnodeconstructedsg_date',
 tl_chnodeconstdestroyedsg=$tl_chnodeconstdestroyedsg,tl_chnodeconstdestroyedsg_plr=$tl_chnodeconstdestroyedsg_plr,tl_chnodeconstdestroyedsg_tm=$tl_chnodeconstdestroyedsg_tm,tl_chnodeconstdestroyedsg_map=$tl_chnodeconstdestroyedsg_map,tl_chnodeconstdestroyedsg_date='$tl_chnodeconstdestroyedsg_date',
-tl_chnodedestroyedsg=$tl_chnodedestroyedsg,tl_chnodedestroyedsg_plr=$tl_chnodedestroyedsg_plr,tl_chnodedestroyedsg_tm=$tl_chnodedestroyedsg_tm,tl_chnodedestroyedsg_map=$tl_chnodedestroyedsg_map,tl_chnodedestroyedsg_date='$tl_chnodedestroyedsg_date' 
+tl_chnodedestroyedsg=$tl_chnodedestroyedsg,tl_chnodedestroyedsg_plr=$tl_chnodedestroyedsg_plr,tl_chnodedestroyedsg_tm=$tl_chnodedestroyedsg_tm,tl_chnodedestroyedsg_map=$tl_chnodedestroyedsg_map,tl_chnodedestroyedsg_date='$tl_chnodedestroyedsg_date'
 WHERE tl_totals='Totals'");
   }
   else {
@@ -1282,7 +1282,7 @@ $tl_chnodeconstdestroyedsg,$tl_chnodeconstdestroyedsg_plr,$tl_chnodeconstdestroy
 $tl_chnodedestroyedsg,$tl_chnodedestroyedsg_plr,$tl_chnodedestroyedsg_tm,$tl_chnodedestroyedsg_map,'$tl_chnodedestroyedsg_date')");
   }
   if (!$result) {
-    echo "Error saving totals data: ".mysql_error()."{$break}\n"; // *tag*
+    echo "Error saving totals data: ".implode(": ", sql_error($link))."{$break}\n"; // *tag*
     exit;
   }
 
