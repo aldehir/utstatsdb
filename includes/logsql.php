@@ -77,7 +77,7 @@ function sql_queryn($link, $query) {
         $query = str_replace("\'", "&#39;", $query);
       case "mysql":
       case "mysqli":
-        $result = $link->query("$query");
+        $result = $link->query($query);
         break;
       default:
         echo "Database type error.\n";
@@ -109,7 +109,7 @@ function sql_querynb($link, $query) {
         $query = str_replace("\'", "&#39;", $query);
       case "mysql":
       case "mysqli":
-        $result = $link->query("$query");
+        $result = $link->query($query);
         break;
       default:
         echo "Database type error.\n";
@@ -142,7 +142,17 @@ function sql_insert_id($link) {
 }
 
 function sql_num_rows($result) {
-  return $result->rowCount();
+  $count = $result->rowCount();
+
+  // this is a bit inefficient, but is the most straight-forward way of counting
+  // rows across all drivers if rowCount isn't supported
+  if ($count == 0 && preg_match("/SELECT\s.+\sFROM/i", $result->queryString) == 1) {
+    $countQuery = preg_replace("/SELECT\s(.+)\sFROM/i", "SELECT count(*) FROM", $result->queryString);
+    $countResult = sql_query($countQuery);
+    $count = sql_fetch_row($countResult);
+  }
+
+  return $count;
 }
 
 function sql_affected_rows($link) {

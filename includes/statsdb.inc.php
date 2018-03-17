@@ -2,9 +2,6 @@
 $dbtype = "SQLite";      // Database type - currently supported: MySQL SQLite MsSQL
 $dbpre = "ut_";         // Prefix to be prepended to all database table names.
 
-//$SQLhost = "localhost"; // The MySQL database host.
-//$SQLport = 3306;        // TCP port or Linux socket to use (/var/lib/mysql/mysql.sock)
-
 //$SQLdb = "mysql:host=localhost;dbname=utstats";
 $SQLdb = "sqlite:/home/shrimp/tmp/utstatsdb/stats.db";
 
