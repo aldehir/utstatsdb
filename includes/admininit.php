@@ -51,8 +51,6 @@ EOF;
 
   if ($reinit == 3)
     echo "<p><font color=\"#e00000\"><b>Configuration table not loaded!</b></font></p>\n";
-  else if ($reinit == 2 && strtolower($dbtype) == "sqlite")
-    echo "<p><font color=\"#e00000\"><b>Warning: \"clear data\" not supported by SQLite.<br />Confirm to do full reinitialization.</b></font></p>\n";
 
   echo <<<EOF
 <form name="login_form" method="post" action="admin.php">
@@ -141,60 +139,28 @@ EOF;
 
   if ($reinit) {
     echo "<b>Removing existing database tables:</b><br />\n";
+
     switch (strtolower($dbtype)) {
       case "mysql":
+      case "mssql":
+      case "sqlite":
         $link = sql_connect();
-        $result = sql_querynb($link, "SHOW TABLES");
-        while ($row = sql_fetch_row($result)) {
-          $table = $row[0];
+        $tables = sql_show_tables($link);
+        foreach ($tables as $table) {
           echo "$table....";
           if (substr($table, 0, strlen($dbpre)) == $dbpre) {
-            if ($reinit == 2 && stristr($table, "config"))
+            if ($reinit == 2 && stristr($table, "config")) {
               echo "skipped config.<br />\n";
-            else {
+            } else {
               $result2 = sql_queryn($link, "DROP TABLE $table");
-              if ($result)
+              if ($result2) {
                 echo "removed.<br />\n";
-              else
+              } else {
                 echo "Error Removing!<br />\n";
-            }
-          }
-          else
-            echo "skipped.<br />\n";
-        }
-        sql_free_result($result);
-        sql_close($link);
-        break;
-      case "sqlite":
-        if (file_exists("$SQLdb")) {
-          if (unlink("$SQLdb"))
-            echo "Successful.<br />\n";
-          else
-            echo "Error!<br />\n";
-        }
-        else
-          echo "No existing database.<br />\n";
-        break;
-      case "mssql":
-        $link = sql_connect();
-        $result = sql_querynb($link, "EXEC sp_tables");
-        while ($row = sql_fetch_row($result)) {
-          if ($row[3] == "TABLE") {
-            $table = $row[2];
-            echo "$table....";
-            if (substr($table, 0, strlen($dbpre)) == $dbpre) {
-              if ($reinit == 2 && stristr($table, "config"))
-                echo "skipped config.<br />\n";
-              else {
-                $result2 = sql_queryn($link, "DROP TABLE $table");
-                if ($result)
-                  echo "removed.<br />\n";
-                else
-                  echo "Error Removing!<br />\n";
               }
             }
-            else
-              echo "skipped.<br />\n";
+          } else {
+            echo "skipped.<br />\n";
           }
         }
         sql_free_result($result);
@@ -208,7 +174,7 @@ EOF;
   $link = sql_connect();
   $i = $errors = 0;
   do {
-    if ($reinit != 2 || strtolower($dbtype) == "sqlite" || substr($sqlfile[$i], 0, 6) != "config") {
+    if ($reinit != 2 || substr($sqlfile[$i], 0, 6) != "config") {
       $fname = "tables/".$tdir."/".$sqlfile[$i].".sql";
       echo "Creating table '{$dbpre}{$sqlfile[$i]}'....";
       if (file_exists($fname)) {

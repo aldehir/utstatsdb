@@ -191,8 +191,34 @@ function from_unixtime($unixtime) {
   return "'".date('Y-m-d H:i:s', $unixtime)."'";
 }
 
-function sql_show_tables($query) {
-  return sql_query($query);
+function sql_show_tables($link) {
+  global $dbtype;
+
+  $tables = [];
+
+  switch (strtolower($dbtype)) {
+    case "mysql":
+    case "mysqli":
+      $result = sql_querynb($link, "SHOW TABLES");
+      while ($row = sql_fetch_row($result)) $tables[] = $row[0];
+      break;
+    case "sqlite":
+      $result = sql_querynb($link, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
+      while ($row = sql_fetch_row($result)) $tables[] = $row[0];
+      break;
+    case "mssql":
+      $result = sql_querynb($link, "EXEC sp_tables");
+      while ($row = sql_fetch_row($result)) {
+        if ($row[3] == "TABLE") $tables[] = $row[2];
+      }
+      break;
+    default:
+      echo "Database type error.\n";
+      exit;
+      break;
+  }
+
+  return $tables;
 }
 
 // Modified from code by Jon Jensen
