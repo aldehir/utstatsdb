@@ -299,6 +299,13 @@ function storedata()
               exit;
             }
           }
+
+          /* log total all-time specials */
+          $result = sql_queryn($link, "UPDATE {$dbpre}special SET se_total=se_total+{$specnum} WHERE se_num=$spectype");
+          if (!$result) {
+            echo "Error updating player total specials data.{$break}\n";
+            exit;
+          }
         }
       }
       $plr_matches++;

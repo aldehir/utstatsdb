@@ -100,7 +100,7 @@ while ($row = sql_fetch_assoc($result)) {
       $fph = sprintf("%0.1f", $frags * (3600.0 / $tp_gtime));
     $ttl = sprintf("%0.1f", $tp_gtime / ($tp_deaths + $tp_suicides + 1));
     $hours = sprintf("%0.1f", $tp_gtime / 3600.0);
-    
+
     $tot_score += $tp_score;
     $tot_frags += $frags;
     $tot_kills += $tp_kills;
@@ -109,7 +109,7 @@ while ($row = sql_fetch_assoc($result)) {
     $tot_teamkills += $tp_teamkills;
     $tot_played += $tp_played;
     $tot_time += $tp_gtime;
-  
+
     echo <<<EOF
   <tr>
     <td class="dark" align="center">$tp_desc</td>
@@ -245,23 +245,17 @@ echo <<<EOF
 <font size="1"><br /></font>
 <table cellpadding="1" cellspacing="2" border="0" class="box">
   <tr>
-    <td class="medheading" align="center" colspan="6">$LANG_SPECTIALEVENTS</td>
+    <td class="medheading" align="center" colspan="8">$LANG_SPECTIALEVENTS</td>
   </tr>
   <tr>
-    <td class="dark" align="center" style="white-space:nowrap" width="100">{$LANG_HEADSHOTS}</td>
-    <td class="grey" align="center" width="45">$tl_headshots</td>
-    <td class="dark" align="center" style="white-space:nowrap" width="105">{$LANG_FAILEDTRANSLOC}</td>
-    <td class="grey" align="center" width="45">$tl_transgib</td>
     <td class="dark" align="center" style="white-space:nowrap" width="95">{$LANG_DOUBLEKILLS}</td>
     <td class="grey" align="center" width="45">$tl_multi1</td>
-  </tr>
-  <tr>
     <td class="dark" align="center" style="white-space:nowrap">{$LANG_MULTIKILLS}</td>
-    <td class="grey" align="center">$tl_multi2</td>
+    <td class="grey" align="center" width="45">$tl_multi2</td>
     <td class="dark" align="center" style="white-space:nowrap">{$LANG_MEGAKILLS}</td>
-    <td class="grey" align="center">$tl_multi3</td>
+    <td class="grey" align="center" width="45">$tl_multi3</td>
     <td class="dark" align="center" style="white-space:nowrap">{$LANG_ULTRAKILLS}</td>
-    <td class="grey" align="center">$tl_multi4</td>
+    <td class="grey" align="center" width="45">$tl_multi4</td>
   </tr>
   <tr>
     <td class="dark" align="center" style="white-space:nowrap">{$LANG_MONSTERKILLS}</td>
@@ -270,11 +264,10 @@ echo <<<EOF
     <td class="grey" align="center">$tl_multi6</td>
     <td class="dark" align="center" style="white-space:nowrap">{$LANG_HOLYSHITKILLS}</td>
     <td class="grey" align="center">$tl_multi7</td>
-  </tr>
 
 EOF;
 
-$col = 0;
+$col = 3;
 for ($i = 0; $i < $numspec; $i++) {
   if ($col == 0)
     echo "  <tr>\n";
@@ -286,7 +279,7 @@ for ($i = 0; $i < $numspec; $i++) {
 EOF;
 
   $col++;
-  if ($col == 3) {
+  if ($col == 4) {
     echo "  </tr>\n";
     $col = 0;
   }
