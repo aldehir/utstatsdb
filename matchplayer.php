@@ -534,7 +534,6 @@ if ($gametval != 9) {
     <td class="dark" align="center" style="white-space:nowrap">Holy Shit Kills</td>
     <td class="grey" align="center">$gp_multi7</td>
   </tr>
-  <tr>
 
 EOF;
 

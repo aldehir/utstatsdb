@@ -271,22 +271,8 @@ function storedata()
         $plr_combo3 += $player[$i]->combo[2];
         $plr_combo4 += $player[$i]->combo[3];
 
-/*		*tag*
-        $plr_headshots += $player[$i]->headshots;
-        $plr_carjack += $player[$i]->carjack;
-        $plr_roadkills += $player[$i]->roadkills;
-        if ($player[$i]->headhunter)
-          $plr_headhunter++;
-        if ($player[$i]->flakmonkey)
-          $plr_flakmonkey++;
-        if ($player[$i]->combowhore)
-          $plr_combowhore++;
-        if ($player[$i]->roadrampage)
-          $plr_roadrampage++;
-
-        $plr_transgib += $player[$i]->transgib;
-*/
         foreach ($player[$i]->specialevents as $spectype => $specnum) {
+          /* log players specials for this match */
           $result = sql_queryn($link, "UPDATE {$dbpre}gspecials SET gs_total=gs_total+{$specnum} WHERE gs_match=$matchnum AND gs_player=$pnum AND gs_stype=$spectype");
           if (!$result) {
             echo "Error updating player match specials data.{$break}\n";
@@ -299,12 +285,26 @@ function storedata()
               exit;
             }
           }
+
+          /* log player's all-time specials */
+          $result = sql_queryn($link, "UPDATE {$dbpre}playerspecial SET ps_total=ps_total+{$specnum} WHERE ps_pnum={$player[$i]->num} AND ps_stype=$spectype");
+          if (!$result) {
+            echo "Error updating player total specials data.{$break}\n";
+            exit;
+          }
+          if (sql_affected_rows($result) == 0) {
+            $result = sql_queryn($link, "INSERT INTO {$dbpre}playerspecial (ps_pnum,ps_stype,ps_total) VALUES ({$player[$i]->num},$spectype,$specnum)");
+            if (!$result) {
+              echo "Error adding player total specials data.{$break}\n";
+              exit;
+            }
+          }
         }
       }
       $plr_matches++;
 
       for ($t = 0; $t < 4; $t++)
-      	$player[$i]->totaltime[$t] /= $match->timeoffset / 100.0;
+        $player[$i]->totaltime[$t] /= $match->timeoffset / 100.0;
 
       $plr_time += array_sum($player[$i]->totaltime);
 

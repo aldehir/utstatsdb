@@ -241,7 +241,7 @@ EOF;
   while ($row = sql_fetch_row($result)) {
     $rankarrayt[$ranks] = $row[0];
     $rankarray[$ranks++] = $row[1];
-  }  	
+  }
   sql_free_result($result);
 
   for ($i = 0; $i < $ranks; $i++) {
@@ -469,13 +469,10 @@ echo <<<EOF
     <td class="dark" align="center" style="white-space:nowrap">Holy Shit Kills</td>
     <td class="grey" align="center">$plr_multi7</td>
   </tr>
-  <tr>
-    <td class="dark" align="center" style="white-space:nowrap">Failed Transloc</td>
-    <td class="grey" align="center">$plr_transgib</td>
 
 EOF;
 
-$col = 1;
+$col = 0;
 for ($i = 0; $i < $numspec; $i++) {
   if ($col == 0)
     echo "  <tr>\n";
