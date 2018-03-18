@@ -163,7 +163,6 @@ EOF;
             echo "skipped.<br />\n";
           }
         }
-        sql_free_result($result);
         sql_close($link);
         break;
     }
