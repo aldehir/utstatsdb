@@ -8,3 +8,5 @@ CREATE TABLE %dbpre%totalspecials (
 );
 
 CREATE INDEX ts_ps ON %dbpre%totalspecials (ts_plr,ts_stype);
+
+INSERT INTO %dbpre%totalspecials (ts_stype,ts_score,ts_plr,ts_gms,ts_tm) SELECT se_num,0,0,0,0 FROM %dbpre%special;

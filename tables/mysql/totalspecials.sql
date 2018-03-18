@@ -7,3 +7,5 @@ CREATE TABLE %dbpre%totalspecials (
   ts_tm bigint(19) NOT NULL default 0,
   KEY ts_ps (ts_plr,ts_stype)
 );
+
+INSERT INTO %dbpre%totalspecials (ts_stype,ts_score,ts_plr,ts_gms,ts_tm) SELECT se_num,0,0,0,0 FROM %dbpre%special;
