@@ -207,7 +207,7 @@ while ($row = sql_fetch_array($result)) {
     $phours = sprintf("%0.1f", $tp_ptime / 360000);
     $tot_gtime += $tp_gtime;
     $tot_ptime += $tp_ptime;
-  
+
     echo <<<EOF
   <tr>
     <td class="dark" align="center">$tp_desc</td>
@@ -249,18 +249,6 @@ $headshotsplayer = getplayer($tl_chheadshots_plr);
 $headshotstime = sprintf("%0.1f", $tl_chheadshots_tm / 360000);
 $firstbloodplayer = getplayer($tl_chfirstblood_plr);
 $firstbloodtime = sprintf("%0.1f", $tl_chfirstblood_tm / 360000);
-$carjackplayer = getplayer($tl_chcarjack_plr);
-$carjacktime = sprintf("%0.1f", $tl_chcarjack_tm / 360000);
-$roadkillsplayer = getplayer($tl_chroadkills_plr);
-$roadkillstime = sprintf("%0.1f", $tl_chroadkills_tm / 360000);
-$headhunterplayer = getplayer($tl_chheadhunter_plr);
-$headhuntertime = sprintf("%0.1f", $tl_chheadhunter_tm / 360000);
-$flakmonkeyplayer = getplayer($tl_chflakmonkey_plr);
-$flakmonkeytime = sprintf("%0.1f", $tl_chflakmonkey_tm / 360000);
-$combowhoreplayer = getplayer($tl_chcombowhore_plr);
-$combowhoretime = sprintf("%0.1f", $tl_chcombowhore_tm / 360000);
-$roadrampageplayer = getplayer($tl_chroadrampage_plr);
-$roadrampagetime = sprintf("%0.1f", $tl_chroadrampage_tm / 360000);
 $multi1player = getplayer($tl_chmulti1_plr);
 $multi1time = sprintf("%0.1f", $tl_chmulti1_tm / 360000);
 $multi2player = getplayer($tl_chmulti2_plr);
@@ -371,13 +359,6 @@ echo <<<EOF
     <td class="grey" align="center">$teamwinstime</td>
   </tr>
   <tr>
-    <td class="dark" align="center">{$LANG_MOSTHEADSHOTS}</td>
-    <td class="darkhuman" align="center">$headshotsplayer</td>
-    <td class="grey" align="center">$tl_chheadshots</td>
-    <td class="grey" align="center">$tl_chheadshots_gms</td>
-    <td class="grey" align="center">$headshotstime</td>
-  </tr>
-  <tr>
     <td class="dark" align="center">{$LANG_HIGHESTFPH}</td>
     <td class="darkhuman" align="center">$fphplayer</td>
     <td class="grey" align="center">$fph</td>
@@ -391,25 +372,14 @@ echo <<<EOF
     <td class="grey" align="center">$tl_chfirstblood_gms</td>
     <td class="grey" align="center">$firstbloodtime</td>
   </tr>
-  <tr>
-    <td class="dark" align="center">{$LANG_MOSTCARJACKINGS}</td>
-    <td class="darkhuman" align="center">$carjackplayer</td>
-    <td class="grey" align="center">$tl_chcarjack</td>
-    <td class="grey" align="center">$tl_chcarjack_gms</td>
-    <td class="grey" align="center">$carjacktime</td>
-  </tr>
-  <tr>
-    <td class="dark" align="center">{$LANG_MOSTROADKILLS}</td>
-    <td class="darkhuman" align="center">$roadkillsplayer</td>
-    <td class="grey" align="center">$tl_chroadkills</td>
-    <td class="grey" align="center">$tl_chroadkills_gms</td>
-    <td class="grey" align="center">$roadkillstime</td>
-  </tr>
 </table>
+EOF;
+
+echo <<<EOF
 <font size="1"><br /></font>
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>
-    <td class="heading" colspan="5" align="center">{$LANG_WEAPONSPECIALS}</td>
+    <td class="heading" colspan="5" align="center">{$LANG_MOSTSPECIALS}</td>
   </tr>
   <tr>
     <td class="smheading" align="center" width="220">{$LANG_CATEGORY}</td>
@@ -418,35 +388,32 @@ echo <<<EOF
     <td class="smheading" align="center" width="60">{$LANG_MATCHES}</td>
     <td class="smheading" align="center" width="60">{$LANG_HOURS}</td>
   </tr>
+EOF;
+
+$result = sql_queryn($link, "SELECT se_title,se_desc,ts_plr,ts_score,ts_gms,ts_tm,se_desc FROM {$dbpre}totalspecials, {$dbpre}special WHERE se_num = ts_stype");
+if (!$result) {
+  echo "Total specials database error";
+  exit;
+}
+
+while ($row = sql_fetch_row($result)) {
+  $p = getplayer($row[2]);
+  $t = sprintf("%0.1f", $row[5] / 360000);
+
+  echo <<<EOF
   <tr>
-    <td class="dark" align="center">{$LANG_MOSTHEADHUNTER}</td>
-    <td class="darkhuman" align="center">$headhunterplayer</td>
-    <td class="grey" align="center">$tl_chheadhunter</td>
-    <td class="grey" align="center">$tl_chheadhunter_gms</td>
-    <td class="grey" align="center">$headhuntertime</td>
+    <td class="dark" align="center" title="{$row[1]}">{$row[0]}</td>
+    <td class="darkhuman" align="center">$p</td>
+    <td class="grey" align="center">$row[3]</td>
+    <td class="grey" align="center">$row[4]</td>
+    <td class="grey" align="center">$t</td>
   </tr>
-  <tr>
-    <td class="dark" align="center">{$LANG_MOSTFLAKMONKEY}</td>
-    <td class="darkhuman" align="center">$flakmonkeyplayer</td>
-    <td class="grey" align="center">$tl_chflakmonkey</td>
-    <td class="grey" align="center">$tl_chflakmonkey_gms</td>
-    <td class="grey" align="center">$flakmonkeytime</td>
-  </tr>
-  <tr>
-    <td class="dark" align="center">{$LANG_MOSTCOMBOWHORE}</td>
-    <td class="darkhuman" align="center">$combowhoreplayer</td>
-    <td class="grey" align="center">$tl_chcombowhore</td>
-    <td class="grey" align="center">$tl_chcombowhore_gms</td>
-    <td class="grey" align="center">$combowhoretime</td>
-  </tr>
-  <tr>
-    <td class="dark" align="center">{$LANG_MOSTROADRAMPAGE}</td>
-    <td class="darkhuman" align="center">$roadrampageplayer</td>
-    <td class="grey" align="center">$tl_chroadrampage</td>
-    <td class="grey" align="center">$tl_chroadrampage_gms</td>
-    <td class="grey" align="center">$roadrampagetime</td>
-  </tr>
-</table>
+EOF;
+}
+
+sql_free_result($result);
+
+echo <<<EOF
 <font size="1"><br /></font>
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>

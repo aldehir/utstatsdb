@@ -398,6 +398,7 @@ $LANG_MOSTCAREERKILLSWITHAWEAPON = "Most Career Kills with a Weapon";
 $LANG_MOSTCAREERDEATHSBYAWEAPON = "Most Career Deaths by a Weapon";
 $LANG_MOSTCAREERDEATHSWHILEHOLDING = "Most Career Deaths While Holding a Weapon";
 $LANG_MOSTCAREERSUICIDES = "Most Career Suicides";
+$LANG_MOSTSPECIALS = "Most Special Events";
 
 // matchhighs.php
 $LANG_HIGHSFROMASINGLEMATCH = "Highs - From a Single Match";
