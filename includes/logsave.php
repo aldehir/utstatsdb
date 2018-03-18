@@ -307,6 +307,9 @@ function storedata()
             exit;
           }
         }
+
+        /* log career highs for specials */
+        // FIXME TODO update table totalspecials
       }
       $plr_matches++;
 
@@ -625,16 +628,6 @@ $gt_extraa,$gt_extrab,$gt_extrac)");
         exit;
       }
 
-/*
-*tag*
-plr_headshots=$plr_headshots,
-$plr_transgib,
-        {$player[$i]->carjack},
-        {$player[$i]->roadkills},
-        {$player[$i]->transgib},
-plr_transgib=$plr_transgib,
-*/
-
       // Save bot stats
       if ($player[$i]->is_bot() && isset($botstats[$i])) {
         $result = sql_queryn($link, "INSERT INTO {$dbpre}gbots VALUES (
@@ -701,20 +694,6 @@ plr_transgib=$plr_transgib,
         $tl_kills += array_sum($player[$i]->kills);
         $tl_deaths += array_sum($player[$i]->deaths);
         $tl_suicides += array_sum($player[$i]->suicides);
-/*      *tag*
-        $tl_headshots += $player[$i]->headshots;
-        if ($player[$i]->headhunter)
-          $tl_headhunter++;
-        if ($player[$i]->flakmonkey)
-          $tl_flakmonkey++;
-        if ($player[$i]->combowhore)
-          $tl_combowhore++;
-        *tag* if ($player[$i]->specialevents(roadrampage))
-          $tl_roadrampage++;
-        $tl_carjack += $player[$i]->carjack;
-        $tl_roadkills += $player[$i]->roadkills;
-        $tl_transgib += $player[$i]->transgib;
-*/
         $tl_multi1 += $player[$i]->multi[0];
         $tl_multi2 += $player[$i]->multi[1];
         $tl_multi3 += $player[$i]->multi[2];
@@ -837,26 +816,6 @@ plr_transgib=$plr_transgib,
             $tl_chfirstblood_tm = $plr_time;
           }
 
-          // FIXME support career high specials
-
-          if ($plr_headshots > $tl_chheadshots) {
-            $tl_chheadshots = $plr_headshots;
-            $tl_chheadshots_plr = $pnum;
-            $tl_chheadshots_gms = $plr_matches;
-            $tl_chheadshots_tm = $plr_time;
-          }
-          if ($plr_carjack > $tl_chcarjack) {
-            $tl_chcarjack = $plr_carjack;
-            $tl_chcarjack_plr = $pnum;
-            $tl_chcarjack_gms = $plr_matches;
-            $tl_chcarjack_tm = $plr_time;
-          }
-          if ($plr_roadkills > $tl_chroadkills) {
-            $tl_chroadkills = $plr_roadkills;
-            $tl_chroadkills_plr = $pnum;
-            $tl_chroadkills_gms = $plr_matches;
-            $tl_chroadkills_tm = $plr_time;
-          }
           if ($plr_multi1 > $tl_chmulti1) {
             $tl_chmulti1 = $plr_multi1;
             $tl_chmulti1_plr = $pnum;
@@ -1012,18 +971,6 @@ plr_transgib=$plr_transgib,
             $tl_chnodeconstdestroyed_plr = $pnum;
             $tl_chnodeconstdestroyed_gms = $plr_matches;
             $tl_chnodeconstdestroyed_tm = $plr_time;
-          }
-          if ($plr_headhunter > $tl_chheadhunter) {
-            $tl_chheadhunter = $plr_headhunter;
-            $tl_chheadhunter_plr = $pnum;
-            $tl_chheadhunter_gms = $plr_matches;
-            $tl_chheadhunter_tm = $plr_time;
-          }
-          if ($plr_roadrampage > $tl_chroadrampage) {
-            $tl_chroadrampage = $plr_roadrampage;
-            $tl_chroadrampage_plr = $pnum;
-            $tl_chroadrampage_gms = $plr_matches;
-            $tl_chroadrampage_tm = $plr_time;
           }
         }
       }

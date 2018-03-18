@@ -102,7 +102,7 @@ function initconfig($reinit) {
                    "gevents","pwkills","type","items","pitems","gitems","gchat",
                    "objectives","mwkills","gwaccuracy","gbots","connections",
                    "eventdesc","special","specialtypes","gspecials",
-                   "playerspecial");
+                   "playerspecial","totalspecials");
 
   if ($IPass != $InitPass) {
     echo <<<EOF
@@ -195,7 +195,7 @@ EOF;
         if ($result)
           echo "Successful.<br />\n";
         else {
-          echo "<font color=\"#e00000\">Failed!</font><br />\n";
+          echo "<font color=\"#e00000\">Failed: </font>".implode(": ", sql_error($link))."<br />\n";
           $errors++;
         }
 
