@@ -172,8 +172,16 @@ function storedata()
   $result = sql_queryn($link, "SELECT * FROM {$dbpre}totals LIMIT 1");
   $row = sql_fetch_assoc($result);
   sql_free_result($result);
-  while (list($key,$val) = each($row))
+  while (list($key,$val) = each($row)) {
     ${$key} = $val;
+  }
+
+  // read specials totals
+  $result = sql_querynb($link, "SELECT ts_stype, ts_score FROM {$dbpre}totalspecials");
+  $sptotals = [];
+  while ($row = sql_fetch_array($result)) {
+    $sptotals[$row[0]] = $row[1];
+  }
 
   // Player Data
   reset($player);
@@ -232,8 +240,22 @@ function storedata()
       $player[$i]->tscore[2] = intval(floor($player[$i]->tscore[2]));
       $player[$i]->tscore[3] = intval(floor($player[$i]->tscore[3]));
       $plr_score += array_sum($player[$i]->tscore);
-      if ($match->rpg && !$plr_rpg)
+      if ($match->rpg && !$plr_rpg) {
         $plr_rpg = 1;
+      }
+
+      /* calculate player's total matches and playtime */
+      $plr_matches++;
+
+      for ($t = 0; $t < 4; $t++) {
+        $player[$i]->totaltime[$t] /= $match->timeoffset / 100.0;
+      }
+      $plr_time += array_sum($player[$i]->totaltime);
+
+      // Store player's total matches and game time
+      $player[$i]->globalmatches = $plr_matches;
+      $player[$i]->globaltime = $plr_time;
+
       // Invasion matches do not change most overall stats
       if ($match->gametype != 9 || $config["invasiontotals"]) {
         $plr_frags += array_sum($player[$i]->frags);
@@ -271,7 +293,17 @@ function storedata()
         $plr_combo3 += $player[$i]->combo[2];
         $plr_combo4 += $player[$i]->combo[3];
 
+        // get player's current special totals, used for career high counters
+        $result = sql_queryn($link, "SELECT se_num,coalesce(ps_total,0) FROM {$dbpre}special LEFT JOIN {$dbpre}playerspecial ON ps_stype=se_num WHERE ps_pnum = {$player[$i]->num}");
+        $playersptotals = [];
+        while ($row = sql_fetch_array($result)) {
+          $playersptotals[$row[0]] = $row[1];
+        }
+
         foreach ($player[$i]->specialevents as $spectype => $specnum) {
+          if (!array_key_exists($spectype, $playersptotals)) $playersptotals[$spectype] = 0;
+          $playersptotals[$spectype] += $specnum;
+
           /* log players specials for this match */
           $result = sql_queryn($link, "UPDATE {$dbpre}gspecials SET gs_total=gs_total+{$specnum} WHERE gs_match=$matchnum AND gs_player=$pnum AND gs_stype=$spectype");
           if (!$result) {
@@ -306,34 +338,34 @@ function storedata()
             echo "Error updating player total specials data.{$break}\n";
             exit;
           }
+
+          /* log career highs for specials */
+          if ($plr_matches >= $config["minchmatches"] && $plr_time >= $config["minchtime"]) {
+            if ($playersptotals[$spectype] > $sptotals[$spectype]) {
+              $ttl = $playersptotals[$spectype];
+              $result = sql_queryn($link, "UPDATE {$dbpre}totalspecials SET ts_score={$ttl},ts_plr={$player[$i]->num},ts_gms={$plr_matches},ts_tm={$plr_time} WHERE ts_stype={$spectype}");
+              if (!$result) {
+                echo "Error updating player total specials data.{$break}\n";
+                exit;
+              }
+            }
+          }
         }
-
-        /* log career highs for specials */
-        // FIXME TODO update table totalspecials
       }
-      $plr_matches++;
 
-      for ($t = 0; $t < 4; $t++)
-        $player[$i]->totaltime[$t] /= $match->timeoffset / 100.0;
-
-      $plr_time += array_sum($player[$i]->totaltime);
-
-      // Store player's total matches and game time
-      $player[$i]->globalmatches = $plr_matches;
-      $player[$i]->globaltime = $plr_time;
-
+      /* calculate player's total kills and scoring rages */
       if ($plr_time <= 0) {
         $plr_fph = 0.0;
         $plr_sph = 0.0;
-      }
-      else {
+      } else {
         $plr_fph = $plr_frags / $plr_time;
         $plr_sph = $plr_score / $plr_time;
       }
-      if (($plr_kills + $plr_deaths + $plr_suicides) <= 0)
+      if (($plr_kills + $plr_deaths + $plr_suicides) <= 0) {
         $plr_eff = 0.0;
-      else
+      } else {
         $plr_eff = $plr_kills / ($plr_kills + $plr_deaths + $plr_suicides);
+      }
 
       // Load gametype specific stats for player
       $result = sql_queryn($link, "SELECT * FROM {$dbpre}playersgt WHERE gt_pnum=$pnum AND gt_tnum={$match->gametnum} LIMIT 1");
@@ -762,20 +794,6 @@ $gt_extraa,$gt_extrab,$gt_extrac)");
           $tl_chsuicidessg_tm = array_sum($player[$i]->totaltime);
           $tl_chsuicidessg_map = $match->mapnum;
           $tl_chsuicidessg_date = $sd;
-        }
-        if ($player[$i]->carjack > $tl_chcarjacksg) {
-          $tl_chcarjacksg = $player[$i]->carjack;
-          $tl_chcarjacksg_plr = $pnum;
-          $tl_chcarjacksg_tm = array_sum($player[$i]->totaltime);
-          $tl_chcarjacksg_map = $match->mapnum;
-          $tl_chcarjacksg_date = $sd;
-        }
-        if ($player[$i]->roadkills > $tl_chroadkillssg) {
-          $tl_chroadkillssg = $player[$i]->roadkills;
-          $tl_chroadkillssg_plr = $pnum;
-          $tl_chroadkillssg_tm = array_sum($player[$i]->totaltime);
-          $tl_chroadkillssg_map = $match->mapnum;
-          $tl_chroadkillssg_date = $sd;
         }
 
         // Career Highs
