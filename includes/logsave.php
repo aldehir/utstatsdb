@@ -836,6 +836,9 @@ plr_transgib=$plr_transgib,
             $tl_chfirstblood_gms = $plr_matches;
             $tl_chfirstblood_tm = $plr_time;
           }
+
+          // FIXME support career high specials
+
           if ($plr_headshots > $tl_chheadshots) {
             $tl_chheadshots = $plr_headshots;
             $tl_chheadshots_plr = $pnum;
