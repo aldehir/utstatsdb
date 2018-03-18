@@ -103,7 +103,8 @@ function initconfig($reinit) {
                    "servers","totals","gplayers","gkills","gscores","tkills",
                    "gevents","pwkills","type","items","pitems","gitems","gchat",
                    "objectives","mwkills","gwaccuracy","gbots","connections",
-                   "eventdesc","special","specialtypes","gspecials");
+                   "eventdesc","special","specialtypes","gspecials",
+                   "playerspecial");
 
   if ($IPass != $InitPass) {
     echo <<<EOF
