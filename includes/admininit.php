@@ -107,32 +107,14 @@ function initconfig($reinit) {
   if ($IPass != $InitPass) {
     echo <<<EOF
 <p><font size="+1" color="#e00000"><center><b>Access Error!</b></center></font></p>
-
 EOF;
     exit;
   }
 
   menu_top();
 
-  switch (strtolower($dbtype)) {
-    case "mysql":
-      $tdir = "mysql";
-      break;
-    case "mysqli":
-      $tdir = "mysql";
-      break;
-    case "sqlite":
-      $tdir = "sqlite";
-      break;
-    case "mssql":
-      $tdir = "mssql";
-      break;
-    default:
-      echo <<<EOF
-<font color=\"#e00000\"><b>Database type error.</b></font>
-
-EOF;
-
+  if (!in_array(strtolower($dbtype), array("mysql", "mysqli", "sqlite", "mssql"))) {
+    echo '<font color=\"#e00000\"><b>Database type error.</b></font>';
     menu_bottom();
     exit;
   }
@@ -174,53 +156,11 @@ EOF;
   $i = $errors = 0;
   do {
     if ($reinit != 2 || substr($sqlfile[$i], 0, 6) != "config") {
-      $fname = "tables/".$tdir."/".$sqlfile[$i].".sql";
-      echo "Creating table '{$dbpre}{$sqlfile[$i]}'....";
-      if (file_exists($fname)) {
-        $sqldata = file($fname);
-        $done = 0;
-        $qstring = "";
-        while(!$done && $row = each($sqldata)) {
-          $qstring.=$row[1];
-          if (strstr($qstring, ";")) {
-            $qstring = trim($qstring, "\t\n\r\0;");
-            $qstring = str_replace("\n", "", $qstring);
-            $done = 1;
-          }
-        }
-
-        // Replace all occurances of %dbpre% with $dbpre
-        $qstring = str_replace("%dbpre%", "$dbpre", $qstring);
-        $result = sql_queryn($link, $qstring);
-        if ($result)
-          echo "Successful.<br />\n";
-        else {
-          echo "<font color=\"#e00000\">Failed: </font>".implode(": ", sql_error($link))."<br />\n";
-          $errors++;
-        }
-
-        each($sqldata);
-        while($row = each($sqldata)) {
-          $qstring = $row[1];
-          if (strlen($qstring) > 10 && substr($qstring, 0, 1) != "#") {
-            $qstring = trim($qstring, "\t\n\r\0;");
-            $qstring = str_replace("\n", "", $qstring);
-
-            // Replace all occurances of %dbpre% with $dbpre
-            $qstring = str_replace("%dbpre%", "$dbpre", $qstring);
-            $result = sql_queryn($link, $qstring);
-            if (!$result) {
-              if (substr($qstring, 0, 12) == "CREATE INDEX")
-                echo "<font color=\"#e00000\">Error creating index: $qstring</font><br />\n";
-              else
-                echo "<font color=\"#e00000\">Error loading table data: $qstring</font><br />\n";
-              $errors++;
-            }
-          }
-        }
+      $result = sql_exec_file($link, $sqlfile[$i]);
+      $errors += $result["errors"];
+      foreach ($result["messages"] as $msg) {
+        echo $msg;
       }
-      else
-        echo "<font color=\"#e00000\"><b>File not found!</b></font><br />\n";
     }
     $i++;
   } while (isset($sqlfile[$i]));

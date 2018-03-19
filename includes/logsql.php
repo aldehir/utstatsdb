@@ -159,6 +159,81 @@ function sql_affected_rows($result) {
   return $result->rowCount();
 }
 
+function sql_exec_file($link, $filename) {
+  global $dbtype, $dbpre;
+
+  switch (strtolower($dbtype)) {
+    case "mysql":
+    case "mysqli":
+      $tdir = "mysql";
+      break;
+    case "sqlite":
+      $tdir = "sqlite";
+      break;
+    case "mssql":
+      $tdir = "mssql";
+      break;
+    default:
+      exit("Unknown DB type $dbtype");
+  }
+
+  $return = array(
+    "errors" => 0,
+    "messages" => array()
+  );
+
+  $fname = "tables/" . $tdir . "/" .$filename . ".sql";
+  $return["messages"][] = "Creating table '{$dbpre}{$filename}'....";
+  if (file_exists($fname)) {
+    $sqldata = file($fname);
+    $done = 0;
+    $qstring = "";
+    while(!$done && $row = each($sqldata)) {
+      $qstring .= $row[1];
+      if (strstr($qstring, ";")) {
+        $qstring = trim($qstring, "\t\n\r\0;");
+        $qstring = str_replace("\n", "", $qstring);
+        $done = 1;
+      }
+    }
+
+    // Replace all occurances of %dbpre% with $dbpre
+    $qstring = str_replace("%dbpre%", "$dbpre", $qstring);
+    $result = sql_queryn($link, $qstring);
+    if ($result)
+      $return["messages"][] = "Successful.<br />\n";
+    else {
+      $return["messages"][] = "<font color=\"#e00000\">Failed: </font>".implode(": ", sql_error($link))."<br />\n";
+      $return["errors"]++;
+    }
+
+    each($sqldata);
+    while($row = each($sqldata)) {
+      $qstring = $row[1];
+      if (strlen($qstring) > 10 && substr($qstring, 0, 1) != "#") {
+        $qstring = trim($qstring, "\t\n\r\0;");
+        $qstring = str_replace("\n", "", $qstring);
+
+        // Replace all occurances of %dbpre% with $dbpre
+        $qstring = str_replace("%dbpre%", "$dbpre", $qstring);
+        $result = sql_queryn($link, $qstring);
+        if (!$result) {
+          if (substr($qstring, 0, 12) == "CREATE INDEX") {
+            $return["messages"][] = "<font color=\"#e00000\">Error creating index: $qstring</font><br />\n";
+          } else {
+            $return["messages"][] = "<font color=\"#e00000\">Error loading table data: $qstring</font><br />\n";
+          }
+          $return["errors"]++;
+        }
+      }
+    }
+  } else {
+    $return["messages"][] = "<font color=\"#e00000\"><b>File not found!</b></font><br />\n";
+  }
+
+  return $return;
+}
+
 function sql_close($link) {
   $link = NULL;
 }
