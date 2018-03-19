@@ -117,14 +117,13 @@ function formatdate($dt, $tm)
   if ($tm) {
     switch ($dateformat) {
       case 1: return date('D, M d Y \a\t G:i:s', $dt); break;
-      case 2: return date('D, d. M Y \a\t G:i:s', $dt); break;
+      case 2: return date('D, d M Y \a\t G:i:s', $dt); break;
       default: return date('D, M d Y \a\t g:i:s A', $dt);
     }
-  }
-  else {
+  } else {
     switch ($dateformat) {
       case 1: return date('D, M d Y', $dt); break;
-      case 2: return date('D, d. M Y', $dt); break;
+      case 2: return date('D, d M Y', $dt); break;
       default: return date('D, M d Y', $dt);
     }
   }
@@ -270,30 +269,30 @@ else {
 <tr>
 <td class="topbar" valign="top" align="center">
   <a class="topbar" href="index.php">{$LANG_INC_MAIN}</a>
-  &nbsp;· &nbsp;<a class="topbar" href="index.php?stats=matches">{$LANG_INC_MATCHES}</a>
-  &nbsp;· &nbsp;<a class="topbar" href="index.php?stats=players">{$LANG_INC_PLAYERS}</a>
+  &nbsp;| &nbsp;<a class="topbar" href="index.php?stats=matches">{$LANG_INC_MATCHES}</a>
+  &nbsp;| &nbsp;<a class="topbar" href="index.php?stats=players">{$LANG_INC_PLAYERS}</a>
 
 EOF;
 
   if (isset($ranksystem) && $ranksystem)
-    echo "&nbsp;· &nbsp;<a class=\"topbar\" href=\"rankings.php\">{$LANG_INC_RANKINGS}</a>\n";
+    echo "&nbsp;| &nbsp;<a class=\"topbar\" href=\"rankings.php\">{$LANG_INC_RANKINGS}</a>\n";
 
-  echo "&nbsp;· &nbsp;<a class=\"topbar\" href=\"index.php?stats=maps\">{$LANG_INC_MAPS}</a>\n";
+  echo "&nbsp;| &nbsp;<a class=\"topbar\" href=\"index.php?stats=maps\">{$LANG_INC_MAPS}</a>\n";
 
   if ($serverlist)
-    echo "&nbsp;· &nbsp;<a class=\"topbar\" href=\"index.php?stats=servers\">{$LANG_INC_SERVERS}</a>\n";
+    echo "&nbsp;| &nbsp;<a class=\"topbar\" href=\"index.php?stats=servers\">{$LANG_INC_SERVERS}</a>\n";
 
-  echo "&nbsp;· &nbsp;<a class=\"topbar\" href=\"totals.php\">{$LANG_INC_TOTALS}</a>\n";
+  echo "&nbsp;| &nbsp;<a class=\"topbar\" href=\"totals.php\">{$LANG_INC_TOTALS}</a>\n";
 
   if (isset($ranksystem) && $ranksystem && $serverlist)
     echo "<br />\n";
   else
-    echo "&nbsp;· &nbsp;";
+    echo "&nbsp;| &nbsp;";
 
   echo <<<EOF
   <a class="topbar" href="careerhighs.php">{$LANG_INC_CAREERHIGHS}</a>
-  &nbsp;· &nbsp;<a class="topbar" href="matchhighs.php">{$LANG_INC_MATCHHIGHS}</a>
-  &nbsp;· &nbsp;<a class="topbar" href="index.php?stats=help">{$LANG_INC_HELP}</a>
+  &nbsp;| &nbsp;<a class="topbar" href="matchhighs.php">{$LANG_INC_MATCHHIGHS}</a>
+  &nbsp;| &nbsp;<a class="topbar" href="index.php?stats=help">{$LANG_INC_HELP}</a>
 
 EOF;
 
