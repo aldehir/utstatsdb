@@ -41,8 +41,8 @@ if (!$matchnum || !$type || $type < 1 || $type > 4) {
 //========== Configure Main Variables =========================================
 //=============================================================================
 
-$x = 550; // Graph image width
-$y = 180; // Graph image height
+$x = 700; // Graph image width
+$y = 200; // Graph image height
 $minx = 36; // Left margin
 $maxy = 6; // Top margin
 $maxx = $x - 10; // Right margin
@@ -52,6 +52,8 @@ $gha = $miny - $maxy + 1; // Graph Height Area
 $font = 1; // Label font size
 $legendfont = 3; // Legend font size
 $minstep = 8; // Minimum graph steps
+
+$bg = array(255, 255, 255);
 
 //=============================================================================
 //========== Retreive Player Data =============================================
@@ -355,34 +357,13 @@ for ($i = $base, $n = 1; $i <= $range; $i += $step) {
   $n++;
 }
 $gridy = floor($range / $step) + 1;
-   
+
 //=============================================================================
 //========== Initialize Image =================================================
 //=============================================================================
 
-if (ImageTypes() & IMG_PNG) {
-  header("Content-type: image/png");
-  $im = imagecreatefrompng("resource/graphimg.png");
-}
-else if (ImageTypes() & IMG_GIF) {
-  header("Content-type: image/gif");
-  $im = imagecreatefromgif("resource/graphimg.gif");
-}
-else {
-  header("Content-type: image/jpeg");
-  $im = imagecreatefromjpeg("resource/graphimg.jpg");
-}
-/*
-if (ImageTypes() & IMG_PNG)
-  header("Content-type: image/png");
-else if (ImageTypes() & IMG_GIF)
-  header("Content-type: image/gif");
-else
-  header("Content-type: image/jpeg");
-$im = imagecreatefromgd2("resource/graphimg.gd2");
-*/
-// if (function_exists(imageantialias))
-//  imageantialias($im, 1);
+$im = imagecreatetruecolor($x, $y);
+imagefilledrectangle($im, 0, 0, $x, $y, imagecolorallocate($im, $bg[0], $bg[1], $bg[2]));
 
 //=============================================================================
 //========== Set Colors =======================================================
@@ -518,12 +499,17 @@ for ($r = 1; $r <= $lines; $r++) {
 //========== Generate Image ===================================================
 //=============================================================================
 
-if (ImageTypes() & IMG_PNG)
+if (ImageTypes() & IMG_PNG) {
+  header("Content-type: image/png");
   imagepng($im);
-else if (ImageTypes() & IMG_GIF)
+} else if (ImageTypes() & IMG_GIF) {
+  header("Content-type: image/gif");
+  imagetruecolortopalette($im, false, 64);
   imagegif($im);
-else
+} else {
+  header("Content-type: image/jpeg");
   imagejpeg($im);
+}
 imagedestroy($im);
 
 ?>

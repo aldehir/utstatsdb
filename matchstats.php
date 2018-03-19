@@ -1221,7 +1221,7 @@ if ($teams && $gametval != 9 && $gametval != 5 && function_exists('ImageTypes'))
     <td class="medheading" colspan="10" align="center">$LANG_TEAMSCORES</td>
   </tr>
   <tr>
-    <td><img src="graphs.php?type=2&amp;match=$matchnum" width="550" height="180" alt="{$LANG_TEAMSCORINGGRAPH}" /></td>
+    <td class="graph"><img src="graphs.php?type=2&amp;match=$matchnum" alt="{$LANG_TEAMSCORINGGRAPH}" /></td>
   </tr>
 </table>
 
@@ -1438,7 +1438,7 @@ if (function_exists('ImageTypes') && $gametval > 1 && $gametval != 10 && $gametv
     <td class="medheading" colspan="10" align="center">{$LANG_INDIVIDUALSCORES}</td>
   </tr>
   <tr>
-    <td><img src="graphs.php?type=3&amp;match=$matchnum" width="550" height="180" alt="{$LANG_SCOREGRAPH}" /></td>
+    <td class="graph"><img src="graphs.php?type=3&amp;match=$matchnum" alt="{$LANG_SCOREGRAPH}" /></td>
   </tr>
 </table>
 
@@ -1459,7 +1459,7 @@ if (function_exists('ImageTypes') && ($gametval != 9 || $gm_logger == 1) && $gam
     <td class="medheading" colspan="10" align="center">{$LANG_INDIVIDUALFRAGS}</td>
   </tr>
   <tr>
-    <td><img src="graphs.php?type=1&amp;match=$matchnum" width="550" height="180" alt="{$LANG_FRAGGRAPH}" /></td>
+    <td class="graph"><img src="graphs.php?type=1&amp;match=$matchnum" alt="{$LANG_FRAGGRAPH}" /></td>
   </tr>
 </table>
 
@@ -1480,7 +1480,7 @@ if (function_exists('ImageTypes') && ($gametval == 10  || $gametval == 19)) {
     <td class="medheading" colspan="10" align="center">{$LANG_LMSLIVESREMAINING}</td>
   </tr>
   <tr>
-    <td><img src="graphs.php?type=4&amp;match=$matchnum" width="550" height="180" alt="{$LANG_LMSGRAPH}" /></td>
+    <td class="graph"><img src="graphs.php?type=4&amp;match=$matchnum" alt="{$LANG_LMSGRAPH}" /></td>
   </tr>
 </table>
 

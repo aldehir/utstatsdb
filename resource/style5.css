@@ -14,8 +14,10 @@ body {font-family: "Open Sans", Arial, Helvetica, sans-serif; background: #fffff
 a.smheading:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
 .tinytext {font-size: 8pt; font-weight: normal}
 
-table {width: 100%}
-table.box { border: none }
+table { border-spacing: 1px;}
+
+table { width: 100% }
+table.box {	border: none;	box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);	border-spacing: 1px; }
 table .heading { padding: 4px 0 4px 0; }
 table .smheading { padding: 3px; }
 
@@ -28,7 +30,7 @@ table .dark { padding: 2px; }
 .grey {font-size: 10pt; color: #000000; background: #cccccc; }
 a.grey {font-size: 10pt; color: #000000; font-weight: bold}
 a.grey:hover {font-size: 10pt; color: #ff0000; font-weight: bold}
-.greyn {font-size: 10pt; color: #000000; background: #cccccc; font-weight: bold; white-space:nowrap}
+.greyn {font-size: 10pt; color: #000000; background: #cccccc; white-space:nowrap}
 table .grey { padding: 2px; }
 
 .darkgrey {font-size: 10pt; color: #000000; background: #808080; font-weight: bold}
@@ -59,12 +61,14 @@ a.darkhuman:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-deco
 a.greyhuman {font-size: 10pt; color: #fdd932; font-weight: bold; text-decoration: none}
 a.greyhuman:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
 
-.darkbot {font-size: 10pt; color: #0575dd; background: #000000; font-weight: bold; text-decoration: none}
-a.darkbot {font-size: 10pt; color: #0575dd; font-weight: bold; text-decoration: none}
+.darkbot {font-size: 10pt; color: #927a0f; background: #000000; font-weight: bold; text-decoration: none}
+a.darkbot {font-size: 10pt; color: #927a0f; font-weight: bold; text-decoration: none}
 a.darkbot:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
-.greybot {font-size: 10pt; color: #0575dd; background: #cccccc; font-weight: bold; text-decoration: none}
-a.greybot {font-size: 10pt; color: #0575dd; font-weight: bold; text-decoration: none}
+a.darkbot::before {content: "🤖 "}
+.greybot {font-size: 10pt; color: #927a0f; background: #cccccc; font-weight: bold; text-decoration: none}
+a.greybot {font-size: 10pt; color: #927a0f; font-weight: bold; text-decoration: none}
 a.greybot:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
+a.greybot::before {content: "🤖 "}
 
 .sidebar {font-size: 12pt; color: #000000; font-weight: bold}
 a.sidebar {font-size: 12pt; color: #000000; font-weight: bold; text-decoration: none}
@@ -106,6 +110,9 @@ a.status:hover { font-size: 9pt; color: #bd0000; text-decoration: none; border: 
 .redteambar { font-size: 9pt; color: #ffffff; background: #660000}
 .offline {color: #a50000}
 .mapimage {padding-left: 4px; padding-right: 2px}
+
+td.graph {text-align: center;}
+td.graph img {max-width: 100%}
 
 #matchup { overflow: auto }
 
