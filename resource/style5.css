@@ -110,6 +110,7 @@ a.status:hover { font-size: 9pt; color: #bd0000; text-decoration: none; border: 
 .redteambar { font-size: 9pt; color: #ffffff; background: #660000}
 .offline {color: #a50000}
 .mapimage {padding-left: 4px; padding-right: 2px}
+img.mapimage {max-height: 192px;}
 
 td.graph {text-align: center;}
 td.graph img {max-width: 100%}

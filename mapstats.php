@@ -111,7 +111,7 @@ if (file_exists("mapimages/$mapimage")) {
         </tr>
       </table>
     </td>
-    <td width="300" align="center"><img src="mapimages/$mapimage" width="256" height="192" border="1" alt="Map Image" /></td>
+    <td width="300" align="center"><img src="mapimages/$mapimage" class="mapimage" alt="Map Image" /></td>
   </tr>
 </table>
 
