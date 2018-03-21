@@ -303,10 +303,8 @@ echo <<<EOF
 </center>
 
 </td></tr></table>
-
-</body>
-</html>
-
 EOF;
+
+require('includes/footer.inc.php');
 
 ?>

@@ -173,15 +173,6 @@ echo <<<EOF
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <link rel="icon" href="resource/uicon.png" type="image/png" />
   <link rel="stylesheet" href="resource/{$stylefile}" type="text/css" />
-  <script language="JavaScript" type="text/JavaScript">
-<!--
-    function changePage(newLoc) {
-      nextPage = "index.php?stats=players&type=" + newLoc.options[newLoc.selectedIndex].value
-      if (nextPage != "")
-        document.location.href = nextPage
-    }
--->
-  </script>
 </head>
 
 EOF;
@@ -241,7 +232,7 @@ EOF;
 <table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
   <tr>
     <td align="center">
-      <a href="http://www.utstatsdb.com"><img src="resource/{$logofile}" border="0" alt="UTStatsDB Logo" /></a>
+      <a href="index.php"><img src="resource/{$logofile}" border="0" alt="UTStatsDB Logo" /></a>
     </td>
   </tr>
 </table>

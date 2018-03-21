@@ -909,18 +909,14 @@ EOF;
     echo "</tr>\n";
   }
 }
-echo "</table>\n";
+
+echo <<<EOF
+</table></center>
+</td></tr></table>
+EOF;
 
 sql_close($link);
 
-echo <<<EOF
-</center>
-
-</td></tr></table>
-
-</body>
-</html>
-
-EOF;
+require('includes/footer.inc.php');
 
 ?>

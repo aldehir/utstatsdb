@@ -3,6 +3,8 @@
 body {font-family: "Open Sans", Helvetica, sans-serif; background: #ffffff; color: #000000; font-size: 0.8em;
       max-width: 900px; margin: 10px auto 0 auto; }
 
+footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd;}
+
 .box {border: 1px #000000 solid}
 .titlemsg {color: #000000; font-weight: bold}
 .heading {font-size: 1.4rem; color: #ffffff; background: #0e0067; font-family: "Anton", sans-serif}

@@ -1171,18 +1171,14 @@ if ($matches > 10) {
 
 EOF;
 }
-echo "</table>\n";
+
+echo <<<EOF
+</table></center>
+</td></tr></table>
+EOF;
 
 sql_close($link);
 
-echo <<<EOF
-</center>
-
-</td></tr></table>
-
-</body>
-</html>
-
-EOF;
+require('includes/footer.inc.php');
 
 ?>

@@ -537,11 +537,10 @@ EOF;
 echo <<<EOF
 </table>
 </td></tr></table>
-
-</body>
-</html>
-
 EOF;
+
 sql_close($link);
+
+require('includes/footer.inc.php');
 
 ?>

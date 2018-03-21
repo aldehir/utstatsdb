@@ -1,4 +1,6 @@
 body {background: #ffffff; color: #000000}
+footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd;}
+
 .box {border: 1px #000000 solid}
 .titlemsg {color: #000000; font-weight: bold}
 .heading {font-family: Arial, Helvetica, sans-serif; font-size: 14pt; color: #ffffff; background: #0e0067; font-weight: bold}

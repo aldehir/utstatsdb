@@ -689,14 +689,11 @@ showweapons(4);
 
 echo <<<EOF
 </center>
-
 </td></tr></table>
-
-</body>
-</html>
-
 EOF;
 
 sql_close($link);
+
+require('includes/footer.inc.php');
 
 ?>

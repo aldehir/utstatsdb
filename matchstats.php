@@ -3132,19 +3132,12 @@ echo <<<EOF
     <td class="chatlink" colspan="3" align="center"><a class="chatlink" href="chatlog.php?match=$matchnum">{$LANG_CHATEVENTLOG}</a> {$LANG_CONTAINS} $numchat {$cmsg}</td>
   </tr>
 </table>
-
+</center>
+</td></tr></table>
 EOF;
 
 sql_close($link);
 
-echo <<<EOF
-</center>
-
-</td></tr></table>
-
-</body>
-</html>
-
-EOF;
+require('includes/footer.inc.php');
 
 ?>
