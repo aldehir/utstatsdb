@@ -9,6 +9,7 @@ Unrealeased (3.08)
   Fix missing fields in Special table definition for MSSQL and SQLite.
   Fixed incomplete special event handling introduced in unrealeased 3.07.
   Add support for Clear Data when using SQLite.
+  Add new modern layout/theme.
 
 Version 3.07
   Fixed not being able to select to display bots or all players in player list.
