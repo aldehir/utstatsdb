@@ -19,30 +19,18 @@ understanding of configuring and managing a web server is assumed.
 UTStatsDB is compatible with most web servers that support PHP, and is
 compatible with the following database formats: MySQL, SQLite, Microsoft SQL.
 
-UTStatsDB is designed to work with PHP 4.2 and MySQL 3.2 or newer.  The
-recommended configuration is with PHP 5.x and MySQL 5.x.  Apache, PHP, and MySQL
-can all be obtained for free.  UTStatsDB can also function with SQLite built
-into PHP 5.x and newer.
+UTStatsDB is designed to work with PHP 5.1 or newer, with a MySQL, SQLite, or
+MSSQL database, on any web server with PHP support (nginx, Apache HTTPD, etc).
 
-The current version of UTStatsDB can be downloaded from the following URL:
-http://www.utstatsdb.com/files/
+The current version of UTStatsDB can be downloaded or cloned from the following
+Git repository: https://github.com/shrimpza/utstatsdb. Older versions and
+information can be found at http://www.utstatsdb.com/.
 
-Only the latest release version is recommended.  There are three packages for
-each version in the downloads:
+Please report bugs using the issue tracker on the GitHub repository's issue
+tracker.
 
-utstatsdb-x.xx.tar.bz2
-  Standard package in bzip2 format, primarily for *nix based systems.
-
-utstatsdb-x.xx.rar
-  Standard package in Rar format, primarily for Windows based systems.
-
-utstatsdb-x.xx-standalone.rar
-  A (nearly) ready-to-run version for Windows packaged with PHP and Apache web
-  server included and configured to use PHP's internal SQLite.
-
-You can check the version of an existing installation by displaying the file
-"VERSION.txt".  Visit the UTStatsDB homepage at http://www.utstatsdb for more
-information on bug reporting, feature requests and general support.
+For installation instructions, please refer to INSTALL.txt located within the
+docs directory.
 
 ===============================================================================
 ========== Unreal Tournament Log Files ========================================
@@ -78,7 +66,6 @@ this release:
      INSTALL.txt - Main installation guide.
 CONFIG_GUIDE.txt - A quick guide to the configuration parameters.
      LOGGING.txt - Configuration of game logging and retrieval by the web server.
- SETUP_GUIDE.txt - A step-by-step setup guide for Windows.
 
 Informational:
 
