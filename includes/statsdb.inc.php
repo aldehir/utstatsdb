@@ -3,7 +3,7 @@ $dbtype = "SQLite";      // Database type - currently supported: MySQL SQLite Ms
 $dbpre = "ut_";         // Prefix to be prepended to all database table names.
 
 //$SQLdb = "mysql:host=localhost;dbname=utstats";
-$SQLdb = "sqlite:/home/shrimp/tmp/utstatsdb/stats.db";
+$SQLdb = "sqlite:/var/lib/utstatsdb/utstatsdb.sqlite";
 
 $SQLus = "utstats";     // A MySQL user with SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX,CREATE TEMPORARY TABLES grants.
 $SQLpw = "statspass";   // The password for the above MySQL user.
