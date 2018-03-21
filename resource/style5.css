@@ -1,103 +1,102 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Anton');
 
-body {font-family: "Open Sans", Arial, Helvetica, sans-serif; background: #ffffff; color: #000000;
+body {font-family: "Open Sans", Helvetica, sans-serif; background: #ffffff; color: #000000; font-size: 0.8em;
       max-width: 900px; margin: 10px auto 0 auto; }
 
 .box {border: 1px #000000 solid}
 .titlemsg {color: #000000; font-weight: bold}
-.heading {font-size: 14pt; color: #ffffff; background: #0e0067; font-weight: bold}
-.medheading {font-size: 12pt; color: #ffffff; background: #0e0067; font-weight: bold}
-.hlheading {font-size: 12pt; color: #fdd932; background: #0e0067; font-weight: bold}
-.hlheadingred {font-size: 10pt; color: #d80000; background: #0e0067; font-weight: bold}
-.hlheadingblue {font-size: 10pt; color: #2222e8; background: #0e0067; font-weight: bold}
-.smheading {font-size: 10pt; color: #ffffff; background: #0e0067; font-weight: bold; text-decoration: none}
-a.smheading:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
-.tinytext {font-size: 8pt; font-weight: normal}
+.heading {font-size: 1.4rem; color: #ffffff; background: #0e0067; font-family: "Anton", sans-serif}
+.medheading {font-size: 1rem; color: #ffffff; background: #0e0067; font-weight: bold}
+.hlheading {font-size: 1rem; color: #fdd932; background: #0e0067; font-weight: bold}
+.hlheadingred { color: #d80000; background: #0e0067; font-weight: bold}
+.hlheadingblue { color: #2222e8; background: #0e0067; font-weight: bold}
+.smheading { color: #ffffff; background: #0e0067; font-weight: bold; text-decoration: none}
+a.smheading:hover { color: #ff0000; font-weight: bold; text-decoration: none}
+.tinytext {font-size: 0.8em; font-weight: normal}
 
-table { border-spacing: 1px;}
-
-table { width: 100% }
-table.box {	border: none;	box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);	border-spacing: 1px; }
+table { width: 100%; border-spacing: 1px; }
+table.box { border: none; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2); border-spacing: 1px; }
 table .heading { padding: 4px 0 4px 0; }
 table .smheading { padding: 3px; }
 
-.dark {font-size: 10pt; color: #ffffff; background: #000000; font-weight: bold}
-a.dark {font-size: 10pt; color: #ffffff; font-weight: bold}
-a.dark:hover {font-size: 10pt; color: #ff0000; font-weight: bold}
-.darkn {font-size: 10pt; color: #ffffff; background: #000000; font-weight: bold; white-space:nowrap}
+.dark { color: #ffffff; background: #000000; font-weight: bold}
+a.dark { color: #ffffff; font-weight: bold}
+a.dark:hover { color: #ff0000; font-weight: bold}
+.darkn { color: #ffffff; background: #000000; font-weight: bold; white-space:nowrap}
 table .dark { padding: 2px; }
 
-.grey {font-size: 10pt; color: #000000; background: #cccccc; }
-a.grey {font-size: 10pt; color: #000000; font-weight: bold}
-a.grey:hover {font-size: 10pt; color: #ff0000; font-weight: bold}
-.greyn {font-size: 10pt; color: #000000; background: #cccccc; white-space:nowrap}
+.grey { color: #000000; background: #cccccc; }
+a.grey { color: #000000; font-weight: bold}
+a.grey:hover { color: #ff0000; font-weight: bold}
+.greyn { color: #000000; background: #cccccc; white-space:nowrap}
 table .grey { padding: 2px; }
 
-.darkgrey {font-size: 10pt; color: #000000; background: #808080; font-weight: bold}
-.warn {font-size: 10pt; color: #880000; background: #cccccc; font-weight: bold}
-.gselog {font-size: 10pt; color: #0f5465; background: #cccccc; font-weight: bold}
-.tclog {font-size: 10pt; color: #4d2821; background: #cccccc; font-weight: bold}
-.opnote {font-size: 10pt; color: #600000; font-weight: bold}
-.gsedark {font-size: 10pt; color: #147588; background: #000000; font-weight: bold}
+.darkgrey { color: #000000; background: #808080; font-weight: bold}
+.warn { color: #880000; background: #cccccc; font-weight: bold}
+.gselog { color: #0f5465; background: #cccccc; font-weight: bold}
+.tclog { color: #4d2821; background: #cccccc; font-weight: bold}
+.opnote { color: #600000; font-weight: bold}
+.gsedark { color: #147588; background: #000000; font-weight: bold}
 
-.chatlink {font-size: 12pt; color: #ffffff; background: #0e0067; font-weight: bold}
-a.chatlink {font-size: 12pt; color: #ffff00; font-weight: bold}
-a.chatlink:hover {font-size: 12pt; color: #ff0000; font-weight: bold}
+.chatlink {font-size: 1rem; color: #ffffff; background: #0e0067; font-weight: bold}
+a.chatlink {font-size: 1rem; color: #ffff00; font-weight: bold}
+a.chatlink:hover {font-size: 1rem; color: #ff0000; font-weight: bold}
 
-.chat {font-size: 10pt; color: #000000; background: #cccccc; font-weight: bold}
-.chatred {font-size: 10pt; color: #800000; background: #cccccc; font-weight: bold}
-.chatblue {font-size: 10pt; color: #000080; background: #cccccc; font-weight: bold}
-.chatgreen {font-size: 10pt; color: #008000; background: #cccccc; font-weight: bold}
-.chatgold {font-size: 10pt; color: #808000; background: #cccccc; font-weight: bold}
-.chatsys {font-size: 10pt; color: #408040; background: #cccccc; font-weight: bold}
-.chatkill {font-size: 10pt; color: #a4a21c; background: #cccccc; font-weight: bold}
-.votesys {font-size: 10pt; color: #006e6d; background: #cccccc; font-weight: bold}
-.chatweapspec {font-size: 10pt; color: #74229a; background: #cccccc; font-weight: bold}
+.chat { color: #000000; background: #cccccc; font-weight: bold}
+.chatred { color: #800000; background: #cccccc; font-weight: bold}
+.chatblue { color: #000080; background: #cccccc; font-weight: bold}
+.chatgreen { color: #008000; background: #cccccc; font-weight: bold}
+.chatgold { color: #808000; background: #cccccc; font-weight: bold}
+.chatsys { color: #408040; background: #cccccc; font-weight: bold}
+.chatkill { color: #da7300; background: #cccccc; font-weight: bold}
+.votesys { color: #006e6d; background: #cccccc; font-weight: bold}
+.chatweapspec { color: #74229a; background: #cccccc; font-weight: bold}
 
-.darkhuman {font-size: 10pt; color: #fdd932; background: #000000; font-weight: bold; text-decoration: none}
-a.darkhuman {font-size: 10pt; color: #fdd932; font-weight: bold; text-decoration: none}
-a.darkhuman:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
-.greyhuman {font-size: 10pt; color: #fdd932; background: #cccccc; font-weight: bold; text-decoration: none}
-a.greyhuman {font-size: 10pt; color: #fdd932; font-weight: bold; text-decoration: none}
-a.greyhuman:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
+.darkhuman { color: #fdd932; background: #000000; font-weight: bold; text-decoration: none}
+a.darkhuman { color: #fdd932; font-weight: bold; text-decoration: none}
+a.darkhuman:hover { color: #ff0000; font-weight: bold; text-decoration: none}
+.greyhuman { color: #fdd932; background: #cccccc; font-weight: bold; text-decoration: none}
+a.greyhuman { color: #fdd932; font-weight: bold; text-decoration: none}
+a.greyhuman:hover { color: #ff0000; font-weight: bold; text-decoration: none}
 
-.darkbot {font-size: 10pt; color: #927a0f; background: #000000; font-weight: bold; text-decoration: none}
-a.darkbot {font-size: 10pt; color: #927a0f; font-weight: bold; text-decoration: none}
-a.darkbot:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
+.darkbot { color: #927a0f; background: #000000; font-weight: bold; text-decoration: none}
+.darkbot span::before {content: "🤖 "}
+a.darkbot { color: #927a0f; font-weight: bold; text-decoration: none}
+a.darkbot:hover { color: #ff0000; font-weight: bold; text-decoration: none}
 a.darkbot::before {content: "🤖 "}
-.greybot {font-size: 10pt; color: #927a0f; background: #cccccc; font-weight: bold; text-decoration: none}
-a.greybot {font-size: 10pt; color: #927a0f; font-weight: bold; text-decoration: none}
-a.greybot:hover {font-size: 10pt; color: #ff0000; font-weight: bold; text-decoration: none}
+.greybot { color: #927a0f; background: #cccccc; font-weight: bold; text-decoration: none}
+a.greybot { color: #927a0f; font-weight: bold; text-decoration: none}
+a.greybot:hover { color: #ff0000; font-weight: bold; text-decoration: none}
 a.greybot::before {content: "🤖 "}
 
-.sidebar {font-size: 12pt; color: #000000; font-weight: bold}
-a.sidebar {font-size: 12pt; color: #000000; font-weight: bold; text-decoration: none}
-a.sidebar:hover {font-size: 12pt; color: #ff0000; font-weight: bold; text-decoration: none}
+.sidebar {font-size: 1rem; color: #000000; font-weight: bold}
+a.sidebar {font-size: 1rem; color: #000000; font-weight: bold; text-decoration: none}
+a.sidebar:hover {font-size: 1rem; color: #ff0000; font-weight: bold; text-decoration: none}
 
-.topbar {font-size: 12pt; color: #000000; font-weight: bold}
-a.topbar {font-size: 12pt; color: #000000; font-weight: bold; text-decoration: none}
-a.topbar:hover {font-size: 12pt; color: #ff0000; font-weight: bold; text-decoration: none}
+.topbar {font-size: 1rem; color: #000000; font-weight: bold}
+a.topbar {font-size: 1rem; color: #000000; font-weight: bold; text-decoration: none}
+a.topbar:hover {font-size: 1rem; color: #ff0000; font-weight: bold; text-decoration: none}
 
 .pages {font-size: 11pt; color: #000000; font-weight: bold}
 a.pages {font-size: 11pt; color: #4a16b4; font-weight: bold; text-decoration: none}
 a.pages:hover {font-size: 11pt; color: #ff0000; font-weight: bold; text-decoration: none}
 
-.searchform {font-size: 10pt; font-weight: bold}
-.searchformbox {font-size: 10pt; font-weight: normal}
+.searchform { font-weight: bold}
+.searchformbox { font-weight: normal}
 
-.blueteam {font-size: 10pt; color: #000000; background: #0000ee; font-weight: bold}
-.redteam {font-size: 10pt; color: #000000; background: #ee0000; font-weight: bold}
-.greenteam {font-size: 10pt; color: #000000; background: #00ee00; font-weight: bold}
-.goldteam {font-size: 10pt; color: #000000; background: #eeee00; font-weight: bold}
+.blueteam { color: #000000; background: #0000ee; font-weight: bold}
+.redteam { color: #000000; background: #ee0000; font-weight: bold}
+.greenteam { color: #000000; background: #00ee00; font-weight: bold}
+.goldteam { color: #000000; background: #eeee00; font-weight: bold}
 
-.blueteamscore {font-size: 10pt; color: #505080; background: #cccccc; font-weight: bold}
-.redteamscore {font-size: 10pt; color: #805050; background: #cccccc; font-weight: bold}
-.greenteamscore {font-size: 10pt; color: #508050; background: #cccccc; font-weight: bold}
-.goldteamscore {font-size: 10pt; color: #808050; background: #cccccc; font-weight: bold}
+.blueteamscore { color: #505080; background: #cccccc; font-weight: bold}
+.redteamscore { color: #805050; background: #cccccc; font-weight: bold}
+.greenteamscore { color: #508050; background: #cccccc; font-weight: bold}
+.goldteamscore { color: #808050; background: #cccccc; font-weight: bold}
 
-.lglheading {font-size: 14pt; color: #fdd932; background: #0e0067; font-weight: bold}
-a.lglheading {font-size: 14pt; color: #ffffff; font-weight: bold}
-a.lglheading:hover {font-size: 14pt; color: #ff0000; font-weight: bold}
+.lglheading {font-size: 1.2rem; color: #fdd932; background: #0e0067; font-weight: bold; font-family: "Anton", sans-serif}
+a.lglheading {font-size: 1.2rem; color: #ffffff; font-weight: bold;  font-family: "Open Sans", Helvetica, sans-serif}
+a.lglheading:hover {font-size: 1.2rem; color: #ff0000; font-weight: bold;  font-family: "Open Sans", Helvetica, sans-serif;}
 
 .status { font-size: 9pt; color: #000000; background: #cccccc; border: 1px #000000 solid; text-align: left}
 a.status { font-size: 9pt; color: #7B6613; text-decoration: none; border: none}
@@ -109,30 +108,29 @@ a.status:hover { font-size: 9pt; color: #bd0000; text-decoration: none; border: 
 .blueteambar { font-size: 9pt; color: #ffffff; background: #000066}
 .redteambar { font-size: 9pt; color: #ffffff; background: #660000}
 .offline {color: #a50000}
-.mapimage {padding-left: 4px; padding-right: 2px}
-img.mapimage {max-height: 192px;}
+img.mapimage {max-height: 192px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2); border-radius: 5px}
 
 td.graph {text-align: center;}
 td.graph img {max-width: 100%}
 
 #matchup { overflow: auto }
 
-.tgheading  {font-size: 10pt; color: #ffffff; background: #d5d5d5; font-weight: bold}
-.tglheading {font-size: 10pt; color: #000000; background: #d5d5d5; font-weight: bold}
+.tgheading  { color: #ffffff; background: #d5d5d5; font-weight: bold}
+.tglheading { color: #000000; background: #d5d5d5; font-weight: bold}
 .tgmainbox  {overflow: hidden; text-align: left; width: 390px; height: 150px}
 .tgsubbox   {font-size: 0pt; width: 390px; height: 130px; background-color: #d5d5d5; border-bottom: 1px solid #666666; float: right}
 .tgbarspace {width: 5px; float: left}
 .tgbar      {font-size: 0pt; width: 9px; background-color: #1ca41c; border: 1px solid #000000; border-bottom-width: 0; float: left; position: relative}
-.tglabel    {font-size: 8pt; color: #000000; font-weight: normal; font-style: normal; text-decoration: none; width: 9px; text-align: center; float: left; overflow: visible; position: relative; border: 1px solid transparent}
+.tglabel    {font-size: 0.8em; color: #000000; font-weight: normal; font-style: normal; text-decoration: none; width: 9px; text-align: center; float: left; overflow: visible; position: relative; border: 1px solid transparent}
 .tgblank    {font-size: 0pt; height: 0px; clear: both}
 .wgmainbox  {overflow: hidden; text-align: left; width: 180px; height: 150px}
 .wgsubbox   {font-size: 0pt; width: 180px; height: 130px; background-color: #d5d5d5; border-bottom: 1px solid #666666; float: right}
 .wgbarspace {width: 13px; float: left}
 .wgbar      {font-size: 0pt; width: 9px; background-color: #1b289b; border: 1px solid #000000; border-bottom-width: 0; float: left; position: relative}
 .wgprespace {width: 10px; float: left}
-.wglabel    {font-size: 8pt; color: #000000; font-weight: normal; font-style: normal; text-decoration: none; width: 9px; text-align: center; float: left; overflow: visible; position: relative; border: 1px solid transparent}
+.wglabel    {font-size: 0.8em; color: #000000; font-weight: normal; font-style: normal; text-decoration: none; width: 9px; text-align: center; float: left; overflow: visible; position: relative; border: 1px solid transparent}
 
-.help    {color: #000000; font-size: 10pt; text-align: left}
-.helphdr {font-size: 14pt; font-weight: bold}
+.help    {color: #000000;  text-align: left}
+.helphdr {font-size: 1.2rem; font-weight: bold}
 a.help   {color: #dcb604; font-weight: bold; text-decoration: none}
-a.idmatch {font-size: 10pt; color: #ff0000; background: #000000; font-weight: bold; text-decoration: none}
+a.idmatch { color: #ff0000; background: #000000; font-weight: bold; text-decoration: none}

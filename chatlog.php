@@ -625,7 +625,7 @@ for ($i = 0; $i < $numchat; $i++) {
     echo <<<EOF
   <tr>
     <td class="dark" align="center">$time</td>
-    <td class="$nameclass" align="center">$name</td>
+    <td class="$nameclass" align="center"><span>$name</span></td>
     <td class="$cclass" align="left">$text</td>
   </tr>
 
