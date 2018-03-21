@@ -1,15 +1,18 @@
 UTStatsDB
   Copyright (C) 2002-2010  Patrick Contreras / Paul Gallier
+  Copyright (C) 2018  Kenneth Watson
 
 Release Notes:
 
-Unrealeased (3.08)
+Version 3.08
   Rewrite DB interface to use PDO, rather than mysql/sqlite/mssql directly.
   Full PHP 7+ compatibility, cleanup various logged notices and warnings.
   Fix missing fields in Special table definition for MSSQL and SQLite.
   Fixed incomplete special event handling introduced in unrealeased 3.07.
   Add support for Clear Data when using SQLite.
   Add new modern layout/theme.
+  Show bot icon next to bots' names for clarity.
+  Show map image for last game logged.
 
 Version 3.07
   Fixed not being able to select to display bots or all players in player list.

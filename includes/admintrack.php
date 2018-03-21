@@ -3,6 +3,7 @@
 /*
     UTStatsDB
     Copyright (C) 2002-2007  Patrick Contreras / Paul Gallier
+    Copyright (C) 2018  Kenneth Watson
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ EOF;
     menu_bottom();
     exit;
   }
-  
+
   $plr = intval($plr);
   $query = "SELECT plr_name,plr_bot,plr_ip FROM {$dbpre}players WHERE pnum=$plr LIMIT 1";
   $link = sql_connect();

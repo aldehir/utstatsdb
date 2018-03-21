@@ -3,6 +3,7 @@
 /*
     UTStatsDB
     Copyright (C) 2002-2007  Patrick Contreras / Paul Gallier
+    Copyright (C) 2018  Kenneth Watson
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -239,7 +240,7 @@ while ($row = sql_fetch_assoc($result)) {
     $phours = sprintf("%0.1f", $tp_ptime / 360000);
     $tot_gtime += $tp_gtime;
     $tot_ptime += $tp_ptime;
-  
+
     echo <<<EOF
   <tr>
     <td class="dark" align="center">$tp_desc</td>

@@ -3,6 +3,7 @@
 /*
     UTStatsDB
     Copyright (C) 2002-2005  Patrick Contreras / Paul Gallier
+    Copyright (C) 2018  Kenneth Watson
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -208,7 +209,7 @@ EOF;
   echo "done.<br />";
 
   echo "Career highs and player count....";
-  $result = sql_queryn($link, "SELECT 
+  $result = sql_queryn($link, "SELECT
    tl_chfrags_plr,
    tl_chkills_plr,
    tl_chdeaths_plr,

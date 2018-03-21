@@ -1,5 +1,6 @@
 UTStatsDB
   Copyright (C) 2002-2009  Patrick Contreras / Paul Gallier
+  Copyright (C) 2018  Kenneth Watson
 
 Here is a list of all associated database tables:
 

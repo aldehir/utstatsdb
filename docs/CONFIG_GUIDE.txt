@@ -1,5 +1,6 @@
 UTStatsDB
   Copyright (C) 2002-2009  Patrick Contreras / Paul Gallier
+  Copyright (C) 2018  Kenneth Watson
 
 ===============================================================================
 ========== Main Configuration =================================================
@@ -19,7 +20,7 @@ UTStatsDB
       Maps Per Page: Number of maps to list per page.
    Matches Per Page: Number of matches to list per page.
      Navigation Bar: Use standard side or top navigation bar.
-             Layout: Layout to use: 1=Default ngStats, 2=Smaller fonts, 3=Dark colors/small fonts, 4=Small/Dark/No bold
+             Layout: Layout to use: 1=Classic ngStats, 2=Smaller fonts, 3=Dark colors/small fonts, 4=Small/Dark/No bold, 5=Modern/Default
         Date Format: Date format to display: US-12hr / US-24hr / European
     Min. CH Matches: Minimum matches for player to appear on career highs.
        Min. CH Time: Minimum time in minutes for player to appear on career highs.
@@ -51,43 +52,43 @@ UTStatsDB
 ===============================================================================
 ========== Logs Configuration =================================================
 ===============================================================================
-     Log Path: Path to where log files are stored on the stats server (i.e. the 
-               local storage path).  When using FTP to download logs, this is 
-               also where the logs are saved.  This can be a relative or 
+     Log Path: Path to where log files are stored on the stats server (i.e. the
+               local storage path).  When using FTP to download logs, this is
+               also where the logs are saved.  This can be a relative or
                absolute path.  Examples:
-                 ./Logs/                 Logs are located in the Logs directory 
+                 ./Logs/                 Logs are located in the Logs directory
                                          within your main UTStatsDB directory.
-                 /UT2004/UserLogs/       Logs are located in /UT2004/Logs on the 
+                 /UT2004/UserLogs/       Logs are located in /UT2004/Logs on the
                                          same drive as UTStatsDB.
-                 C:\\UT2004\\UserLogs\\  Logs are located in C:\UT2004\UserLogs 
+                 C:\\UT2004\\UserLogs\\  Logs are located in C:\UT2004\UserLogs
                                          on a Windows system.
 
-  Backup Path: Path to where log files are backed up after successfully parsing. 
-               Leave blank to not backup.  This can be a relative or absolute 
+  Backup Path: Path to where log files are backed up after successfully parsing.
+               Leave blank to not backup.  This can be a relative or absolute
                path.  Example:
-                 ./Backup/  Logs are backed up to the Backup directory within 
+                 ./Backup/  Logs are backed up to the Backup directory within
                             your main UTStatsDB directory.
 
-   Log Prefix: Prefix of log files, before the timestamp or port number.  The 
+   Log Prefix: Prefix of log files, before the timestamp or port number.  The
                defaults by game type are:
                     UT3: Stats-
                  UT2003: Stats_
                  UT2004: Stats_
                    UT99: Unreal.ngLog.
 
-      No Port: True/False - Set true if the log filenames do not contain the 
+      No Port: True/False - Set true if the log filenames do not contain the
                server port number.  This should usually be set false.
 
   Chat Prefix: Prefix of chat log files, excluding timestamp or port number.
 
- Require Chat: Set to true if only logs with matching chat logs should be 
-               processed.  This ensures that game logs are not processed before 
+ Require Chat: Set to true if only logs with matching chat logs should be
+               processed.  This ensures that game logs are not processed before
                the corresponding chat logs are closed.
 
-   FTP Server: FTP server address, including ftp:// or ftps// and port number 
+   FTP Server: FTP server address, including ftp:// or ftps// and port number
                (:21 default).
 
- Passive Mode: True/False - Set true to use FTP passive mode, false for active 
+ Passive Mode: True/False - Set true to use FTP passive mode, false for active
                mode.  Generally safe to leave set to true.
 
      FTP User: FTP server username.
@@ -98,15 +99,15 @@ UTStatsDB
 
  Demorec Path: Path to demorec logs on FTP server - relative to path at login.
 
- Default Type: This sets the default type to use for unknown game types.  Set to 
-               whichever the server most frequently runs.  Recognized game types 
-               are: 0=Other, 1=DM, 2=CTF, 3=BR, 4=TDM, 5=AS, 6=ONS, 7=DD, 8=MU, 
+ Default Type: This sets the default type to use for unknown game types.  Set to
+               whichever the server most frequently runs.  Recognized game types
+               are: 0=Other, 1=DM, 2=CTF, 3=BR, 4=TDM, 5=AS, 6=ONS, 7=DD, 8=MU,
                9=INV, 10=LMS
 
     Team Game: True/False - Set true to have new game types default as team games.
 
-     All Logs: True/False - Set false to leave the most recent log on the 
-               server.  Mainly used for certain UT2003 loggeers which did not 
+     All Logs: True/False - Set false to leave the most recent log on the
+               server.  Mainly used for certain UT2003 loggeers which did not
                generate a .tmp file before creating the final log file.
 
   Multi-check: True/False - Set true for UTStatsDB to handle calculating multi-
@@ -118,7 +119,7 @@ UTStatsDB
  Query Server: Server address (FQDN or IP) to query (excluding port).
      Password: Query password for playerhashes query (ServerExt).
     Game Port: Port number of server (game port).
-   Query Type: Unreal/Game Spy/UT 99 /UT3 - Type of game server to query.
+   Query Type: Unreal/Game Spy/UT 99/UT3 - Type of game server to query.
   Server Link: Full URL to game server (excluding port).
    Spectators: Enable/Disable - Include spectators in server query status.
          Bots: Enable/Disable - Include bots in server query status.

@@ -3,6 +3,7 @@
 /*
     UTStatsDB
     Copyright (C) 2002-2008  Patrick Contreras / Paul Gallier
+    Copyright (C) 2018  Kenneth Watson
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -752,7 +753,7 @@ function saveconfig() {
           $newspectators = intval($_POST["spectators{$num}"]);
           $newbots = intval($_POST["bots{$num}"]);
 
-          if ($server != $newserver || $port != $newport || $type != $newtype || $password != $newpassword || 
+          if ($server != $newserver || $port != $newport || $type != $newtype || $password != $newpassword ||
               $slink != $newlink || $spectators != $newspectators || $bots != $newbots)
           {
             if ($newserver == "")

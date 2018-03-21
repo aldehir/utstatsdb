@@ -3,6 +3,7 @@
 /*
     UTStatsDB
     Copyright (C) 2002-2009  Patrick Contreras / Paul Gallier
+    Copyright (C) 2018  Kenneth Watson
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -228,7 +229,7 @@ function SendQuery3($fs, $query)
         if ($op == FALSE)
           break;
       }
-  
+
       if ($op != FALSE) {
         $datay[0] = substr($datay[0], 0, $op + 1);
         $datay[0] .= substr($datay[$i], $p + 2);

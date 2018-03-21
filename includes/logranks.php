@@ -3,6 +3,7 @@
 /*
     UTStatsDB
     Copyright (C) 2002-2007  Patrick Contreras / Paul Gallier
+    Copyright (C) 2018  Kenneth Watson
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,7 +132,7 @@ function rankplayers()
         for ($i2 = $i + 1; $i2 < $numgrid; $i2++) {
           $num2 = $pgrid[$i2];
 
-          
+
           if ($config["rankbots"] || !$player[$num2]->is_bot()) { // Do not rank bots when disabled in config
             // Check for minimum game time to rank
             $young = 0;
