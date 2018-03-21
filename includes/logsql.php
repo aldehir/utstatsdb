@@ -32,7 +32,9 @@ function sql_connect() {
 }
 
 function sql_query($query) {
-  global $dbtype;
+  global $dbtype, $pageStats;
+
+  $_start = microtime(true);
 
   try {
     $link = sql_connect();
@@ -52,6 +54,9 @@ function sql_query($query) {
 
     $link = NULL;
 
+    $pageStats["querycount"]++;
+    $pageStats["querytime"] += microtime(true) - $_start;
+
     return $result;
   } catch(PDOException $e) {
     print "Database query failure for query: \n" . $query . " \n". $e->getMessage();
@@ -59,7 +64,9 @@ function sql_query($query) {
 }
 
 function sql_queryn($link, $query) {
-  global $uselimit, $dbtype;
+  global $uselimit, $dbtype, $pageStats;
+
+  $_start = microtime(true);
 
   if (!isset($uselimit) || !$uselimit) { // Remove LIMIT 1 from UPDATE queries for unsupported versions
     if (!strcmp(substr($query, 0, 6), "UPDATE") && !strcmp(substr($query, -7), "LIMIT 1"))
@@ -84,6 +91,10 @@ function sql_queryn($link, $query) {
         echo "Database type error.\n";
         exit;
     }
+
+    $pageStats["querycount"]++;
+    $pageStats["querytime"] += microtime(true) - $_start;
+
     return $result;
   } catch(PDOException $e) {
     print "Database query failure for query: \n" . $query . " \n". $e->getMessage();
@@ -91,7 +102,9 @@ function sql_queryn($link, $query) {
 }
 
 function sql_querynb($link, $query) {
-  global $uselimit, $dbtype;
+  global $uselimit, $dbtype, $pageStats;
+
+  $_start = microtime(true);
 
   if (!isset($uselimit) || !$uselimit) { // Remove LIMIT 1 from UPDATE queries
     if (!strcmp(substr($query, 0, 6), "UPDATE") && !strcmp(substr($query, -7), "LIMIT 1"))
@@ -116,6 +129,10 @@ function sql_querynb($link, $query) {
         echo "Database type error.\n";
         exit;
     }
+
+    $pageStats["querycount"]++;
+    $pageStats["querytime"] += microtime(true) - $_start;
+
     return $result;
   } catch(PDOException $e) {
     print "Database query failure for query: \n" . $query . " \n". $e->getMessage();

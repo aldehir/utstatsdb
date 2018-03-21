@@ -20,6 +20,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+$pageStats = array(
+  "pagestart" => microtime(true),
+  "querytime" => 0.0,
+  "querycount" => 0
+);
+
 require("statsdb.inc.php"); // Set to the location of your account settings file
 require("logsql.php");
 $magicrt = get_magic_quotes_runtime();
