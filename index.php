@@ -108,21 +108,43 @@ EOF;
     $row = sql_fetch_row($result);
     $mapname = $row[0];
 
+    $mapimage = strtolower($mapname).".jpg";
+    if (file_exists("mapimages/$mapimage")) {
     echo <<<EOF
-<br />
-<table cellpadding="1" cellspacing="0" border="0" width="350" class="box">
-  <tr>
-    <td class="lglheading" align="center"><b>{$LANG_LASTMATCHLOGGED}</b></td>
-  </tr>
-  <tr>
-    <td class="heading" align="center">
-      <a class="lglheading" href="$link"><b>$mapname</b><br />
-      <b>$matchdate</b></a>
-    </td>
-  </tr>
-</table>
-
+      <br />
+      <table cellpadding="1" cellspacing="0" border="0" width="550">
+        <tr>
+          <td class="lglheading" align="center" colspan="2"><b>{$LANG_LASTMATCHLOGGED}</b></td>
+        </tr>
+        <tr>
+          <td class="heading" align="center">
+            <a class="lglheading" href="$link"><b>$mapname</b><br />
+            <b>$matchdate</b></a>
+          </td>
+          <td align="center" width="1%">
+            <a href="$link">
+              <img class="mapimage small" src="mapimages/$mapimage" title="$mapname"/>
+            </a>
+          </td>
+        </tr>
+      </table>
 EOF;
+    } else {
+    echo <<<EOF
+      <br />
+      <table cellpadding="1" cellspacing="0" border="0" width="350" class="box">
+        <tr>
+          <td class="lglheading" align="center"><b>{$LANG_LASTMATCHLOGGED}</b></td>
+        </tr>
+        <tr>
+          <td class="heading" align="center">
+            <a class="lglheading" href="$link"><b>$mapname</b><br />
+            <b>$matchdate</b></a>
+          </td>
+        </tr>
+      </table>
+EOF;
+    }
   }
   sql_free_result($result);
 

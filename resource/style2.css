@@ -96,6 +96,7 @@ a.status:hover {font-family: Verdana,Helvetica; font-size: 9pt; color: #bd0000; 
 .offline {color: #a50000}
 .mapimage {padding-left: 4px; padding-right: 2px}
 img.mapimage {width: 256; height: 192; border: 1px;}
+.mapimage.small {max-height: 128px;}
 
 #matchup { width: 720px; overflow: auto }
 
