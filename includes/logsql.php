@@ -20,6 +20,14 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+if (!isset($pageStats)) {
+  $pageStats = array(
+    "pagestart" => microtime(true),
+    "querytime" => 0.0,
+    "querycount" => 0
+  );
+}
+
 function sql_connect() {
   global $SQLdb, $SQLus, $SQLpw, $dbtype;
 
