@@ -1,2 +1,7 @@
+/* runtime directories */
 mapimages
 Logs
+
+/* IDEA project files */
+.idea
+*.iml
