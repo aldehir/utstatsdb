@@ -2,8 +2,13 @@
 
 body {font-family: "Open Sans", Helvetica, sans-serif; background: #ffffff; color: #000000; font-size: 0.8em;
       max-width: 900px; margin: 10px auto 0 auto; }
-
+header {margin-bottom: 10px}
 footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd;}
+
+header .head-logo {text-align: center}
+header.top-nav div {display: inline-block}
+header.top-nav .side-logo {width: 200px; text-align: center}
+header.top-nav .head-logo {width: calc(100% - 210px);}
 
 .box {border: 1px #000000 solid}
 .titlemsg {color: #000000; font-weight: bold}
