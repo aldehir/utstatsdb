@@ -425,7 +425,7 @@ function menu_top() {
 
 <div id="header">
   <div id="header-logo">
-    <a href="index.php"><img src="resource/adminlogo.gif" alt="UTStatsDB Logo" /></a>
+    <a href="index.php"><img src="resource/utstatsdblogo.png" alt="UTStatsDB Logo" /></a>
   </div>
 </div>
 

@@ -26,7 +26,7 @@ EOF;
 if (!$navbar) {
   // =========== Side Menu Bar ===========
   echo <<<EOF
-<body style="background: url(resource/sidebar{$layout}.gif); background-repeat: repeat-y">
+<body class="side-nav">
 
 <table cellpadding="0" cellspacing="0" border="0"><tr>
 <td width="159" class="sidebar" valign="top">
@@ -75,7 +75,7 @@ EOF;
 </td>
 <td width="$twidth" valign="top" align="center">
 
-<header class="side-nav">
+<header>
   <div class="head-logo">
     <a href="index.php"><img src="resource/{$logofile}" border="0" alt="UTStatsDB" /></a>
   </div>
@@ -85,9 +85,9 @@ EOF;
 } else {
   // =========== Top Menu Bar ===========
   echo <<<EOF
-<body>
+<body class="top-nav">
 
-<header class="top-nav">
+<header>
   <div class="side-logo">
     <a href="{$sidebarlink}"><img src="resource/{$sidebarlogo}" border="0" alt="Unreal Tournament Logo" /></a>
   </div>
@@ -141,8 +141,6 @@ EOF;
 <tr><td>&nbsp;</td></tr>
 <tr>
 <td width="$twidth" valign="top" align="center">
-
-<br />
 
 EOF;
 }
