@@ -3,7 +3,7 @@
 body {font-family: "Open Sans", Helvetica, sans-serif; background: #ffffff; color: #000000; font-size: 0.8em;
       max-width: 900px; margin: 10px auto 0 auto; }
 header {margin-bottom: 10px}
-footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd;}
+footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd; font-size: 0.8em}
 
 header .head-logo {text-align: center}
 .top-nav header div {display: inline-block}

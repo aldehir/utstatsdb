@@ -1,7 +1,7 @@
 body {background: #ffffff; color: #000000}
 body.side-nav {background-image: url("sidebar1.gif"); background-repeat: repeat-y;}
 header {max-width: 720px; margin: 0 auto 10px auto}
-footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd;}
+footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd; font-size: 0.7em}
 
 header .head-logo {text-align: center}
 .top-nav header div {display: inline-block}
@@ -107,7 +107,7 @@ a.status:hover {font-family: Verdana,Helvetica; font-size: 9pt; color: #bd0000; 
 .redteambar {font-family: Verdana,Helvetica; font-size: 9pt; color: #ffffff; background: #660000}
 .offline {color: #a50000}
 .mapimage {padding-left: 4px; padding-right: 2px}
-img.mapimage {width: 256; height: 192; border: 1px;}
+img.mapimage {max-height: 192px; border-radius: 5px}
 .mapimage.small {max-height: 128px;}
 
 #matchup { width: 720px; overflow: auto }
