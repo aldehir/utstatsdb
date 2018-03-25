@@ -12,7 +12,7 @@ if ($showStats) {
 echo <<<EOF
 <footer>
   {$version} &#8729;
-  <a href="https://github.com/shrimpza/utstatsdb">GitHub Project</a>
+  <a href="https://github.com/shrimpza/utstatsdb">UTStatsDB on GitHub</a>
   {$stats}
 </footer>
 </body>
