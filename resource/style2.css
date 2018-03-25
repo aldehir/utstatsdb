@@ -68,6 +68,9 @@ a.greybot:hover {font-family: Verdana, Arial, Helvetica; font-size: 8pt; color: 
 a.sidebar {font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color: #000000; background: #aeaeae; font-weight: bold; text-decoration: none}
 a.sidebar:hover {font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color: #ff0000; background: #aeaeae; font-weight: bold; text-decoration: none}
 
+.menulinks {margin: 5px 0 5px 0; padding-top: 5px; border-top: 1px solid #ddd;}
+
+td.topbar {padding-bottom: 5px}
 .topbar {font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color: #000000; font-weight: bold}
 a.topbar {font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color: #000000; font-weight: bold; text-decoration: none}
 a.topbar:hover {font-family: Arial, Helvetica, sans-serif; font-size: 12pt; color: #ff0000; font-weight: bold; text-decoration: none}

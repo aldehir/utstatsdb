@@ -6,9 +6,9 @@ header {margin-bottom: 10px}
 footer {margin: 40px 0 20px 0; padding-top: 20px; text-align: center; border-top: 1px solid #ddd;}
 
 header .head-logo {text-align: center}
-header.top-nav div {display: inline-block}
-header.top-nav .side-logo {width: 200px; text-align: center}
-header.top-nav .head-logo {width: calc(100% - 210px);}
+.top-nav header div {display: inline-block}
+.top-nav header .side-logo {width: 200px; text-align: center}
+.top-nav header .head-logo {width: calc(100% - 210px);}
 
 .box {border: 1px #000000 solid}
 .titlemsg {color: #000000; font-weight: bold}
@@ -80,6 +80,9 @@ a.greybot::before {content: "🤖 "}
 a.sidebar {font-size: 1rem; color: #000000; font-weight: bold; text-decoration: none}
 a.sidebar:hover {font-size: 1rem; color: #ff0000; font-weight: bold; text-decoration: none}
 
+.menulinks {margin: 5px 0 5px 0; padding-top: 5px; border-top: 1px solid #ddd;}
+
+td.topbar {padding-bottom: 5px}
 .topbar {font-size: 1rem; color: #000000; font-weight: bold}
 a.topbar {font-size: 1rem; color: #000000; font-weight: bold; text-decoration: none}
 a.topbar:hover {font-size: 1rem; color: #ff0000; font-weight: bold; text-decoration: none}

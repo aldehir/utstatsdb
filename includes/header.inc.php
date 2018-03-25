@@ -65,11 +65,13 @@ EOF;
 
 EOF;
 
+if ($menulinks) {
+  echo '<div class="menulinks">';
   for ($i = 0; $i < $menulinks; $i++) {
-    if ($i == 0)
-      echo "  <br />\n";
-    echo "  <p>&nbsp;<a class=\"sidebar\" href=\"{$menu_url[$i]}\">{$menu_descr[$i]}</a></p>\n";
+    echo "  <p><a class=\"sidebar\" href=\"{$menu_url[$i]}\">{$menu_descr[$i]}</a></p>";
   }
+  echo '</div>';
+}
 
   echo <<<EOF
 </td>
@@ -127,18 +129,17 @@ EOF;
 
 EOF;
 
-  if ($menulinks)
-    echo "<br />\n";
-  for ($i = 0; $i < $menulinks; $i++) {
-    if ($i == 0)
-      echo "  <br />\n";
-    echo "  &nbsp;<a class=\"topbar\" href=\"{$menu_url[$i]}\">{$menu_descr[$i]}</a>\n";
+  if ($menulinks) {
+    echo '<div class="menulinks">';
+    for ($i = 0; $i < $menulinks; $i++) {
+      echo "  &nbsp;<a class=\"topbar\" href=\"{$menu_url[$i]}\">{$menu_descr[$i]}</a>";
+    }
+    echo "</div>";
   }
 
   echo <<<EOF
 </td>
 </tr>
-<tr><td>&nbsp;</td></tr>
 <tr>
 <td width="$twidth" valign="top" align="center">
 
