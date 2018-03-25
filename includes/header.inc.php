@@ -5,9 +5,8 @@ $twidthm = $twidth + 160;
 
 $stylefile = "style{$layout}.css";
 $logofile = "utstatsdblogo.png";
-$utlogofile = "utlogo{$layout}.png";
-if (!file_exists("resource/{$utlogofile}")) {
-  $utlogofile = "utlogo.png";
+if (!file_exists("resource/{$sidebarlogo}")) {
+  $sidebarlogo = "utlogo.png";
 }
 
 echo <<<EOF
@@ -31,7 +30,7 @@ if (!$navbar) {
 
 <table cellpadding="0" cellspacing="0" border="0"><tr>
 <td width="159" class="sidebar" valign="top">
-  <a href="http://www.unrealtournament.com"><img src="resource/{$utlogofile}" border="0" alt="Unreal Tournament Logo" /></a>
+  <a href="{$sidebarlink}"><img src="resource/{$sidebarlogo}" border="0" alt="Unreal Tournament Logo" /></a>
   <br />
   <p><a class="sidebar" href="index.php">{$LANG_INC_MAIN}</a></p>
   <p><a class="sidebar" href="index.php?stats=matches">{$LANG_INC_MATCHES}</a></p>
@@ -90,7 +89,7 @@ EOF;
 
 <header class="top-nav">
   <div class="side-logo">
-    <a href="http://www.unrealtournament.com"><img src="resource/{$utlogofile}" border="0" alt="Unreal Tournament Logo" /></a>
+    <a href="{$sidebarlink}"><img src="resource/{$sidebarlogo}" border="0" alt="Unreal Tournament Logo" /></a>
   </div>
   <div class="head-logo">
     <a href="index.php"><img src="resource/{$logofile}" border="0" alt="UTStatsDB" /></a>
