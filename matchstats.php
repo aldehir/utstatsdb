@@ -332,19 +332,19 @@ EOF;
 
   if ($gametval == 6) {
     $SpecialText = "{$LANG_LINKSETUP}";
-    $special = $linksetup;
+    $specialCondition = $linksetup;
   }
   else if ($gametval == 9 && $gm_logger == 1) {
     $SpecialText = "{$LANG_WAVES}";
-    $special = $gm_maxwave;
+    $specialCondition = $gm_maxwave;
   }
   else if ($gametval == 18) {
   	$SpecialText = "{$LANG_OVERTIME}";
-  	$special = "$gm_overtime {$LANG_MINUTES}";
+    $specialCondition = "$gm_overtime {$LANG_MINUTES}";
   }
   else {
     $SpecialText = "&nbsp;";
-    $special = "&nbsp;";
+    $specialCondition = "&nbsp;";
   }
 
   echo <<<EOF
@@ -352,7 +352,7 @@ EOF;
     <td class="dark" align="center">{$LANG_FRIENDLYFIRE}</td>
     <td class="grey" align="center">$gm_friendlyfirescale</td>
     <td class="dark" align="center">$SpecialText</td>
-    <td class="grey" align="center">$special</td>
+    <td class="grey" align="center">$specialCondition</td>
   </tr>
 
 EOF;
