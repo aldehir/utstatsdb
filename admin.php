@@ -96,96 +96,36 @@ class AdminVer {
 //=============================================================================
 $error = 0;
 if (!isset($dbpre) || $dbpre == "") {
-  echo "<b>Error: You must set the &amp;dbpre variable in your statsdb.inc.php file (default 'ut_').</b><br />\n";
+  echo "<b>Error: You must set the \$dbpre variable in your statsdb.inc.php file (default 'ut_').</b><br />\n";
   $error++;
 }
 if (!isset($dbtype) || $dbtype == "") {
-  echo "<b>Error: You must set the &amp;dbtype variable in your statsdb.inc.php file to your SQL database type (MySQL/SQLite).</b><br />\n";
+  echo "<b>Error: You must set the \$dbtype variable in your statsdb.inc.php file to your SQL database type (MySQL/SQLite).</b><br />\n";
   $error++;
 }
 
 if (strtolower($dbtype) != "sqlite") {
-  if (!isset($SQLhost) || $SQLhost == "") {
-    echo "<b>Error: You must set the &amp;SQLhost variable in statsdb.inc.php to your SQL database server, usually 'localhost'.</b><br />\n";
-    $error++;
-  }
   if (!isset($SQLus) || $SQLus == "") {
-    echo "<b>Error: You must set the &amp;SQLus variable in statsdb.inc.php to your SQL database username.</b><br />\n";
+    echo "<b>Error: You must set the \$SQLus variable in statsdb.inc.php to your SQL database username.</b><br />\n";
     $error++;
   }
   if (!isset($SQLpw) || $SQLpw == "") {
-    echo "<b>Error: You must set the &amp;SQLpw variable in statsdb.inc.php to your SQL database password.</b><br />\n";
+    echo "<b>Error: You must set the \$SQLpw variable in statsdb.inc.php to your SQL database password.</b><br />\n";
     $error++;
   }
 }
 
 if (!isset($SQLdb) || $SQLdb == "") {
-  echo "<b>Error: You must set the &amp;SQLdb variable in statsdb.inc.php to your SQL database name.</b><br />\n";
+  echo "<b>Error: You must set the \$SQLdb variable in statsdb.inc.php to your SQL database name.</b><br />\n";
   $error++;
 }
 
-if ($error)
-  exit;
+$testLink = sql_connect();
+if (!$testLink) $error++;
+else sql_close($testLink);
 
-switch (strtolower($dbtype)) {
-  case "mysql":
-    if (!isset($SQLport) || $SQLport == "")
-      $SQLport = 3306;
-    $link = mysql_connect("$SQLhost:$SQLport","$SQLus","$SQLpw");
-    if (!$link) {
-      echo "Database access error.\n";
-      exit;
-    }
-    $result = mysql_select_db("$SQLdb");
-    if (!$result) {
-      echo "Error selecting database '$SQLdb'.\n";
-      exit;
-    }
-    mysql_close($link);
-    break;
-  case "mysqli":
-    if (!isset($SQLport) || $SQLport == "")
-      $SQLport = 3306;
-    $link = mysqli_connect("$SQLhost:$SQLport","$SQLus","$SQLpw");
-    if (!$link) {
-      echo "Database access error.\n";
-      exit;
-    }
-    $result = mysqli_select_db($link, "$SQLdb");
-    if (!$result) {
-      echo "Error selecting database '$SQLdb'.\n";
-      exit;
-    }
-    mysqli_close($link);
-    break;
-  case "sqlite":
-/*  This can be created directly
-    $link = sqlite_open("$SQLdb", 0640, $sqlite_err);
-    if (!$link) {
-      echo "Database access error.\n";
-      die($sqlite_err);
-    }
-    sqlite_unbuffered_query($link, "BEGIN");
-    sqlite_unbuffered_query($link, "COMMIT");
-    sqlite_close($link);
-*/
-    break;
-  case "mssql":
-    $link = mssql_connect("$SQLhost","$SQLus","$SQLpw");
-    if (!$link) {
-      echo "Database access error.\n";
-      exit;
-    }
-    $result = mssql_select_db("$SQLdb");
-    if (!$result) {
-      echo "Error selecting database '$SQLdb'.\n";
-      exit;
-    }
-    mssql_close($link);
-    break;
-  default:
-    echo "Database type error - you must set &amp;dbtype in your statsdb.inc.php file.\n";
-    exit;
+if ($error) {
+  exit;
 }
 
 //=============================================================================
