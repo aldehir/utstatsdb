@@ -15,6 +15,7 @@ Version 3.08
   Show map image for last game logged.
   Display version number in page footer.
   Support for setting custom logo and link for page top-left, rather than always utlogo(layout).png.
+  Add Dockerfile and supporting Docker documentation.
 
 Version 3.07
   Fixed not being able to select to display bots or all players in player list.

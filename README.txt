@@ -19,7 +19,7 @@ understanding of configuring and managing a web server is assumed.
 UTStatsDB is compatible with most web servers that support PHP, and is
 compatible with the following database formats: MySQL, SQLite, Microsoft SQL.
 
-UTStatsDB is designed to work with PHP 5.1 or newer, with a MySQL, SQLite, or
+UTStatsDB is designed to work with PHP 5.2 or newer, with a MySQL, SQLite, or
 MSSQL database, on any web server with PHP support (nginx, Apache HTTPD, etc).
 
 The current version of UTStatsDB can be downloaded or cloned from the following
@@ -66,6 +66,7 @@ this release:
      INSTALL.txt - Main installation guide.
 CONFIG_GUIDE.txt - A quick guide to the configuration parameters.
      LOGGING.txt - Configuration of game logging and retrieval by the web server.
+      DOCKER.txt - Configuring, building, and running in a Docker environment.
 
 Informational:
 
