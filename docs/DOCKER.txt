@@ -10,3 +10,78 @@ UTStatsDB within a Docker container.
 
 This should make it relatively easy to test or even deploy UTStatsDB.
 
+This documentation will not go into the configuration and general usage of
+Docker, that's left as an exercise for the reader.
+
+In both examples below, if you're not using something like OLStats to post logs
+directly to your UTStatsDB but rely on parsing log files, be usre to mount
+those as volumes and reconfigure the Log Config options int he Admin menu to
+match.
+
+-------------------------------------------------------------------------------
+1. Usage with MySQL:
+-------------------------------------------------------------------------------
+
+In this example, we'll use the MariaDB Docker image to host the database:
+
+  docker run --name utstatsdb_mariadb \
+             -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+             -e MYSQL_DATABASE=utstats \
+             -e MYSQL_USER=utstats \
+             -e MYSQL_PASSWORD=statstats \
+             -d mariadb:10.3
+
+Refer to the documentation at https://hub.docker.com/_/mariadb/ for setting up
+persistent volumes so your database is not lost on each MariaDB container
+restart.
+
+Then configure your statsdb.inc.php file with an appropriate DSN (also set
+username and password):
+
+  mysql:host=utstatsdb_mariadb;dbname=utstats
+
+Then, build the UTStatsDB image (from within the UTStatsDB source root):
+
+  docker build -t utstatsdb .
+
+Finally, launch the UTStatsDB container, linking it to the MySQL/MariaDB one:
+
+  docker run --name utstatsdb \
+             --link utstatsdb_mariadb:utstatsdb_mariadb \
+             -p 80:80 \
+             -d utstatsdb
+
+Customise the ports as required for your environment, then visit
+http://your-host/admin.php as per usual to perform first-time setup of the
+database, followed by usual usage.
+
+-------------------------------------------------------------------------------
+2. Usage with SQLite
+-------------------------------------------------------------------------------
+
+First, configure statsdb.inc.php with an appropriate DBN:
+
+  sqlite:/utstatsdb/db.sqlite
+
+Then, build the UTStatsDB image (from within the UTStatsDB source root):
+
+  docker build -t utstatsdb .
+
+You will also need a persistent data store outside of the Docker container, to
+prevent data loss after restarts. Create a directory somewhere on the host, and
+change the owner to user ID 33 (on Linux systems). The HTTP service runs as
+"www-data", with user ID 33 within the container:
+
+  mkdir /var/lib/utstatsdb
+  chown -R 33:33 /var/lib/utstatsdb
+
+Finally, launch the UTStatsDB container, mounting the external persistent
+storage, and customising the ports as required for your environment:
+
+  docker run --name statsdb \
+             -v /var/lib/utstatsdb:/utstatsdb \
+             -p 80:80 \
+             -d utstatsdb
+
+Then, as per a usual install, visit http://your-host/admin.php to perform
+first-time setup of the database, followed by usual usage.
