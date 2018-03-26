@@ -231,12 +231,22 @@ function rawlist($conn_id, $path)
   return $newlist;
 }
 
-function release_lock()
+function acquire_lock($lockname)
 {
-  global $lockname, $link;
+  $lockFile = fopen(sys_get_temp_dir() . "/" . $lockname, "w");
+  $lock = flock($lockFile, LOCK_EX | LOCK_NB);
 
-  if ($lockname != "")
-    sql_queryn($link, "DO RELEASE_LOCK('$lockname')");
+  return array(
+    "lock" => $lock,
+    "lockFile" => $lockFile
+  );
+}
+
+function release_lock($lock)
+{
+  if ($lock && $lock["lock"]) {
+    fclose($lock["lockFile"]);
+  }
 }
 
 function dellog($file,$chatfile)
@@ -345,48 +355,11 @@ if (!isset($dbtype)) {
   exit;
 }
 
-if (strtolower($dbtype) == "mysql") {
-  $mysqlver = mysql_get_server_info();
-  $dot = strpos($mysqlver, ".");
-  if ($dot === FALSE) {
-    echo "Unable to determine MySQL version.<br />\n";
-    exit;
-  }
-  $mysqlverh = (int) substr($mysqlver, 0, $dot);
-  $dot2 = strpos($mysqlver, ".", $dot + 1);
-  if ($dot2 === FALSE) {
-    echo "Unable to determine MySQL version.<br />\n";
-    exit;
-  }
-  $mysqlverl = (int) substr($mysqlver, $dot + 1, $dot2 - $dot - 1);
-}
-if (strtolower($dbtype) == "mysqli") {
-  $mysqlver = mysqli_get_server_info($link);
-  $dot = strpos($mysqlver, ".");
-  if ($dot === FALSE) {
-    echo "Unable to determine MySQL version.<br />\n";
-    exit;
-  }
-  $mysqlverh = (int) substr($mysqlver, 0, $dot);
-  $dot2 = strpos($mysqlver, ".", $dot + 1);
-  if ($dot2 === FALSE) {
-    echo "Unable to determine MySQL version.<br />\n";
-    exit;
-  }
-  $mysqlverl = (int) substr($mysqlver, $dot + 1, $dot2 - $dot - 1);
-}
-
-// Obtain MySQL lock to insure only one copy of logs.php is running
-if ($config["lockname"] != "" && (strtolower($dbtype) == "mysql" || strtolower($dbtype) == "mysqli") && ($mysqlverh > 3 || ($mysqlverh == 3 && $mysqlverl >= 23))) {
-  $result = sql_queryn($link, "SELECT GET_LOCK('{$config['lockname']}',0)");
-  if (!$result) {
-    echo "Unable to obtain MySQL lock.{$break}\n";
-    sql_close($link);
-    exit;
-  }
-  list($lockresult) = sql_fetch_row($result);
-  sql_free_result($result);
-  if (!$lockresult) {
+// Obtain lock to ensure only one copy of logs.php is running
+$lock = false;
+if ($config["lockname"] != "") {
+  $lock = acquire_lock($config["lockname"]);
+  if (!$lock["lock"]) {
     echo "Log parser is currently locked for update.{$break}\n";
     sql_close($link);
     exit;
@@ -421,14 +394,14 @@ while (isset($conflogs["logpath"][$ftpnum])) {
 
     if ($ftpuser == "" || $ftppass == "") {
       echo "Error - you must set the FTPuser and FTPpass variables for this ftp server.{$break}\n";
-      release_lock();
+      release_lock($lock);
       sql_close($link);
       exit;
     }
 
     if ($logpath == "" || $logprefix == "") {
       echo "Error - you must set the logpath and logprefix variables for this ftp server.{$break}\n";
-      release_lock();
+      release_lock($lock);
       sql_close($link);
       exit;
     }
@@ -444,7 +417,7 @@ while (isset($conflogs["logpath"][$ftpnum])) {
       $ftptype = 2;
     else {
       echo "Error - you must set the ftp type in the server to either ftp or ftps.{$break}\n";
-      release_lock();
+      release_lock($lock);
       sql_close($link);
       exit;
     }
@@ -700,7 +673,7 @@ while (isset($conflogs["logpath"][$lognum])) {
 
   if (!isset($conflogs["logprefix"][$lognum])) {
     echo "Error - you must set the logprefix variable for this log path.{$break}\n";
-    release_lock();
+    release_lock($lock);
     sql_close($link);
     exit;
   }
@@ -931,8 +904,9 @@ while (isset($conflogs["logpath"][$lognum])) {
       echo "{$bold}$logs_saved of $files logs processed.{$ebold}{$break}\n";
       $total_saved += $logs_saved;
     }
-    $lognum++;
   }
+
+  $lognum++;
 }
 
 if ($lognum > 2)
@@ -969,7 +943,7 @@ if ($total_saved && $config["maxmatches"] && !$test) {
       $result = sql_querynb($link, "SELECT gm_start,mp_name FROM {$dbpre}matches,{$dbpre}maps WHERE gm_num<=$gmnum AND mp_num=gm_map");
       if (!$result) {
         echo "Error selecting matches for demo log removal.{$break}\n";
-        release_lock();
+        release_lock($lock);
         sql_close($link);
         exit;
       }
@@ -1039,7 +1013,7 @@ if ($total_saved && $config["maxmatches"] && !$test) {
     if (!$dresult)
       echo "Error removing chat logs!{$break}\n";
   }
-  release_lock();
+  release_lock($lock);
 }
 
 sql_close($link);
