@@ -1,0 +1,12 @@
+UTStatsDB
+  Copyright (C) 2002-2009  Patrick Contreras / Paul Gallier
+  Copyright (C) 2018  Kenneth Watson
+
+===============================================================================
+========== Running UTStatsDB Under Docker =====================================
+===============================================================================
+A simple Dockerfile is provided for building a Docker image for running
+UTStatsDB within a Docker container.
+
+This should make it relatively easy to test or even deploy UTStatsDB.
+
