@@ -5,7 +5,8 @@ UTStatsDB
 Release Notes:
 
 Version 3.09 (Work in Progress)
-  Clean out old resource files, remove some old styles
+  Clean out old resource files, remove some old styles.
+  Clean out upgrade code for versions < 3.07.
 
 Version 3.08
   Rewrite DB interface to use PDO, rather than mysql/sqlite/mssql directly.
