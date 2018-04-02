@@ -25,7 +25,7 @@ INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('serverspage','i5'
 INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('mapspage','i5','30','Maps Per Page','Number of maps to list per page.');
 INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('matchespage','i5','35','Matches Per Page','Number of matches to list per page.');
 INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('navbar','b2|Side|Top','0','Navigation Bar','Use standard side or top navigation bar.');
-INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('layout','i2','5','Layout','Layout to use: 1=Default ngStats, 2=Smaller fonts, 3=Dark colors/small fonts, 4=Small/Dark/No bold, 5=Modern/Default');
+INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('layout','i2','1','Layout','Layout to use: 1=Default, 2=Classic ngStats, 3=Classic Dark');
 INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('sidebarlogo','s200','utlogo.png','Logo Image','Name of image file to be displayed in the top-left of the page, located in the resources directory.');
 INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('sidebarlink','s200','http://www.unrealtournament.com/','Logo Link','Link for the logo displayed in the top-left of the page.');
 INSERT INTO %dbpre%config (conf,type,value,name,descr) VALUES('dateformat','b3|US-12hr|US-24hr|Europe','0','Date Format','Date Format');

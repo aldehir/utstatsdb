@@ -20,6 +20,35 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+function update309() {
+  global $dbtype, $dbpre, $break;
+
+  $link = sql_connect();
+
+  echo "Updating styles config....<br />\n";
+  $result = sql_queryn($link, "UPDATE {$dbpre}config SET value='1' WHERE conf='layout' and value in ('4', '5')");
+  if (!$result) {
+    echo "<br />Error updating style config.{$break}\n";
+    exit;
+  }
+
+  $result = sql_queryn($link, "UPDATE {$dbpre}config SET descr='Layout to use: 1=Default, 2=Classic ngStats, 3=Classic Dark' WHERE conf='layout'");
+  if (!$result) {
+    echo "<br />Error updating layout config.{$break}\n";
+    exit;
+  }
+
+  echo "Updating version....<br />\n";
+  $result = sql_queryn($link, "UPDATE {$dbpre}config SET value='3.09' WHERE conf='Version'");
+  if (!$result) {
+    echo "<br />Error updating version.{$break}\n";
+    exit;
+  }
+
+  sql_close($link);
+  echo "<br />Database updates complete.<br />\n";
+}
+
 function update308() {
   global $dbtype, $dbpre, $break;
 
