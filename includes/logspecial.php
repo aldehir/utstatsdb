@@ -413,7 +413,7 @@ function flag_check($plr, $time, $set) // Set = 1 on pickup, 0 on drop
   global $player, $flagstatus;
 
   if ($plr < 0)
-    $return;
+    return;
 
   if ($set) {
     if (!$flagstatus[$plr])
