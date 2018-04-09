@@ -596,7 +596,7 @@ if ($numchat) {
 
 for ($i = 0; $i < $numchat; $i++) {
   $nodisplay = 0;
-  $time = sprintf("%0.2f", $chatlog[0][$i] / (60.0 * $gm_timeoffset));
+  $time = displayTime($chatlog[0][$i], $gm_timeoffset);
   $plr = $chatlog[1][$i];
 
   if ($plr >= 0) {

@@ -27,7 +27,7 @@ $LANG_TOTALKILLS = "Total Kills";
 // index.php
 // careerhighs.php
 // matchhighs.php
-$LANG_PLAYERHOURS = "Player Hours";
+$LANG_PLAYERHOURS = "Player Time";
 
 // index.php
 // matchplayer.php

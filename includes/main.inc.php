@@ -49,17 +49,26 @@ function check_get(&$store, $val)
   }
 }
 
-function dtime($tm) // Convert Time Format
+// Convert Time Format
+function displayTime($seconds, $offset)
 {
-  $t = intval(round($tm / 100));
-  $t1 = intval(floor($t / 3600));
-  $t2 = intval(floor(($t - ($t1 * 3600)) / 60));
-  $t3 = intval(floor($t - ($t1 * 3600) - ($t2 * 60)));
-  if ($t1)
-    $time = sprintf("%d:%02d:%02d", $t1, $t2, $t3);
-  else
-    $time = sprintf("%d:%02d", $t2, $t3);
-  return $time;
+  return displayTimeMins(floatval($seconds) / (60.0 * $offset));
+}
+
+function displayTimeMins($minutes)
+{
+  $neg = $minutes < 0;
+
+  $minutes = abs($minutes);
+  $h = floor($minutes / 60);
+  $m = $minutes % 60;
+  $s = floor(($minutes - floor($minutes)) * 60);
+
+  if ($h) {
+    return sprintf(($neg ? "-" : "") . "%dh&nbsp;%02dm&nbsp;%02ds", $h, $m, $s);
+  } else {
+    return sprintf(($neg ? "-" : "") . "%dm&nbsp;%02ds", $m, $s);
+  }
 }
 
 function stripspecialchars($str)

@@ -446,7 +446,7 @@ EOF;
         else
           $nameclass = "darkhuman";
         $gpplayer = "<a class=\"$nameclass\" href=\"matchplayer.php?match=$matchnum&amp;player=$gp_num\">$gp_name</a>";
-        $held = sprintf("%0.1f", $held / (6000.0 * $gm_timeoffset));
+        $held = displayTime($held, $gm_timeoffset);
 
         echo <<<EOF
   <tr>
@@ -468,7 +468,7 @@ EOF;
     }
 
     $teamscore = ${"gm_tscore{$tm}"};
-    $theld = sprintf("%0.1f", $theld / 6000.0);
+    $theld = displayTime($theld, $gm_timeoffset);
 
     echo <<<EOF
   <tr>
@@ -556,7 +556,7 @@ EOF;
         else
           $nameclass = "darkhuman";
         $gpplayer = "<a class=\"$nameclass\" href=\"matchplayer.php?match=$matchnum&amp;player=$gp_num\">$gp_name</a>";
-        $held = sprintf("%0.1f", $held / (6000.0 * $gm_timeoffset));
+        $held = displayTime($held, $gm_timeoffset);
 
         echo <<<EOF
   <tr>
@@ -576,7 +576,7 @@ EOF;
     }
 
     $teamscore = ${"gm_tscore{$tm}"};
-    $theld = sprintf("%0.1f", $theld / 6000.0);
+    $theld = displayTime($theld, $gm_timeoffset);
 
     echo <<<EOF
   <tr>
@@ -661,6 +661,7 @@ EOF;
         else
           $nameclass = "darkhuman";
         $gpplayer = "<a class=\"$nameclass\" href=\"matchplayer.php?match=$matchnum&amp;player=$gp_num\">$gp_name</a>";
+        $held = displayTime($held, $gm_timeoffset);
 
         echo <<<EOF
   <tr>
@@ -678,6 +679,7 @@ EOF;
     }
 
     $teamscore = ${"gm_tscore{$tm}"};
+    $theld = displayTime($theld, $gm_timeoffset);
 
     echo <<<EOF
   <tr>
@@ -725,7 +727,7 @@ EOF;
   }
   while ($row = sql_fetch_row($result)) {
     $team = $row[1];
-    $time = $row[2] / $gm_timeoffset;
+    $time = displayTime($row[2], $gm_timeoffset);
     $length = $row[3];
     $objnum = $row[4];
     $lengtht = sprintf("%d:%02d", floor($length / 60), intval(fmod($length, 60)));
@@ -931,7 +933,7 @@ EOF;
     $gp_bot = $gplayer[$i]["gp_bot"];
     $gp_rank = $gplayer[$i]["gp_rank"];
     $mutant = $gplayer[$i]["gp_pickup0"];
-    $muttime = sprintf("%0.1f", $gplayer[$i]["gp_holdtime0"] / (6000.0 * $gm_timeoffset));
+    $muttime = displayTime($gplayer[$i]["gp_holdtime0"], $gm_timeoffset);
     $bottom = $gplayer[$i]["gp_pickup1"];
 
     if ($gp_bot)
@@ -1077,7 +1079,7 @@ EOF;
         else
           $nameclass = "darkhuman";
         $gpplayer = "<a class=\"$nameclass\" href=\"matchplayer.php?match=$matchnum&amp;player=$gp_num\">$gp_name</a>";
-        $balltime = sprintf("%0.1f", $balltime / (6000.0 * $gm_timeoffset));
+        $balltime = displayTime($balltime, $gm_timeoffset);
 
         echo <<<EOF
   <tr>
@@ -1097,7 +1099,7 @@ EOF;
       }
     }
 
-    $tballtime = sprintf("%0.1f", $tballtime / (6000.0 * $gm_timeoffset));
+    $tballtime = displayTime($tballtime, $gm_timeoffset);
 
     echo <<<EOF
   <tr>
@@ -1323,8 +1325,9 @@ EOF;
         else
           $sph = sprintf("%0.1f", $score * (3600 / $ptime));
 
-        $ttl = sprintf("%0.1f", $ptime / ($deaths + $suicides + 1));
-        $time = sprintf("%0.1f", $ptime / 60.0);
+        $ttl = displayTimeMins($ptime / 60 / ($deaths + $suicides + 1));
+
+        $time = displayTimeMins($ptime / 60.0);
 
         if ($gp_bot)
           $nameclass = "darkbot";
@@ -1376,14 +1379,14 @@ EOF;
     if ($ttime == 0)
       $sph = "0.0";
     else
-      $sph = sprintf("%0.1f", $tscore * (3600 / ($ttime * $gm_timeoffset))); // *tag*
+      $sph = sprintf("%0.1f", $tscore * (3600 / $ttime));
 
-    $ttl = sprintf("%0.1f", $ttime / ($tdeaths + $tsuicides + 1));
+    $ttl = displayTimeMins($ttime / 60 / ($tdeaths + $tsuicides + 1));
 
     if ($teamsize > 0)
-      $time = sprintf("%0.1f", $ttime / (60.0 * $gm_timeoffset) / $teamsize); // *tag*
+      $time = displayTimeMins($ttime / 60 / $teamsize);
     else
-      $time = sprintf("%0.1f", $ttime / (60.0 * $gm_timeoffset)); // *tag*
+      $time = displayTimeMins($ttime / 60);
 
     echo <<<EOF
   <tr>
@@ -1564,8 +1567,8 @@ EOF;
         $fph = sprintf("%0.1f", $frags * (3600 / $ptime));
     }
 
-    $ttl = sprintf("%0.1f", $ptime / ($deaths + $suicides + 1));
-    $time = sprintf("%0.1f", $ptime / 60.0);
+    $ttl = displayTimeMins($ptime / 60 / ($deaths + $suicides + 1));
+    $time = displayTimeMins($ptime / 60.0);
 
     $total_score += $score;
     $total_frags += $frags;
@@ -1633,7 +1636,7 @@ EOF;
     else
       $fph = sprintf("%0.1f", $total_score * (3600 / $total_time));
   }
-  $ttl = sprintf("%0.1f", $total_time / ($total_deaths + $total_suicides + 1));
+  $ttl = displayTimeMins($total_time / 60 / ($total_deaths + $total_suicides + 1));
 
   echo <<<EOF
   <tr>
@@ -2588,8 +2591,8 @@ if ($gametval != 9 && $gametval != 18) {
         $bot = 0;
       }
       $player = "<a class=\"$nameclass\" href=\"matchplayer.php?match=$matchnum&amp;player=$ge_plr\">$name</a>";
-      $time = sprintf("%0.1f", ($ge_time - $ge_length - ($delay * $gm_timeoffset)) / (60.0 * $gm_timeoffset));
-      $length = sprintf("%0.1f", $ge_length / (60.0 * $gm_timeoffset));
+      $time = displayTime($ge_time - $ge_length - ($delay * $gm_timeoffset), $gm_timeoffset);
+      $length = displayTime($ge_length, $gm_timeoffset);
 
       $type = "";
       if ($ge_quant >= 5 && $ge_quant < 10)
@@ -2956,7 +2959,7 @@ while ($row = sql_fetch_assoc($result)) {
     $bot = 0;
   }
 
-  $time = sprintf("%0.1f", ($row["ge_time"] - ($delay * $gm_timeoffset)) / (60.0 * $gm_timeoffset));
+  $time = displayTime($row["ge_time"] - ($delay * $gm_timeoffset), $gm_timeoffset);
   $quant = $row["ge_quant"];
   $reas = $row["ge_reason"];
 
@@ -2988,7 +2991,7 @@ while ($row = sql_fetch_assoc($result)) {
       switch ($reas) {
         case 0:
           $reason = "{$LANG_GAMESTART}";
-          $time = "0.0";
+          $time = displayTimeMins(0);
           break;
         case 1:
           $reason = "{$LANG_GAMEENDED}";

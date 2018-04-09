@@ -111,7 +111,7 @@ while($row = sql_fetch_assoc($result)) {
   }
   $start = strtotime($gm_start);
   $matchdate = formatdate($start, 1);
-  $length = sprintf("%0.1f", $gm_length / (60.0 * $gm_timeoffset));
+  $length = displayTime($gm_length, $gm_timeoffset);
   $map = stripspecialchars($mp_name);
   if ($useshortname && $sv_shortname != "")
     $server = stripspecialchars($sv_shortname);

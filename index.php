@@ -44,7 +44,7 @@ else {
   list($tl_score,$tl_kills,$tl_suicides,$tl_teamkills,$tl_players,$tl_matches,$tl_playertime) = sql_fetch_row($result);
   sql_free_result($result);
   $frags = $tl_kills - $tl_suicides;
-  $time = sprintf("%0.1f", $tl_playertime / 360000.0);
+  $time = displayTimeMins($tl_playertime / 6000.0);
 
   $result = sql_query("SELECT COUNT(*) FROM {$dbpre}servers");
   if (!$result) {
