@@ -85,16 +85,6 @@ $total_score = 0;
 $total_teamkills = $total_teamdeaths = 0;
 $total_wins = $total_losses = $total_matches = 0;
 
-// Load game type descriptions
-$result = sql_queryn($link, "SELECT tp_desc,tp_num FROM {$dbpre}type");
-if (!$result) {
-  echo "Database error accessing game types.<br />\n";
-  exit;
-}
-while ($row = sql_fetch_row($result))
-  $gtype[$row[1]] = $row[0];
-sql_free_result($result);
-
 echo <<<EOF
 <center>
 <table cellpadding="1" cellspacing="2" border="0" width="710" class="box">
@@ -116,12 +106,15 @@ echo <<<EOF
     <td class="smheading" align="center">Wins</td>
     <td class="smheading" align="center">Losses</td>
     <td class="smheading" align="center">Matches</td>
-    <td class="smheading" align="center">Hours</td>
+    <td class="smheading" align="center">Time</td>
   </tr>
 
 EOF;
 
-$result = sql_queryn($link, "SELECT * FROM {$dbpre}playersgt WHERE gt_pnum=$plr ORDER BY gt_tnum");
+$result = sql_queryn($link, "SELECT p.*, tp_desc
+                             FROM {$dbpre}playersgt p
+                               LEFT JOIN {$dbpre}type ON tp_num=gt_tnum 
+                             WHERE gt_pnum=$plr ORDER BY gt_tnum");
 if (!$result) {
   echo "Player Database Error.<br />\n";
   exit;
@@ -133,7 +126,7 @@ while ($row = sql_fetch_assoc($result)) {
     ${$key} = $val;
 
   $time = floatval($gt_time / 100.0);
-  $hours = sprintf("%0.1f", $time / 3600.0);
+  $hours = displayTimeMins($time / 60.0);
   if ($gt_kills + $gt_deaths + $gt_suicides == 0)
     $eff = "0.0";
   else
@@ -142,7 +135,7 @@ while ($row = sql_fetch_assoc($result)) {
     $fph = "0.0";
   else
     $fph = sprintf("%0.1f", $gt_frags / ($time / 3600));
-  $ttl = sprintf("%0.1f", $time / ($gt_deaths + $gt_suicides + 1));
+  $ttl = displayTimeMins($time / 60 / ($gt_deaths + $gt_suicides + 1));
 
   $total_time += $time;
   $total_score += $gt_score;
@@ -152,11 +145,9 @@ while ($row = sql_fetch_assoc($result)) {
   $total_losses += $gt_losses;
   $total_matches += $gt_matches;
 
-  $typename = $gtype[$gt_tnum];
-
   echo <<<EOF
   <tr>
-    <td class="dark" align="center">$typename</td>
+    <td class="dark" align="center">$tp_desc</td>
     <td class="grey" align="center">$gt_score</td>
     <td class="grey" align="center">$gt_frags</td>
     <td class="grey" align="center">$gt_kills</td>
@@ -182,7 +173,7 @@ if (!$gametypes) {
   exit;
 }
 
-$total_hours = sprintf("%0.1f", $total_time / 3600);
+$total_hours = displayTimeMins($total_time / 60);
 if ($plr_kills + $plr_deaths + $plr_suicides == 0)
   $total_eff = "0.0";
 else
@@ -191,7 +182,7 @@ if ($total_time == 0)
   $total_fph = "0.0";
 else
   $total_fph = sprintf("%0.1f", $plr_frags / ($total_time / 3600));
-$total_ttl = sprintf("%0.1f", $total_time / ($plr_deaths + $plr_suicides + 1));
+$total_ttl = displayTimeMins($total_time / 60 / ($plr_deaths + $plr_suicides + 1));
 
 echo <<<EOF
   <tr>
@@ -233,26 +224,23 @@ if (isset($ranksystem) && $ranksystem) {
 
 EOF;
 
-  $result = sql_queryn($link, "SELECT gt_tnum,gt_rank FROM {$dbpre}playersgt WHERE gt_pnum=$plr ORDER BY gt_tnum");
+  $result = sql_queryn($link, "SELECT gt_tnum,gt_rank,tp_desc 
+                               FROM {$dbpre}playersgt
+                                 LEFT JOIN {$dbpre}type ON tp_num=gt_tnum
+                               WHERE gt_pnum=$plr 
+                               ORDER BY gt_tnum");
   if (!$result) {
     echo "Player Database Error.<br />\n";
     exit;
   }
-  $ranks = 0;
-  while ($row = sql_fetch_row($result)) {
-    $rankarrayt[$ranks] = $row[0];
-    $rankarray[$ranks++] = $row[1];
-  }
-  sql_free_result($result);
 
-  for ($i = 0; $i < $ranks; $i++) {
-    $rankp = sprintf("%0.2f", $rankarray[$i]);
-    $rpos = get_rankpos($rankarrayt[$i], $rankarray[$i]);
-    $typename = $gtype[$rankarrayt[$i]];
+  while ($row = sql_fetch_assoc($result)) {
+    $rankp = sprintf("%0.2f", $row['gt_rank']);
+    $rpos = get_rankpos($row['gt_tnum'], $row['gt_rank']);
 
   echo <<<EOF
   <tr>
-    <td class="dark" align="center">$typename</td>
+    <td class="dark" align="center">${row['tp_desc']}</td>
     <td class="grey" align="center">$rpos</td>
     <td class="grey" align="center">$rankp</td>
   </tr>
@@ -260,6 +248,7 @@ EOF;
 EOF;
   }
   echo "</table>\n";
+  sql_free_result($result);
 }
 
 //=============================================================================
@@ -282,7 +271,7 @@ while ($row = sql_fetch_row($result)) {
 }
 sql_free_result($result);
 
-$flagtime = sprintf("%0.1f", $holdtime / 6000.0);
+$flagtime = displayTimeMins($holdtime / 6000.0);
 echo <<<EOF
 <br />
 <table cellpadding="1" cellspacing="2" border="0">
@@ -329,7 +318,7 @@ while ($row = sql_fetch_row($result)) {
 }
 sql_free_result($result);
 
-$bombtime = sprintf("%0.1f", $holdtime / 6000.0);
+$bombtime = displayTimeMins($holdtime / 6000.0);
 
 $result = sql_queryn($link, "SELECT gt_capcarry FROM {$dbpre}playersgt WHERE gt_pnum=$plr AND gt_type=7");
 if (!$result) {
@@ -421,7 +410,11 @@ EOF;
 //=============================================================================
 //========== Special Events ===================================================
 //=============================================================================
-$result = sql_queryn($link, "SELECT se_num,se_title,se_desc,ps_total FROM {$dbpre}special LEFT JOIN {$dbpre}playerspecial ON ps_stype=se_num WHERE ps_pnum=$plr OR ps_pnum IS NULL ORDER BY se_num");
+$result = sql_queryn($link, "SELECT se_num,se_title,se_desc,ps_total 
+                             FROM {$dbpre}special 
+                               LEFT JOIN {$dbpre}playerspecial ON ps_stype=se_num 
+                             WHERE ps_pnum=$plr OR ps_pnum IS NULL 
+                             ORDER BY se_num");
 if (!$result) {
   echo "Player database error.<br />\n";
   exit;
@@ -557,24 +550,6 @@ echo <<<EOF
 
 EOF;
 
-// Load Weapon Descriptions
-$result = sql_queryn($link, "SELECT wp_num,wp_secondary,wp_desc,wp_weaptype FROM {$dbpre}weapons");
-if (!$result) {
-  echo "Error loading weapons descriptions.<br />\n";
-  exit;
-}
-$maxweapon = 0;
-$weapons = array();
-while($row = sql_fetch_row($result)) {
-  $num = $row[0];
-  $weapons[$num][0] = $row[2];
-  $weapons[$num][1] = $row[1];
-  $weapons[$num][2] = $row[3];
-  if ($num > $maxweapon)
-    $maxweapon = $num;
-}
-sql_free_result($result);
-
 $wskills = array(array());
 /* wskills:
  0 = Primary Kills
@@ -592,16 +567,20 @@ $wskills = array(array());
 */
 $numweapons = 0;
 // Load Player Weapon Kills for current player
-$result = sql_queryn($link, "SELECT pwk_weapon,pwk_frags,pwk_kills,pwk_deaths,pwk_held,pwk_suicides,pwk_fired,pwk_hits,pwk_damage FROM {$dbpre}pwkills WHERE pwk_player=$pnum");
-while (list($weapon,$frags,$kills,$deaths,$held,$suicides,$fired,$hits,$damage) = sql_fetch_row($result)) {
+$result = sql_queryn($link, "SELECT pwk_weapon,pwk_frags,pwk_kills,pwk_deaths,pwk_held,pwk_suicides,pwk_fired,
+                               pwk_hits,pwk_damage,wp_secondary,wp_desc,wp_weaptype
+                             FROM {$dbpre}pwkills
+                               LEFT JOIN {$dbpre}weapons ON wp_num=pwk_weapon
+                             WHERE pwk_player=$pnum");
+while (list($weapon,$frags,$kills,$deaths,$held,$suicides,$fired,$hits,$damage,$wSecondary,$wDesc,$wType) = sql_fetch_row($result)) {
   if ($frags || $kills || $deaths || $held || $suicides || $fired || $hits || $damage) {
     // Look for existing matching wskills description
     $weap = -1;
     $secondary = 0;
     for ($i = 0; $i < $numweapons && $weap < 0; $i++) {
-      if (!strcmp($wskills[5][$i], $weapons[$weapon][0])) {
+      if (!strcmp($wskills[5][$i], $wDesc)) {
         $weap = $i;
-        $secondary = $weapons[$weapon][1];
+        $secondary = $wSecondary;
       }
     }
     // Add weapon if not already used
@@ -609,15 +588,15 @@ while (list($weapon,$frags,$kills,$deaths,$held,$suicides,$fired,$hits,$damage) 
       $wskills[0][$numweapons] = $wskills[1][$numweapons] = 0; // Primary Kills / Secondary Kills
       $wskills[2][$numweapons] = $wskills[3][$numweapons] = 0; // Deaths From / Deaths Holding
       $wskills[4][$numweapons] = 0; // Suicides
-      $wskills[5][$numweapons] = $weapons[$weapon][0]; // Description
+      $wskills[5][$numweapons] = $wDesc; // Description
       $wskills[6][$numweapons] = 0; // Frags
-      $wskills[7][$numweapons] = $weapons[$weapon][2]; // Type
+      $wskills[7][$numweapons] = $wType; // Type
       $wskills[8][$numweapons] = 0; // Road Kills
       $wskills[9][$numweapons] = 0; // Fired
       $wskills[10][$numweapons] = 0; // Hits
       $wskills[11][$numweapons] = 0; // Damage
       $weap = $numweapons++;
-      $secondary = $weapons[$weapon][1];
+      $secondary = $wSecondary;
     }
     $wskills[6][$weap] += $frags;
     if ($secondary == 4)
@@ -933,12 +912,12 @@ echo "</table>\n";
 //=============================================================================
 //========== Killing Sprees by Type ===========================================
 //=============================================================================
-$time1 = sprintf("%0.1f", $plr_spreet1 / 6000);
-$time2 = sprintf("%0.1f", $plr_spreet2 / 6000);
-$time3 = sprintf("%0.1f", $plr_spreet3 / 6000);
-$time4 = sprintf("%0.1f", $plr_spreet4 / 6000);
-$time5 = sprintf("%0.1f", $plr_spreet5 / 6000);
-$time6 = sprintf("%0.1f", $plr_spreet6 / 6000);
+$time1 = displayTimeMins($plr_spreet1 / 6000);
+$time2 = displayTimeMins($plr_spreet2 / 6000);
+$time3 = displayTimeMins($plr_spreet3 / 6000);
+$time4 = displayTimeMins($plr_spreet4 / 6000);
+$time5 = displayTimeMins($plr_spreet5 / 6000);
+$time6 = displayTimeMins($plr_spreet6 / 6000);
 
 echo <<<EOF
 <br />
@@ -949,7 +928,7 @@ echo <<<EOF
   <tr>
     <td class="smheading" align="center" width="110">Spree Type</td>
     <td class="smheading" align="center" width="85"># of Sprees</td>
-    <td class="smheading" align="center" width="115">Total Time (min)</td>
+    <td class="smheading" align="center" width="115">Total Time</td>
     <td class="smheading" align="center" width="80">Total Kills</td>
   </tr>
   <tr>
@@ -995,17 +974,6 @@ EOF;
 //=============================================================================
 //========== Total Items Collected ============================================
 //=============================================================================
-// Load Item Descriptions
-$result = sql_queryn($link, "SELECT it_num,it_desc FROM {$dbpre}items");
-if (!$result) {
-  echo "Error loading item descriptions.<br />\n";
-  exit;
-}
-$items = array();
-while ($row = sql_fetch_row($result))
-  $items[$row[0]] = $row[1];
-sql_free_result($result);
-
 echo <<<EOF
 <br />
 <table cellpadding="1" cellspacing="2" border="0" width="600">
@@ -1023,7 +991,10 @@ echo <<<EOF
 
 EOF;
 
-$result = sql_queryn($link, "SELECT pi_item,pi_pickups FROM {$dbpre}pitems WHERE pi_plr=$pnum");
+$result = sql_queryn($link, "SELECT pi_item,pi_pickups,it_desc 
+                             FROM {$dbpre}pitems
+                               INNER JOIN {$dbpre}items ON it_num=pi_item
+                             WHERE pi_plr=$pnum");
 if (!$result) {
   echo "Error loading player item pickups.<br />\n";
   exit;
@@ -1033,11 +1004,11 @@ $pickups = array(array());
 $totpickups = 0;
 while ($row = sql_fetch_row($result)) {
   for ($i = 0, $item = -1; $i < $totpickups && $item < 0; $i++) {
-    if (!strcmp($pickups[0][$i], $items[$row[0]]))
+    if (!strcmp($pickups[0][$i], $row[2]))
       $item = $i;
   }
   if ($item < 0) {
-    $pickups[0][$totpickups] = $items[$row[0]];
+    $pickups[0][$totpickups] = $row[2];
     $pickups[1][$totpickups++] = $row[1];
   }
   else
@@ -1094,11 +1065,6 @@ echo "</table>\n";
 //========== Most Recent Games Played =========================================
 //=============================================================================
 // Load game types
-$numtypes = 0;
-$result = sql_queryn($link, "SELECT tp_num,tp_desc FROM {$dbpre}type");
-while($row = sql_fetch_row($result))
-  $gtype[$numtypes++] = $row;
-sql_free_result($result);
 
 echo <<<EOF
 <br />
@@ -1111,16 +1077,19 @@ echo <<<EOF
     <td class="smheading" align="center" width="150">Match Type</td>
     <td class="smheading" align="center" width="225">Map</td>
     <td class="smheading" align="center" width="50">Players</td>
-    <td class="smheading" align="center" width="50">Minutes</td>
+    <td class="smheading" align="center" width="50">Time</td>
   </tr>
 
 EOF;
 
 $matches = 0;
-$result = sql_querynb($link, "SELECT gm_num,gm_map,gm_type,gm_start,gm_timeoffset,gm_length,gm_numplayers
-  FROM {$dbpre}gplayers,{$dbpre}matches
-  WHERE {$dbpre}gplayers.gp_pnum=$pnum AND {$dbpre}matches.gm_num={$dbpre}gplayers.gp_match
-  ORDER BY {$dbpre}matches.gm_num DESC LIMIT 11");
+$result = sql_querynb($link, "SELECT gm_num,gm_map,gm_type,gm_start,gm_timeoffset,gm_length,gm_numplayers,
+                                mp_name, tp_desc
+                              FROM {$dbpre}gplayers,{$dbpre}matches
+                                LEFT JOIN {$dbpre}maps ON mp_num=gm_map
+                                LEFT JOIN {$dbpre}type ON tp_num=gm_type
+                              WHERE {$dbpre}gplayers.gp_pnum=$pnum AND {$dbpre}matches.gm_num={$dbpre}gplayers.gp_match
+                              ORDER BY {$dbpre}matches.gm_num DESC LIMIT 11");
 if (!$result) {
   echo "Error accessing game and game player tables.<br />\n";
   exit;
@@ -1130,29 +1099,16 @@ while ($row = sql_fetch_assoc($result)) {
     while (list ($key, $val) = each ($row))
       ${$key} = $val;
 
-    $gametype = "";
-    for ($i = 0; $i < $numtypes && !$gametype; $i++) {
-      if ($gtype[$i][0] == $gm_type)
-        $gametype = $gtype[$i][1];
-    }
     $start = strtotime($gm_start);
     $matchdate = formatdate($start, 1);
-    $length = sprintf("%0.1f", $gm_length / (60.0 * $gm_timeoffset));
+    $length = displayTime($gm_length, $gm_timeoffset);
 
-    // Load Map Name
-    $result2 = sql_queryn($link, "SELECT mp_name FROM {$dbpre}maps WHERE mp_num=$gm_map LIMIT 1");
-    if (!$result2) {
-      echo "Map database error.<br />\n";
-      exit;
-    }
-    list($mp_name) = sql_fetch_row($result2);
-    sql_free_result($result2);
     $mapname = stripspecialchars($mp_name);
 
     echo <<<EOF
   <tr>
     <td class="dark" align="center"><a class="dark" href="matchstats.php?match=$gm_num">$matchdate</a></td>
-    <td class="grey" align="center">$gametype</td>
+    <td class="grey" align="center">$tp_desc</td>
     <td class="grey" align="center"><a class="grey" href="mapstats.php?map=$gm_map">$mapname</a></td>
     <td class="grey" align="center">$gm_numplayers</td>
     <td class="grey" align="center">$length</td>

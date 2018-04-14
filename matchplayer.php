@@ -37,14 +37,16 @@ if ($matchnum <= 0 || $plr < 0) {
 
 $link = sql_connect();
 
-// Load game types
-$numtypes = 0;
-$result = sql_queryn($link, "SELECT tp_num,tp_desc,tp_type,tp_team FROM {$dbpre}type");
-while($row = sql_fetch_row($result))
-  $gtype[$numtypes++] = $row;
-sql_free_result($result);
-
-$result = sql_queryn($link, "SELECT * FROM {$dbpre}matches WHERE gm_num=$matchnum LIMIT 1");
+$result = sql_queryn($link, "SELECT m.*, 
+                               tp_num,tp_desc,tp_type,tp_team,
+                               mp_name,
+                               sv_name,sv_shortname,sv_admin,sv_email 
+                             FROM {$dbpre}matches m
+                               LEFT JOIN {$dbpre}type ON tp_num=gm_type
+                               LEFT JOIN {$dbpre}maps ON mp_num=gm_map
+                               LEFT JOIN {$dbpre}servers ON sv_num=gm_server
+                             WHERE gm_num=$matchnum 
+                             LIMIT 1");
 if (!$result) {
   echo "Match database error.<br />\n";
   exit;
@@ -58,15 +60,17 @@ if (!$row) {
 while (list ($key, $val) = each ($row))
   ${$key} = $val;
 
-$gametype = "";
-$gametval = 0;
-for ($i = 0; $i < $numtypes && !$gametype; $i++) {
-  if ($gtype[$i][0] == $gm_type) {
-    $gametype = $gtype[$i][1];
-    $gametval = $gtype[$i][2];
-    $teams = $gtype[$i][3];
-  }
-}
+$gametype = $tp_desc;
+$gametval = $tp_type;
+$teams = $tp_team;
+
+$mapname = stripspecialchars($mp_name);
+
+if ($useshortname && $sv_shortname != "") $servername = stripspecialchars($sv_shortname);
+else $servername = stripspecialchars($sv_name);
+$serveradmin = stripspecialchars($sv_admin);
+$serveremail = stripspecialchars($sv_email);
+
 $start = strtotime($gm_start);
 $init = strtotime($gm_init);
 $delay = $start - strtotime($gm_init);
@@ -105,31 +109,6 @@ else {
     $gp_name = "Player $gp_num"; // Player not found
 }
 sql_free_result($result);
-
-// Load Server Data
-$result = sql_queryn($link, "SELECT sv_name,sv_shortname,sv_admin,sv_email FROM {$dbpre}servers WHERE sv_num=$gm_server LIMIT 1");
-if (!$result) {
-  echo "Server database error.<br />\n";
-  exit;
-}
-list($sv_name,$sv_shortname,$sv_admin,$sv_email) = sql_fetch_row($result);
-sql_free_result($result);
-if ($useshortname && $sv_shortname != "")
-  $servername = stripspecialchars($sv_shortname);
-else
-  $servername = stripspecialchars($sv_name);
-$serveradmin = stripspecialchars($sv_admin);
-$serveremail = stripspecialchars($sv_email);
-
-// Load Map Data
-$result = sql_queryn($link, "SELECT mp_name FROM {$dbpre}maps WHERE mp_num=$gm_map LIMIT 1");
-if (!$result) {
-  echo "Map database error.<br />\n";
-  exit;
-}
-list($mp_name) = sql_fetch_row($result);
-sql_free_result($result);
-$mapname = stripspecialchars($mp_name);
 
 $pw = (isset($password) && $password) ? "{$LANG_ENABLED}" : "{$LANG_DISABLED}";
 $stats = (isset($gamestats) && $gamestats) ? "{$LANG_ENABLED}" : "{$LANG_DISABLED}";
@@ -422,8 +401,8 @@ if ($ptime == 0)
 else
   $fph = sprintf("%0.1f", $frags * (3600 / $ptime));
 
-$ttl = sprintf("%0.1f", $ptime / ($deaths + $suicides + 1));
-$time = sprintf("%0.1f", $ptime / 60.0);
+$ttl = displayTimeMins($ptime / 60 / ($deaths + $suicides + 1));
+$time = displayTimeMins($ptime / 60.0);
 
 if ($gp_bot)
   $nameclass = "darkbot";
@@ -1258,8 +1237,8 @@ while ($row = sql_fetch_assoc($result)) {
     while (list ($key, $val) = each ($row))
       ${$key} = $val;
 
-    $time = sprintf("%0.1f", ($ge_time - $ge_length - ($delay * $gm_timeoffset)) / (60.0 * $gm_timeoffset));
-    $length = sprintf("%0.1f", $ge_length / (60.0 * $gm_timeoffset));
+    $time = displayTime(($ge_time - $ge_length - ($delay * $gm_timeoffset)), $gm_timeoffset);
+    $length = displayTime($ge_length, $gm_timeoffset);
 
     $type = "";
     if ($ge_quant >= 5 && $ge_quant < 10)
@@ -1529,7 +1508,7 @@ while ($row = sql_fetch_assoc($result)) {
   $plr = $row["ge_plr"];
   $event = $row["ge_event"];
   if ($plr == $gp_num || $event == 3) {
-    $time = sprintf("%0.1f", ($row["ge_time"] - ($delay * $gm_timeoffset)) / (60.0 * $gm_timeoffset));
+    $time = displayTime(($row["ge_time"] - ($delay * $gm_timeoffset)), $gm_timeoffset);
     if ($event == 3) {
       switch ($row["ge_reason"]) {
         case 0:

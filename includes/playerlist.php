@@ -311,7 +311,7 @@ while($row = sql_fetch_array($result)) {
     $fph = sprintf("%0.1f", $plr_frags / ($plr_time / 360000.0));
     $sph = sprintf("%0.1f", $plr_score / ($plr_time / 360000.0));
   }
-  $time = sprintf("%0.1f", $plr_time / 360000.0);
+  $time = displayTimeMins($plr_time / 6000.0);
   if ($plr_bot)
     $nameclass = "darkbot";
   else

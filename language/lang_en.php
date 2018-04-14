@@ -110,7 +110,7 @@ $LANG_MATCHES = "Matches";
 // includes/serverlist.php
 // totals.php
 // careerhighs.php
-$LANG_HOURS = "Hours";
+$LANG_HOURS = "Time";
 
 // includes/playerlist.php
 // includes/serverlist.php
