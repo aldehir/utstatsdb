@@ -46,21 +46,25 @@ if (!$row) {
   echo "Server not found in database.<br />\n";
   exit;
 }
-while (list ($key, $val) = each ($row))
-  ${$key} = $val;
-if ($useshortname && $sv_shortname != "")
+while (list ($key, $val) = each ($row)) ${$key} = $val;
+
+if ($useshortname && $sv_shortname != "") {
   $servername = stripspecialchars($sv_shortname);
-else
+} else {
   $servername = stripspecialchars($sv_name);
-if ($sv_addr)
+}
+
+if ($sv_addr) {
   $svn = "<a href=\"$sv_addr\" class=\"grey\">$servername</a>";
-else
+} else {
   $svn = $servername;
+}
+
 $serveradmin = stripspecialchars($sv_admin);
 $serveremail = stripspecialchars($sv_email);
 $last = strtotime($sv_lastmatch);
 $lastdate = formatdate($last, 1);
-$time = sprintf("%0.1f", $sv_time / 360000.0);
+$time = displayTimeMins($sv_time / 6000.0);
 
 echo <<<EOF
 <table cellpadding="1" cellspacing="2" border="0" width="720">
@@ -105,13 +109,6 @@ EOF;
 //========== Most Recent Matches Played =======================================
 //=============================================================================
 
-// Load game types
-$numtypes = 0;
-$result = sql_queryn($link, "SELECT tp_num,tp_desc FROM {$dbpre}type");
-while($row = sql_fetch_row($result))
-  $gtype[$numtypes++] = $row;
-sql_free_result($result);
-
 echo <<<EOF
 <br />
 <table cellpadding="1" cellspacing="2" border="0">
@@ -129,27 +126,25 @@ echo <<<EOF
 EOF;
 
 $matches = 0;
-$result = sql_queryn($link, "SELECT gm_num,gm_map,gm_type,gm_start,gm_timeoffset,gm_length,gm_numplayers,mp_name
-  FROM {$dbpre}matches USE INDEX (gm_svnum),{$dbpre}maps
-  WHERE gm_server=$servernum AND mp_num=gm_map
-  ORDER BY gm_num DESC LIMIT 21");
+$result = sql_queryn($link, "SELECT 
+                               gm_num,gm_map,gm_type,gm_start,gm_timeoffset,gm_length,gm_numplayers,mp_name,tp_desc
+                               FROM {$dbpre}matches USE INDEX (gm_svnum), {$dbpre}maps,{$dbpre}type
+                               WHERE gm_server=$servernum 
+                                     AND mp_num=gm_map
+                                     AND tp_num=gm_type
+                               ORDER BY gm_num DESC LIMIT 21");
 if (!$result) {
   echo "Error accessing match database.<br />\n";
   exit;
 }
 while ($row = sql_fetch_assoc($result)) {
   if ($matches < 20) {
-    while (list ($key, $val) = each ($row))
-      ${$key} = $val;
+    while (list ($key, $val) = each ($row)) ${$key} = $val;
 
-    $gametype = "";
-    for ($i = 0; $i < $numtypes && !$gametype; $i++) {
-      if ($gtype[$i][0] == $gm_type)
-        $gametype = $gtype[$i][1];
-    }
+    $gametype = $tp_desc;
     $start = strtotime($gm_start);
     $matchdate = formatdate($start, 1);
-    $length = sprintf("%0.1f", $gm_length / (60.0 * $gm_timeoffset));
+    $length = displayTime($gm_length, $gm_timeoffset);
     $mapname = stripspecialchars($mp_name);
 
     echo <<<EOF
