@@ -95,7 +95,6 @@ if ($numpages > 1) {
 
 if ($mapsearch == 1 || ($mapsearch == 2 && $numpages > 1)) {
   echo <<<EOF
-<font size="1"><br /></font>
 <form name="mapsearch" method="post" action="index.php?stats=maps">
   <table class="searchform">
     <tr>
@@ -133,7 +132,11 @@ if ($searchname != "")
 else
   $where = "";
 
-$result = sql_queryn($link, "SELECT mp_num,mp_name,mp_matches,mp_score,mp_time,mp_lastmatch FROM {$dbpre}maps $where ORDER BY mp_matches DESC LIMIT $start,$mapspage");
+$result = sql_queryn($link, "SELECT mp_num,mp_name,mp_matches,mp_score,mp_time,mp_lastmatch 
+                             FROM {$dbpre}maps 
+                             $where 
+                             ORDER BY mp_matches DESC 
+                             LIMIT $start,$mapspage");
 if (!$result) {
   echo "$LANG_MAPDATABASEERRORP<br />\n";
   exit;
@@ -145,7 +148,7 @@ while($row = sql_fetch_assoc($result)) {
   $mapname = stripspecialchars($mp_name);
   $start = strtotime($mp_lastmatch);
   $matchdate = formatdate($start, 1);
-  $tottime = sprintf("%0.1f", $mp_time / 360000.0);
+  $tottime = displayTimeMins($mp_time / 6000.0);
 
   echo <<<EOF
   <tr>

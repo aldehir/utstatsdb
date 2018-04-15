@@ -53,7 +53,7 @@ $mapdesc = stripspecialchars($mp_desc);
 $mapauthor = stripspecialchars($mp_author);
 $last = strtotime($mp_lastmatch);
 $lastdate = formatdate($last, 1);
-$time = sprintf("%0.1f", $mp_time / 360000.0);
+$time = displayTimeMins($mp_time / 6000.0);
 
 echo <<<EOF
 <table cellpadding="1" cellspacing="2" border="0" width="720">
@@ -93,10 +93,7 @@ if (file_exists("mapimages/$mapimage")) {
         </tr>
         <tr>
           <td class="dark" align="center">Game Time</td>
-          <td class="grey" align="center" colspan="3">$time hours</td>
-        </tr>
-        <tr>
-          <td style="height:3"></td>
+          <td class="grey" align="center" colspan="3">$time</td>
         </tr>
         <tr>
           <td class="dark" align="center">Matches</td>
@@ -150,7 +147,7 @@ else {
   </tr>
   <tr>
     <td class="dark" align="center">Game Time</td>
-    <td class="grey" align="center">$time hours</td>
+    <td class="grey" align="center">$time</td>
     <td class="dark" align="center">&nbsp;</td>
     <td class="grey" align="center">&nbsp;</td>
   </tr>
@@ -231,24 +228,6 @@ echo <<<EOF
 
 EOF;
 
-// Load Weapon Descriptions
-$result = sql_queryn($link, "SELECT wp_num,wp_secondary,wp_desc,wp_weaptype FROM {$dbpre}weapons");
-if (!$result) {
-  echo "Error loading weapons descriptions.<br />\n";
-  exit;
-}
-$maxweapon = 0;
-$weapons = array();
-while($row = sql_fetch_row($result)) {
-  $num = $row[0];
-  $weapons[$num][0] = $row[2];
-  $weapons[$num][1] = $row[1];
-  $weapons[$num][2] = $row[3];
-  if ($num > $maxweapon)
-    $maxweapon = $num;
-}
-sql_free_result($result);
-
 $wskills = array(array());
 /* wskills:
  0 = Primary Kills
@@ -262,17 +241,22 @@ $wskills = array(array());
 */
 $numweapons = 0;
 // Load Map Weapon Kills for current map
-$result = sql_queryn($link, "SELECT mwk_weapon,mwk_kills,mwk_deaths,mwk_held,mwk_suicides FROM {$dbpre}mwkills WHERE mwk_map=$mapnum");
-while (list($weapon,$kills,$deaths,$held,$suicides) = sql_fetch_row($result)) {
+$result = sql_queryn($link, "SELECT 
+                              mwk_weapon,mwk_kills,mwk_deaths,mwk_held,mwk_suicides,
+                              wp_num,wp_secondary,wp_desc,wp_weaptype
+                             FROM {$dbpre}mwkills 
+                               LEFT JOIN {$dbpre}weapons ON wp_num=mwk_weapon
+                             WHERE mwk_map=$mapnum");
+while (list($weapon,$kills,$deaths,$held,$suicides,$wp_num,$wp_secondary,$wp_desc,$wp_weaptype) = sql_fetch_row($result)) {
   if ($kills || $deaths || $held || $suicides) {
     $frags = $kills - $suicides;
     // Look for existing matching wskills description
     $weap = -1;
     $secondary = 0;
     for ($i = 0; $i < $numweapons && $weap < 0; $i++) {
-      if (!strcmp($wskills[5][$i], $weapons[$weapon][0])) {
+      if (!strcmp($wskills[5][$i], $wp_desc)) {
         $weap = $i;
-        $secondary = $weapons[$weapon][1];
+        $secondary = $wp_secondary;
       }
     }
     // Add weapon if not already used
@@ -280,11 +264,11 @@ while (list($weapon,$kills,$deaths,$held,$suicides) = sql_fetch_row($result)) {
       $wskills[0][$numweapons] = $wskills[1][$numweapons] = 0; // Primary Kills / Secondary Kills
       $wskills[2][$numweapons] = $wskills[3][$numweapons] = 0; // Deaths From / Deaths Holding
       $wskills[4][$numweapons] = 0; // Suicides
-      $wskills[5][$numweapons] = $weapons[$weapon][0]; // Description
+      $wskills[5][$numweapons] = $wp_desc; // Description
       $wskills[6][$numweapons] = 0; // Frags
-      $wskills[7][$numweapons] = $weapons[$weapon][2]; // Type
+      $wskills[7][$numweapons] = $wp_weaptype; // Type
       $weap = $numweapons++;
-      $secondary = $weapons[$weapon][1];
+      $secondary = $wp_secondary;
     }
     $wskills[6][$weap] += $frags;
     if ($secondary)
@@ -347,20 +331,6 @@ echo "</table>\n";
 //========== Vehicle and Turret Specific Totals ===============================
 //=============================================================================
 echo <<<EOF
-<br />
-<table cellpadding="1" cellspacing="2" border="0" width="540">
-  <tr>
-    <td class="heading" colspan="7" align="center">Vehicle and Turret Specific Totals</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">Vehicle/Turret</td>
-    <td class="smheading" align="center" width="55">Frags</td>
-    <td class="smheading" align="center" width="55">Primary Kills</td>
-    <td class="smheading" align="center" width="70">Secondary Kills</td>
-    <td class="smheading" align="center" width="55">Deaths In</td>
-    <td class="smheading" align="center" width="55">Suicides</td>
-    <td class="smheading" align="center" width="55">Eff.</td>
-  </tr>
 
 EOF;
 
@@ -393,6 +363,20 @@ if ($numweapons > 0) {
 
     if ($kills || $skills || $deaths || $held) {
       echo <<< EOF
+<br />
+<table cellpadding="1" cellspacing="2" border="0" width="540">
+  <tr>
+    <td class="heading" colspan="7" align="center">Vehicle and Turret Specific Totals</td>
+  </tr>
+  <tr>
+    <td class="smheading" align="center">Vehicle/Turret</td>
+    <td class="smheading" align="center" width="55">Frags</td>
+    <td class="smheading" align="center" width="55">Primary Kills</td>
+    <td class="smheading" align="center" width="70">Secondary Kills</td>
+    <td class="smheading" align="center" width="55">Deaths In</td>
+    <td class="smheading" align="center" width="55">Suicides</td>
+    <td class="smheading" align="center" width="55">Eff.</td>
+  </tr>
   <tr>
     <td class="dark" align="center">$weapon</td>
     <td class="grey" align="center">$frags</td>
@@ -402,27 +386,17 @@ if ($numweapons > 0) {
     <td class="grey" align="center">$suicides</td>
     <td class="grey" align="center">$eff%</td>
   </tr>
-
+</table>
 EOF;
     }
   }
 }
-echo "</table>\n";
+//echo "</table>\n";
 
 //=============================================================================
 //========== Invasion Monster Totals ==========================================
 //=============================================================================
 echo <<<EOF
-<br />
-<table cellpadding="1" cellspacing="2" border="0" width="340">
-  <tr>
-    <td class="heading" colspan="3" align="center">Invasion Monster Totals</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">Monster</td>
-    <td class="smheading" align="center" width="95">Players Killed</td>
-    <td class="smheading" align="center" width="55">Deaths</td>
-  </tr>
 
 EOF;
 
@@ -446,17 +420,27 @@ if ($numweapons > 0) {
 
     if ($deaths) {
       echo <<< EOF
+<br />
+<table cellpadding="1" cellspacing="2" border="0" width="340">
+  <tr>
+    <td class="heading" colspan="3" align="center">Invasion Monster Totals</td>
+  </tr>
+  <tr>
+    <td class="smheading" align="center">Monster</td>
+    <td class="smheading" align="center" width="95">Players Killed</td>
+    <td class="smheading" align="center" width="55">Deaths</td>
+  </tr>
   <tr>
     <td class="dark" align="center">$weapon</td>
     <td class="grey" align="center">$kills</td>
     <td class="grey" align="center">$deaths</td>
   </tr>
-
+</table>
 EOF;
     }
   }
 }
-echo "</table>\n";
+//echo "</table>\n";
 
 //=============================================================================
 //========== Most Recent Matches Played =======================================
@@ -480,16 +464,16 @@ echo <<<EOF
     <td class="smheading" align="center" width="150">Match Type</td>
     <td class="smheading" align="center" width="225">Server</td>
     <td class="smheading" align="center" width="50">Players</td>
-    <td class="smheading" align="center" width="50">Minutes</td>
+    <td class="smheading" align="center" width="50">Time</td>
   </tr>
 
 EOF;
 
 $matches = 0;
 $result = sql_queryn($link, "SELECT gm_num,gm_server,gm_type,gm_start,gm_timeoffset,gm_length,gm_numplayers,sv_name,sv_shortname
-                       FROM {$dbpre}matches,{$dbpre}servers
-                       WHERE gm_map=$mapnum AND {$dbpre}servers.sv_num=gm_server
-                       ORDER BY gm_num DESC LIMIT 21");
+                             FROM {$dbpre}matches,{$dbpre}servers
+                             WHERE gm_map=$mapnum AND {$dbpre}servers.sv_num=gm_server
+                             ORDER BY gm_num DESC LIMIT 21");
 if (!$result) {
   echo "Error accessing match database.<br />\n";
   exit;
@@ -506,7 +490,7 @@ while ($row = sql_fetch_assoc($result)) {
     }
     $start = strtotime($gm_start);
     $matchdate = formatdate($start, 1);
-    $length = sprintf("%0.1f", $gm_length / (60.0 * $gm_timeoffset));
+    $length = displayTime($gm_length, $gm_timeoffset);
     if ($useshortname && $sv_shortname != "")
       $servername = stripspecialchars($sv_shortname);
     else
