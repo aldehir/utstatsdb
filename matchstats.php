@@ -2366,25 +2366,6 @@ EOF;
 //========== Vehicle and Turret Specific Information ==========================
 //=============================================================================
 if ($gm_logger == 1 && $gametval != 18) {
-  echo <<<EOF
-<br />
-<table cellpadding="1" cellspacing="2" border="0" width="660">
-  <tr>
-    <td class="heading" colspan="8" align="center">{$LANG_VEHICLETURRETSPECIFICINFORMATION}</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">{$LANG_VEHICLETURRET}</td>
-    <td class="smheading" align="center" width="55">{$LANG_FRAGS}</td>
-    <td class="smheading" align="center" width="70">{$LANG_PRIMARYKILLS}</td>
-    <td class="smheading" align="center" width="70">{$LANG_SECONDARYKILLS}</td>
-    <td class="smheading" align="center" width="55">{$LANG_ROADKILLS}</td>
-    <td class="smheading" align="center" width="55">{$LANG_DEATHSIN}</td>
-    <td class="smheading" align="center" width="55">{$LANG_SUICIDES}</td>
-    <td class="smheading" align="center" width="60">{$LANG_EFF}</td>
-  </tr>
-
-EOF;
-
   if ($numweapons > 0) {
     // Sort by frags,kills,secondary kills,road kills,deaths in,suicides,description,type
     array_multisort($wskills[5], SORT_DESC, SORT_NUMERIC,
@@ -2396,9 +2377,9 @@ EOF;
                     $wskills[4], SORT_ASC, SORT_STRING,
                     $wskills[6], SORT_ASC, SORT_NUMERIC);
 
+    $wasStats = false;
     for ($i = 0; $i < $numweapons; $i++) {
-      if ($wskills[6][$i] < 1 || $wskills[6][$i] > 2)
-        continue;
+      if ($wskills[6][$i] < 1 || $wskills[6][$i] > 2) continue;
       $weapon = $wskills[4][$i];
       $kills = $wskills[0][$i];
       $skills = $wskills[1][$i];
@@ -2408,54 +2389,59 @@ EOF;
       $roadkills = $wskills[7][$i];
 
       if ($kills || $skills || $roadkills || $held || $suicides) {
-        if ($kills + $skills + $roadkills + $held + $suicides == 0)
+        $wasStats = true;
+        if ($kills + $skills + $roadkills + $held + $suicides == 0) {
           $eff = "0.0";
-        else
+        } else {
           $eff = sprintf("%0.1f", (($kills + $skills + $roadkills) / ($kills + $skills + $roadkills + $held + $suicides)) * 100.0);
+        }
+
+        if ($i == 0) { // print headers on first iteration
+          echo <<<EOF
+  <br />
+  <table cellpadding="1" cellspacing="2" border="0" width="660">
+    <tr>
+      <td class="heading" colspan="8" align="center">{$LANG_VEHICLETURRETSPECIFICINFORMATION}</td>
+    </tr>
+    <tr>
+      <td class="smheading" align="center">{$LANG_VEHICLETURRET}</td>
+      <td class="smheading" align="center" width="55">{$LANG_FRAGS}</td>
+      <td class="smheading" align="center" width="70">{$LANG_PRIMARYKILLS}</td>
+      <td class="smheading" align="center" width="70">{$LANG_SECONDARYKILLS}</td>
+      <td class="smheading" align="center" width="55">{$LANG_ROADKILLS}</td>
+      <td class="smheading" align="center" width="55">{$LANG_DEATHSIN}</td>
+      <td class="smheading" align="center" width="55">{$LANG_SUICIDES}</td>
+      <td class="smheading" align="center" width="60">{$LANG_EFF}</td>
+    </tr>
+EOF;
+        }
 
         echo <<< EOF
-  <tr>
-    <td class="dark" align="center">$weapon</td>
-    <td class="grey" align="center">$frags</td>
-    <td class="grey" align="center">$kills</td>
-    <td class="grey" align="center">$skills</td>
-    <td class="grey" align="center">$roadkills</td>
-    <td class="grey" align="center">$held</td>
-    <td class="grey" align="center">$suicides</td>
-    <td class="grey" align="center">$eff%</td>
-  </tr>
-
+    <tr>
+      <td class="dark" align="center">$weapon</td>
+      <td class="grey" align="center">$frags</td>
+      <td class="grey" align="center">$kills</td>
+      <td class="grey" align="center">$skills</td>
+      <td class="grey" align="center">$roadkills</td>
+      <td class="grey" align="center">$held</td>
+      <td class="grey" align="center">$suicides</td>
+      <td class="grey" align="center">$eff%</td>
+    </tr>
 EOF;
       }
     }
-  }
-  else {
+  } else {
     echo <<< EOF
   <tr>
     <td class="grey" align="center" colspan="5">{$LANG_NOVEHICLEORTURRETKILLS}</td>
   </tr>
-
 EOF;
+
+    if ($wasStats) echo "</table>";
   }
-  echo "</table>\n";
 }
-else if ($gametval != 18) {
-  echo <<<EOF
-<br />
-<table cellpadding="1" cellspacing="2" border="0" width="560">
-  <tr>
-    <td class="heading" colspan="6" align="center">{$LANG_VEHICLETURRETSPECIFICINFORMATION}</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">{$LANG_VEHICLETURRET}</td>
-    <td class="smheading" align="center" width="55">{$LANG_FRAGS}</td>
-    <td class="smheading" align="center" width="70">{$LANG_PRIMARYKILLS}</td>
-    <td class="smheading" align="center" width="70">{$LANG_SECONDARYKILLS}</td>
-    <td class="smheading" align="center" width="55">{$LANG_ROADKILLS}</td>
-    <td class="smheading" align="center" width="55">{$LANG_SUICIDES}</td>
-  </tr>
 
-EOF;
+else if ($gametval != 18) {
 
   if ($numweapons > 0) {
     // Sort by frags,kills,secondary kills,road kills,suicides,description,deaths holding,type
@@ -2468,6 +2454,7 @@ EOF;
                     $wskills[2], SORT_ASC, SORT_NUMERIC,
                     $wskills[6], SORT_ASC, SORT_NUMERIC);
 
+    $wasStats = false;
     for ($i = 0; $i < $numweapons; $i++) {
       if ($wskills[6][$i] < 1 || $wskills[6][$i] > 2)
         continue;
@@ -2479,16 +2466,34 @@ EOF;
       $roadkills = $wskills[7][$i];
 
       if ($kills || $skills || $roadkills || $suicides) {
-        echo <<< EOF
-  <tr>
-    <td class="dark" align="center">$weapon</td>
-    <td class="grey" align="center">$frags</td>
-    <td class="grey" align="center">$kills</td>
-    <td class="grey" align="center">$skills</td>
-    <td class="grey" align="center">$roadkills</td>
-    <td class="grey" align="center">$suicides</td>
-  </tr>
+        $wasStats = true;
+        if ($i == 0) { // print heading on first iteration
+          echo <<<EOF
+  <br />
+  <table cellpadding="1" cellspacing="2" border="0" width="560">
+    <tr>
+      <td class="heading" colspan="6" align="center">{$LANG_VEHICLETURRETSPECIFICINFORMATION}</td>
+    </tr>
+    <tr>
+      <td class="smheading" align="center">{$LANG_VEHICLETURRET}</td>
+      <td class="smheading" align="center" width="55">{$LANG_FRAGS}</td>
+      <td class="smheading" align="center" width="70">{$LANG_PRIMARYKILLS}</td>
+      <td class="smheading" align="center" width="70">{$LANG_SECONDARYKILLS}</td>
+      <td class="smheading" align="center" width="55">{$LANG_ROADKILLS}</td>
+      <td class="smheading" align="center" width="55">{$LANG_SUICIDES}</td>
+    </tr>
+EOF;
+        }
 
+        echo <<< EOF
+    <tr>
+      <td class="dark" align="center">$weapon</td>
+      <td class="grey" align="center">$frags</td>
+      <td class="grey" align="center">$kills</td>
+      <td class="grey" align="center">$skills</td>
+      <td class="grey" align="center">$roadkills</td>
+      <td class="grey" align="center">$suicides</td>
+    </tr>
 EOF;
       }
     }
@@ -2498,10 +2503,10 @@ EOF;
   <tr>
     <td class="grey" align="center" colspan="5">{$LANG_NOVEHICLEORTURRETKILLS}</td>
   </tr>
-
 EOF;
+
+    if ($wasStats) echo "</table>";
   }
-  echo "</table>\n";
 }
 
 //=============================================================================

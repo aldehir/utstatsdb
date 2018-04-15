@@ -330,10 +330,6 @@ echo "</table>\n";
 //=============================================================================
 //========== Vehicle and Turret Specific Totals ===============================
 //=============================================================================
-echo <<<EOF
-
-EOF;
-
 if ($numweapons > 0) {
   // Sort by frags, kills, secondary kills, deaths holding, deaths from, suicides, description
   array_multisort($wskills[6], SORT_DESC, SORT_NUMERIC,
@@ -345,6 +341,7 @@ if ($numweapons > 0) {
                   $wskills[5], SORT_ASC, SORT_STRING,
                   $wskills[7], SORT_ASC, SORT_NUMERIC);
 
+  $wasStats = false;
   for ($i = 0; $i < $numweapons; $i++) {
     if ($wskills[7][$i] < 1 || $wskills[7][$i] > 2)
       continue;
@@ -362,43 +359,45 @@ if ($numweapons > 0) {
       $eff = sprintf("%0.1f", (($kills + $skills) / ($kills + $skills + $held + $suicides)) * 100.0);
 
     if ($kills || $skills || $deaths || $held) {
+      $wasStats = true;
+      if ($i == 0) { // print header on first iteration
+        echo <<< EOF
+  <br />
+  <table cellpadding="1" cellspacing="2" border="0" width="540">
+    <tr>
+      <td class="heading" colspan="7" align="center">Vehicle and Turret Specific Totals</td>
+    </tr>
+    <tr>
+      <td class="smheading" align="center">Vehicle/Turret</td>
+      <td class="smheading" align="center" width="55">Frags</td>
+      <td class="smheading" align="center" width="55">Primary Kills</td>
+      <td class="smheading" align="center" width="70">Secondary Kills</td>
+      <td class="smheading" align="center" width="55">Deaths In</td>
+      <td class="smheading" align="center" width="55">Suicides</td>
+      <td class="smheading" align="center" width="55">Eff.</td>
+    </tr>
+EOF;
+      }
+
       echo <<< EOF
-<br />
-<table cellpadding="1" cellspacing="2" border="0" width="540">
-  <tr>
-    <td class="heading" colspan="7" align="center">Vehicle and Turret Specific Totals</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">Vehicle/Turret</td>
-    <td class="smheading" align="center" width="55">Frags</td>
-    <td class="smheading" align="center" width="55">Primary Kills</td>
-    <td class="smheading" align="center" width="70">Secondary Kills</td>
-    <td class="smheading" align="center" width="55">Deaths In</td>
-    <td class="smheading" align="center" width="55">Suicides</td>
-    <td class="smheading" align="center" width="55">Eff.</td>
-  </tr>
-  <tr>
-    <td class="dark" align="center">$weapon</td>
-    <td class="grey" align="center">$frags</td>
-    <td class="grey" align="center">$kills</td>
-    <td class="grey" align="center">$skills</td>
-    <td class="grey" align="center">$held</td>
-    <td class="grey" align="center">$suicides</td>
-    <td class="grey" align="center">$eff%</td>
-  </tr>
-</table>
+    <tr>
+      <td class="dark" align="center">$weapon</td>
+      <td class="grey" align="center">$frags</td>
+      <td class="grey" align="center">$kills</td>
+      <td class="grey" align="center">$skills</td>
+      <td class="grey" align="center">$held</td>
+      <td class="grey" align="center">$suicides</td>
+      <td class="grey" align="center">$eff%</td>
+    </tr>
 EOF;
     }
   }
+  if ($wasStats) echo "</table>";
 }
-//echo "</table>\n";
 
 //=============================================================================
 //========== Invasion Monster Totals ==========================================
 //=============================================================================
-echo <<<EOF
-
-EOF;
 
 if ($numweapons > 0) {
   // Sort by kills, deaths, description
@@ -411,6 +410,7 @@ if ($numweapons > 0) {
                   $wskills[3], SORT_ASC, SORT_NUMERIC,
                   $wskills[7], SORT_ASC, SORT_NUMERIC);
 
+  $wasStats = false;
   for ($i = 0; $i < $numweapons; $i++) {
     if ($wskills[7][$i] != 3)
       continue;
@@ -419,28 +419,34 @@ if ($numweapons > 0) {
     $deaths = $wskills[2][$i];
 
     if ($deaths) {
+      $wasStats = true;
+      if ($i == 0) { // print headers on first iteration
+        echo <<< EOF
+  <br />
+  <table cellpadding="1" cellspacing="2" border="0" width="340">
+    <tr>
+      <td class="heading" colspan="3" align="center">Invasion Monster Totals</td>
+    </tr>
+    <tr>
+      <td class="smheading" align="center">Monster</td>
+      <td class="smheading" align="center" width="95">Players Killed</td>
+      <td class="smheading" align="center" width="55">Deaths</td>
+    </tr>
+EOF;
+
+      }
       echo <<< EOF
-<br />
-<table cellpadding="1" cellspacing="2" border="0" width="340">
-  <tr>
-    <td class="heading" colspan="3" align="center">Invasion Monster Totals</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">Monster</td>
-    <td class="smheading" align="center" width="95">Players Killed</td>
-    <td class="smheading" align="center" width="55">Deaths</td>
-  </tr>
-  <tr>
-    <td class="dark" align="center">$weapon</td>
-    <td class="grey" align="center">$kills</td>
-    <td class="grey" align="center">$deaths</td>
-  </tr>
-</table>
+    <tr>
+      <td class="dark" align="center">$weapon</td>
+      <td class="grey" align="center">$kills</td>
+      <td class="grey" align="center">$deaths</td>
+    </tr>
+  </table>
 EOF;
     }
   }
+  if ($wasStats) echo "</table>";
 }
-//echo "</table>\n";
 
 //=============================================================================
 //========== Most Recent Matches Played =======================================
