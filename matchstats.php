@@ -2389,14 +2389,14 @@ if ($gm_logger == 1 && $gametval != 18) {
       $roadkills = $wskills[7][$i];
 
       if ($kills || $skills || $roadkills || $held || $suicides) {
-        $wasStats = true;
         if ($kills + $skills + $roadkills + $held + $suicides == 0) {
           $eff = "0.0";
         } else {
           $eff = sprintf("%0.1f", (($kills + $skills + $roadkills) / ($kills + $skills + $roadkills + $held + $suicides)) * 100.0);
         }
 
-        if ($i == 0) { // print headers on first iteration
+        if (!$wasStats) { // print headers on first iteration
+          $wasStats = true;
           echo <<<EOF
   <br />
   <table cellpadding="1" cellspacing="2" border="0" width="660">
@@ -2430,12 +2430,6 @@ EOF;
 EOF;
       }
     }
-  } else {
-    echo <<< EOF
-  <tr>
-    <td class="grey" align="center" colspan="5">{$LANG_NOVEHICLEORTURRETKILLS}</td>
-  </tr>
-EOF;
 
     if ($wasStats) echo "</table>";
   }
@@ -2466,8 +2460,8 @@ else if ($gametval != 18) {
       $roadkills = $wskills[7][$i];
 
       if ($kills || $skills || $roadkills || $suicides) {
-        $wasStats = true;
-        if ($i == 0) { // print heading on first iteration
+        if (!$wasStats) { // print heading on first iteration
+          $wasStats = true;
           echo <<<EOF
   <br />
   <table cellpadding="1" cellspacing="2" border="0" width="560">
@@ -2497,15 +2491,9 @@ EOF;
 EOF;
       }
     }
-  }
-  else {
-    echo <<< EOF
-  <tr>
-    <td class="grey" align="center" colspan="5">{$LANG_NOVEHICLEORTURRETKILLS}</td>
-  </tr>
-EOF;
 
     if ($wasStats) echo "</table>";
+
   }
 }
 

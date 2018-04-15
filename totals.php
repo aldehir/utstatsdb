@@ -54,7 +54,7 @@ EOF;
 //========== Summary ==========================================================
 //=============================================================================
 echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" class="box">
   <tr>
     <td class="medheading" align="center" colspan="12">{$LANG_SUMMARY}</td>
@@ -99,8 +99,8 @@ while ($row = sql_fetch_assoc($result)) {
       $fph = "0.0";
     else
       $fph = sprintf("%0.1f", $frags * (3600.0 / $tp_gtime));
-    $ttl = sprintf("%0.1f", $tp_gtime / ($tp_deaths + $tp_suicides + 1));
-    $hours = sprintf("%0.1f", $tp_gtime / 3600.0);
+    $ttl = displayTimeMins($tp_gtime / 60 / ($tp_deaths + $tp_suicides + 1));
+    $hours = displayTimeMins($tp_gtime / 60.0);
 
     $tot_score += $tp_score;
     $tot_frags += $frags;
@@ -140,8 +140,8 @@ if ($tot_time == 0)
   $tot_fph = "0.0";
 else
   $tot_fph = sprintf("%0.1f", $tot_frags * (3600 / $tot_time));
-$tot_ttl = sprintf("%0.1f", $tot_time / ($tot_deaths + $tot_suicides + 1));
-$tot_hours = sprintf("%0.1f", $tot_time / 3600);
+$tot_ttl = displayTimeMins($tot_time / 60 / ($tot_deaths + $tot_suicides + 1));
+$tot_hours = displayTimeMins($tot_time / 60);
 
 echo <<<EOF
   <tr>
@@ -166,7 +166,7 @@ EOF;
 //========== CTF, Bombing Run, and Double Domination Events Summary ===========
 //=============================================================================
 echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="600" class="box">
   <tr>
     <td class="medheading" align="center" colspan="11">{$LANG_CTFBRDDEVENTSSUMMARY}</td>
@@ -205,7 +205,7 @@ EOF;
 //========== Onslaught Events Summary =========================================
 //=============================================================================
 echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="400" class="box">
   <tr>
     <td class="medheading" align="center" colspan="11">{$LANG_ONSEVENTSSUMMARY}</td>
@@ -243,7 +243,7 @@ while ($row = sql_fetch_row($result)) {
 sql_free_result($result);
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" class="box">
   <tr>
     <td class="medheading" align="center" colspan="8">$LANG_SPECTIALEVENTS</td>
@@ -360,7 +360,7 @@ array_multisort($weapons[1], SORT_DESC, SORT_NUMERIC,
                 $weapons[0], SORT_ASC, SORT_STRING);
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="590" class="box">
   <tr>
     <td class="heading" colspan="7" align="center">{$LANG_WEAPONSPECIFICTOTALS}</td>
@@ -444,7 +444,7 @@ sql_free_result($result);
 
 if ($numweapons) {
   echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="440" class="box">
   <tr>
     <td class="heading" colspan="5" align="center">{$LANG_WEAPONACCURACYINFO}</td>
@@ -571,25 +571,7 @@ array_multisort($weapons[1], SORT_DESC, SORT_NUMERIC,
                 $weapons[6], SORT_ASC, SORT_NUMERIC,
                 $weapons[0], SORT_ASC, SORT_STRING);
 
-echo <<<EOF
-<font size="1"><br /></font>
-<table cellpadding="1" cellspacing="2" border="0" width="660" class="box">
-  <tr>
-    <td class="heading" colspan="8" align="center">{$LANG_VEHICLETURRETSPECIFICTOTALS}</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">{$LANG_VEHICLETURRET}</td>
-    <td class="smheading" align="center" width="55">{$LANG_FRAGS}</td>
-    <td class="smheading" align="center" width="70">{$LANG_PRIMARYKILLS}</td>
-    <td class="smheading" align="center" width="70">{$LANG_SECONDARYKILLS}</td>
-    <td class="smheading" align="center" width="55">{$LANG_ROADKILLS}</td>
-    <td class="smheading" align="center" width="55">{$LANG_DEATHSIN}</td>
-    <td class="smheading" align="center" width="55">{$LANG_SUICIDES}</td>
-    <td class="smheading" align="center" width="60">{$LANG_EFF}</td>
-  </tr>
-
-EOF;
-
+$wasStats = false;
 for ($i = 0; $i < $numweapons; $i++) {
   $weapon = $weapons[0][$i];
   $frags = $weapons[1][$i];
@@ -605,22 +587,42 @@ for ($i = 0; $i < $numweapons; $i++) {
     $eff = sprintf("%0.1f", (($kills + $skills + $roadkills) / ($kills + $skills + $roadkills + $deaths + $suicides)) * 100.0);
 
   if ($frags || $kills || $skills || $roadkills) {
-    echo <<< EOF
-  <tr>
-    <td class="dark" align="center">$weapon</td>
-    <td class="grey" align="center">$frags</td>
-    <td class="grey" align="center">$kills</td>
-    <td class="grey" align="center">$skills</td>
-    <td class="grey" align="center">$roadkills</td>
-    <td class="grey" align="center">$deaths</td>
-    <td class="grey" align="center">$suicides</td>
-    <td class="grey" align="center">$eff%</td>
-  </tr>
+    if (!$wasStats) {
+      $wasStats = true;
+      echo <<<EOF
+  <br />
+  <table cellpadding="1" cellspacing="2" border="0" width="660" class="box">
+    <tr>
+      <td class="heading" colspan="8" align="center">{$LANG_VEHICLETURRETSPECIFICTOTALS}</td>
+    </tr>
+    <tr>
+      <td class="smheading" align="center">{$LANG_VEHICLETURRET}</td>
+      <td class="smheading" align="center" width="55">{$LANG_FRAGS}</td>
+      <td class="smheading" align="center" width="70">{$LANG_PRIMARYKILLS}</td>
+      <td class="smheading" align="center" width="70">{$LANG_SECONDARYKILLS}</td>
+      <td class="smheading" align="center" width="55">{$LANG_ROADKILLS}</td>
+      <td class="smheading" align="center" width="55">{$LANG_DEATHSIN}</td>
+      <td class="smheading" align="center" width="55">{$LANG_SUICIDES}</td>
+      <td class="smheading" align="center" width="60">{$LANG_EFF}</td>
+    </tr>
+EOF;
+    }
 
+    echo <<< EOF
+    <tr>
+      <td class="dark" align="center">$weapon</td>
+      <td class="grey" align="center">$frags</td>
+      <td class="grey" align="center">$kills</td>
+      <td class="grey" align="center">$skills</td>
+      <td class="grey" align="center">$roadkills</td>
+      <td class="grey" align="center">$deaths</td>
+      <td class="grey" align="center">$suicides</td>
+      <td class="grey" align="center">$eff%</td>
+    </tr>
 EOF;
   }
 }
-echo "</table>\n";
+if ($wasStats) echo "</table>";
 
 //=============================================================================
 //========== Invasion Monster Specific Totals =================================
@@ -658,37 +660,38 @@ array_multisort($weapons[1], SORT_DESC, SORT_NUMERIC,
                 $weapons[2], SORT_ASC, SORT_NUMERIC,
                 $weapons[0], SORT_ASC, SORT_STRING);
 
-echo <<<EOF
-<font size="1"><br /></font>
-<table cellpadding="1" cellspacing="2" border="0" width="340" class="box">
-  <tr>
-    <td class="heading" colspan="3" align="center">{$LANG_INVASIONMONSTERTOTALS}</td>
-  </tr>
-  <tr>
-    <td class="smheading" align="center">{$LANG_MONSTER}</td>
-    <td class="smheading" align="center" width="95">{$LANG_PLAYERSKILLED}</td>
-    <td class="smheading" align="center" width="55">{$LANG_DEATHS}</td>
-  </tr>
-
-EOF;
-
+$wasStats = false;
 for ($i = 0; $i < $numweapons; $i++) {
   $weapon = $weapons[0][$i];
   $kills = $weapons[1][$i];
   $deaths = $weapons[2][$i];
 
   if ($kills || $deaths) {
-    echo <<< EOF
-  <tr>
-    <td class="dark" align="center">$weapon</td>
-    <td class="grey" align="center">$kills</td>
-    <td class="grey" align="center">$deaths</td>
-  </tr>
+    if (!$wasStats) {
+      echo <<<EOF
+  <br />
+  <table cellpadding="1" cellspacing="2" border="0" width="340" class="box">
+    <tr>
+      <td class="heading" colspan="3" align="center">{$LANG_INVASIONMONSTERTOTALS}</td>
+    </tr>
+    <tr>
+      <td class="smheading" align="center">{$LANG_MONSTER}</td>
+      <td class="smheading" align="center" width="95">{$LANG_PLAYERSKILLED}</td>
+      <td class="smheading" align="center" width="55">{$LANG_DEATHS}</td>
+    </tr>
+EOF;
+    }
 
+    echo <<< EOF
+    <tr>
+      <td class="dark" align="center">$weapon</td>
+      <td class="grey" align="center">$kills</td>
+      <td class="grey" align="center">$deaths</td>
+    </tr>
 EOF;
   }
 }
-echo "</table>\n";
+if ($wasStats) echo "</table>";
 
 //=============================================================================
 //========== Suicide Totals ===================================================
@@ -730,7 +733,7 @@ if ($numweapons) {
                   $weapons[0], SORT_ASC, SORT_STRING);
 
   echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="260" class="box">
   <tr>
     <td class="heading" colspan="2" align="center">{$LANG_SUICIDETOTALS}</td>
@@ -762,15 +765,15 @@ EOF;
 //=============================================================================
 //========== Killing Sprees by Type ===========================================
 //=============================================================================
-$time1 = sprintf("%0.1f", $tl_spreet1 / 6000);
-$time2 = sprintf("%0.1f", $tl_spreet2 / 6000);
-$time3 = sprintf("%0.1f", $tl_spreet3 / 6000);
-$time4 = sprintf("%0.1f", $tl_spreet4 / 6000);
-$time5 = sprintf("%0.1f", $tl_spreet5 / 6000);
-$time6 = sprintf("%0.1f", $tl_spreet6 / 6000);
+$time1 = displayTimeMins($tl_spreet1 / 6000);
+$time2 = displayTimeMins($tl_spreet2 / 6000);
+$time3 = displayTimeMins($tl_spreet3 / 6000);
+$time4 = displayTimeMins($tl_spreet4 / 6000);
+$time5 = displayTimeMins($tl_spreet5 / 6000);
+$time6 = displayTimeMins($tl_spreet6 / 6000);
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="390" class="box">
   <tr>
     <td class="medheading" align="center" colspan="4">{$LANG_KILLINGSPREESBYTYPE}</td>
@@ -825,7 +828,7 @@ EOF;
 //========== Total Items Collected ============================================
 //=============================================================================
 echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="600" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_TOTALITEMSCOLLECTED}</td>

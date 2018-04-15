@@ -359,8 +359,8 @@ if ($numweapons > 0) {
       $eff = sprintf("%0.1f", (($kills + $skills) / ($kills + $skills + $held + $suicides)) * 100.0);
 
     if ($kills || $skills || $deaths || $held) {
-      $wasStats = true;
-      if ($i == 0) { // print header on first iteration
+      if (!$wasStats) { // print header on first iteration
+        $wasStats = true;
         echo <<< EOF
   <br />
   <table cellpadding="1" cellspacing="2" border="0" width="540">
@@ -419,8 +419,8 @@ if ($numweapons > 0) {
     $deaths = $wskills[2][$i];
 
     if ($deaths) {
-      $wasStats = true;
-      if ($i == 0) { // print headers on first iteration
+      if (!$wasStats) { // print headers on first iteration
+        $wasStats = true;
         echo <<< EOF
   <br />
   <table cellpadding="1" cellspacing="2" border="0" width="340">
