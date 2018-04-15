@@ -65,7 +65,7 @@ function displayTimeMins($minutes)
   $s = floor(($minutes - floor($minutes)) * 60);
 
   if ($h) {
-    return sprintf(($neg ? "-" : "") . "%dh&nbsp;%02dm&nbsp;%02ds", $h, $m, $s);
+    return sprintf(($neg ? "-" : "") . "%dh&nbsp;%02dm", $h, $m);
   } else {
     return sprintf(($neg ? "-" : "") . "%dm&nbsp;%02ds", $m, $s);
   }
