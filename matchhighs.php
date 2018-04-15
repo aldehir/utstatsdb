@@ -20,10 +20,18 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+$player_cache = array();
+$map_cache = array();
+
 function getplayer($plr)
 {
   global $link, $dbpre;
   global $LANG_PLAYERDATABASEERROR;
+  global $player_cache;
+
+  if (array_key_exists($plr, $player_cache)) {
+    return $player_cache[$plr];
+  }
 
   $result = sql_queryn($link, "SELECT pnum,plr_name,plr_bot FROM {$dbpre}players WHERE pnum=$plr LIMIT 1");
   if (!$result) {
@@ -42,13 +50,38 @@ function getplayer($plr)
     $gpplayer = "&nbsp;";
   sql_free_result($result);
 
+  $player_cache[$plr] = $gpplayer;
+
   return $gpplayer;
+}
+
+function getmap($map) {
+  global $link, $dbpre;
+  global $LANG_MAPDATABASEERRORP;
+  global $map_cache;
+
+  if (array_key_exists($map, $map_cache)) {
+    return $map_cache[$map];
+  }
+
+  // Get Map Name
+  $result = sql_queryn($link, "SELECT mp_name FROM {$dbpre}maps WHERE mp_num=$map LIMIT 1");
+  if (!$result) {
+    echo "{$LANG_MAPDATABASEERRORP}<br />\n";
+    exit;
+  }
+  list($mapName) = sql_fetch_row($result);
+  sql_free_result($result);
+
+  $map_cache[$map] = $mapName;
+
+  return $mapName;
 }
 
 function showweapons($group)
 {
-  global $weapons, $numweapons, $link, $dbpre;
-  global $LANG_NONE, $LANG_MAPDATABASEERRORP;
+  global $weapons, $numweapons;
+  global $LANG_NONE;
 
   // Sort by num, date, description, time, player, map
   switch ($group) {
@@ -104,18 +137,11 @@ function showweapons($group)
       $wpdesc = $weapons[0][$i];
       if (strcmp($wpdesc, "{$LANG_NONE}")) {
         $player = getplayer($weapons[$group * 5 - 3][$i]);
-        $time = sprintf("%0.1f", $weapons[$group * 5 - 2][$i] / 6000);
+        $time = displayTimeMins($weapons[$group * 5 - 2][$i] / 6000);
         $mapnum = $weapons[$group * 5 - 1][$i];
         $date = formatdate(strtotime($weapons[$group * 5][$i]), 0);
 
-        // Get Map Name
-        $result = sql_queryn($link, "SELECT mp_name FROM {$dbpre}maps WHERE mp_num=$mapnum LIMIT 1");
-        if (!$result) {
-          echo "{$LANG_MAPDATABASEERRORP}<br />\n";
-          exit;
-        }
-        list($map) = sql_fetch_row($result);
-        sql_free_result($result);
+        $map = getmap($mapnum);
 
         echo <<< EOF
     <tr>
@@ -132,22 +158,6 @@ EOF;
     }
   }
   echo "</table>\n";
-}
-
-function map_name($num)
-{
-  global $link, $dbpre;
-  global $LANG_MAPDATABASEERROR;
-
-  // Get Map Names
-  $result = sql_queryn($link, "SELECT mp_name FROM {$dbpre}maps WHERE mp_num=$num LIMIT 1");
-  if (!$result) {
-    echo "{$LANG_MAPDATABASEERROR}<br />\n";
-    exit;
-  }
-  list($map) = sql_fetch_row($result);
-  sql_free_result($result);
-  return(stripspecialchars($map));
 }
 
 require("includes/main.inc.php");
@@ -172,8 +182,8 @@ while (list ($key, $val) = each ($row))
 //=============================================================================
 
 $frags = $tl_kills - $tl_suicides;
-$ghours = sprintf("%0.1f", $tl_gametime / 360000);
-$phours = sprintf("%0.1f", $tl_playertime / 360000);
+$ghours = displayTimeMins($tl_gametime / 6000);
+$phours = displayTimeMins($tl_playertime / 6000);
 
 echo <<<EOF
 <center>
@@ -214,7 +224,7 @@ if (!$result) {
 }
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" class="box">
   <tr>
     <td class="heading" colspan="4" align="center">{$LANG_TOTALMATCHESPLAYEDBYTYPE}</td>
@@ -236,8 +246,8 @@ while ($row = sql_fetch_assoc($result)) {
 
   if ($tp_played > 0) {
     $tot_played += $tp_played;
-    $ghours = sprintf("%0.1f", $tp_gtime / 360000);
-    $phours = sprintf("%0.1f", $tp_ptime / 360000);
+    $ghours = displayTimeMins($tp_gtime / 6000);
+    $phours = displayTimeMins($tp_ptime / 6000);
     $tot_gtime += $tp_gtime;
     $tot_ptime += $tp_ptime;
 
@@ -253,8 +263,8 @@ EOF;
 }
 sql_free_result($result);
 
-$ghours = sprintf("%0.1f", $tot_gtime / 360000);
-$phours = sprintf("%0.1f", $tot_ptime / 360000);
+$ghours = displayTimeMins($tot_gtime / 6000);
+$phours = displayTimeMins($tot_ptime / 6000);
 echo <<<EOF
   <tr>
     <td class="dark" align="center">{$LANG_TOTALS}</td>
@@ -271,120 +281,120 @@ EOF;
 //=============================================================================
 
 $fragsplayer = getplayer($tl_chfragssg_plr);
-$fragstime = sprintf("%0.1f", $tl_chfragssg_tm / 6000);
+$fragstime = displayTimeMins($tl_chfragssg_tm / 6000);
 if ($tl_chfragssg > 0)
   $fragsdate = formatdate(strtotime($tl_chfragssg_date), 0);
 else
   $fragsdate = "&nbsp;";
 
 $killsplayer = getplayer($tl_chkillssg_plr);
-$killstime = sprintf("%0.1f", $tl_chkillssg_tm / 6000);
+$killstime = displayTimeMins($tl_chkillssg_tm / 6000);
 if ($tl_chkillssg > 0)
   $killsdate = formatdate(strtotime($tl_chkillssg_date), 0);
 else
   $killsdate = "&nbsp;";
 
 $deathsplayer = getplayer($tl_chdeathssg_plr);
-$deathstime = sprintf("%0.1f", $tl_chdeathssg_tm / 6000);
+$deathstime = displayTimeMins($tl_chdeathssg_tm / 6000);
 if ($tl_chdeathssg > 0)
   $deathsdate = formatdate(strtotime($tl_chdeathssg_date), 0);
 else
   $deathsdate = "&nbsp;";
 
 $suicidesplayer = getplayer($tl_chsuicidessg_plr);
-$suicidestime = sprintf("%0.1f", $tl_chsuicidessg_tm / 6000);
+$suicidestime = displayTimeMins($tl_chsuicidessg_tm / 6000);
 if ($tl_chsuicidessg > 0)
   $suicidesdate = formatdate(strtotime($tl_chsuicidessg_date), 0);
 else
   $suicidesdate = "&nbsp;";
 
 $flagcaptureplayer = getplayer($tl_chflagcapturesg_plr);
-$flagcapturetime = sprintf("%0.1f", $tl_chflagcapturesg_tm / 6000);
+$flagcapturetime = displayTimeMins($tl_chflagcapturesg_tm / 6000);
 if ($tl_chflagcapturesg > 0)
   $flagcapturedate = formatdate(strtotime($tl_chflagcapturesg_date), 0);
 else
   $flagcapturedate = "&nbsp;";
 
 $flagreturnplayer = getplayer($tl_chflagreturnsg_plr);
-$flagreturntime = sprintf("%0.1f", $tl_chflagreturnsg_tm / 6000);
+$flagreturntime = displayTimeMins($tl_chflagreturnsg_tm / 6000);
 if ($tl_chflagreturnsg > 0)
   $flagreturndate = formatdate(strtotime($tl_chflagreturnsg_date), 0);
 else
   $flagreturndate = "&nbsp;";
 
 $flagkillplayer = getplayer($tl_chflagkillsg_plr);
-$flagkilltime = sprintf("%0.1f", $tl_chflagkillsg_tm / 6000);
+$flagkilltime = displayTimeMins($tl_chflagkillsg_tm / 6000);
 if ($tl_chflagkillsg > 0)
   $flagkilldate = formatdate(strtotime($tl_chflagkillsg_date), 0);
 else
   $flagkilldate = "&nbsp;";
 
 $cpcaptureplayer = getplayer($tl_chcpcapturesg_plr);
-$cpcapturetime = sprintf("%0.1f", $tl_chcpcapturesg_tm / 6000);
+$cpcapturetime = displayTimeMins($tl_chcpcapturesg_tm / 6000);
 if ($tl_chcpcapturesg > 0)
   $cpcapturedate = formatdate(strtotime($tl_chcpcapturesg_date), 0);
 else
   $cpcapturedate = "&nbsp;";
 
 $bombcarriedplayer = getplayer($tl_chbombcarriedsg_plr);
-$bombcarriedtime = sprintf("%0.1f", $tl_chbombcarriedsg_tm / 6000);
+$bombcarriedtime = displayTimeMins($tl_chbombcarriedsg_tm / 6000);
 if ($tl_chbombcarriedsg > 0)
   $bombcarrieddate = formatdate(strtotime($tl_chbombcarriedsg_date), 0);
 else
   $bombcarrieddate = "&nbsp;";
 
 $bombtossedplayer = getplayer($tl_chbombtossedsg_plr);
-$bombtossedtime = sprintf("%0.1f", $tl_chbombtossedsg_tm / 6000);
+$bombtossedtime = displayTimeMins($tl_chbombtossedsg_tm / 6000);
 if ($tl_chbombtossedsg > 0)
   $bombtosseddate = formatdate(strtotime($tl_chbombtossedsg_date), 0);
 else
   $bombtosseddate = "&nbsp;";
 
 $bombkillplayer = getplayer($tl_chbombkillsg_plr);
-$bombkilltime = sprintf("%0.1f", $tl_chbombkillsg_tm / 6000);
+$bombkilltime = displayTimeMins($tl_chbombkillsg_tm / 6000);
 if ($tl_chbombkillsg > 0)
   $bombkilldate = formatdate(strtotime($tl_chbombkillsg_date), 0);
 else
   $bombkilldate = "&nbsp;";
 
 $nodeconstructedplayer = getplayer($tl_chnodeconstructedsg_plr);
-$nodeconstructedtime = sprintf("%0.1f", $tl_chnodeconstructedsg_tm / 6000);
+$nodeconstructedtime = displayTimeMins($tl_chnodeconstructedsg_tm / 6000);
 if ($tl_chnodeconstructedsg > 0)
   $nodeconstructeddate = formatdate(strtotime($tl_chnodeconstructedsg_date), 0);
 else
   $nodeconstructeddate = "&nbsp;";
 
 $nodedestroyedplayer = getplayer($tl_chnodedestroyedsg_plr);
-$nodedestroyedtime = sprintf("%0.1f", $tl_chnodedestroyedsg_tm / 6000);
+$nodedestroyedtime = displayTimeMins($tl_chnodedestroyedsg_tm / 6000);
 if ($tl_chnodedestroyedsg > 0)
   $nodedestroyeddate = formatdate(strtotime($tl_chnodedestroyedsg_date), 0);
 else
   $nodedestroyeddate = "&nbsp;";
 
 $nodeconstdestroyedplayer = getplayer($tl_chnodeconstdestroyedsg_plr);
-$nodeconstdestroyedtime = sprintf("%0.1f", $tl_chnodeconstdestroyedsg_tm / 6000);
+$nodeconstdestroyedtime = displayTimeMins($tl_chnodeconstdestroyedsg_tm / 6000);
 if ($tl_chnodeconstdestroyedsg > 0)
   $nodeconstdestroyeddate = formatdate(strtotime($tl_chnodeconstdestroyedsg_date), 0);
 else
   $nodeconstdestroyeddate = "&nbsp;";
 
-$tl_chfragssg_mapname = map_name($tl_chfragssg_map);
-$tl_chkillssg_mapname = map_name($tl_chkillssg_map);
-$tl_chdeathssg_mapname = map_name($tl_chdeathssg_map);
-$tl_chsuicidessg_mapname = map_name($tl_chsuicidessg_map);
-$tl_chflagkillsg_mapname = map_name($tl_chflagkillsg_map);
-$tl_chflagcapturesg_mapname = map_name($tl_chflagcapturesg_map);
-$tl_chflagreturnsg_mapname = map_name($tl_chflagreturnsg_map);
-$tl_chcpcapturesg_mapname = map_name($tl_chcpcapturesg_map);
-$tl_chbombcarriedsg_mapname = map_name($tl_chbombcarriedsg_map);
-$tl_chbombtossedsg_mapname = map_name($tl_chbombtossedsg_map);
-$tl_chbombkillsg_mapname = map_name($tl_chbombkillsg_map);
-$tl_chnodeconstructedsg_mapname = map_name($tl_chnodeconstructedsg_map);
-$tl_chnodedestroyedsg_mapname = map_name($tl_chnodedestroyedsg_map);
-$tl_chnodeconstdestroyedsg_mapname = map_name($tl_chnodeconstdestroyedsg_map);
+$tl_chfragssg_mapname = getmap($tl_chfragssg_map);
+$tl_chkillssg_mapname = getmap($tl_chkillssg_map);
+$tl_chdeathssg_mapname = getmap($tl_chdeathssg_map);
+$tl_chsuicidessg_mapname = getmap($tl_chsuicidessg_map);
+$tl_chflagkillsg_mapname = getmap($tl_chflagkillsg_map);
+$tl_chflagcapturesg_mapname = getmap($tl_chflagcapturesg_map);
+$tl_chflagreturnsg_mapname = getmap($tl_chflagreturnsg_map);
+$tl_chcpcapturesg_mapname = getmap($tl_chcpcapturesg_map);
+$tl_chbombcarriedsg_mapname = getmap($tl_chbombcarriedsg_map);
+$tl_chbombtossedsg_mapname = getmap($tl_chbombtossedsg_map);
+$tl_chbombkillsg_mapname = getmap($tl_chbombkillsg_map);
+$tl_chnodeconstructedsg_mapname = getmap($tl_chnodeconstructedsg_map);
+$tl_chnodedestroyedsg_mapname = getmap($tl_chnodedestroyedsg_map);
+$tl_chnodeconstdestroyedsg_mapname = getmap($tl_chnodeconstdestroyedsg_map);
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="710" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_HIGHSFROMASINGLEMATCH}</td>
@@ -604,7 +614,7 @@ sql_free_result($result);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="710" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTKILLSWITHWEAPONINGLEMATCH}</td>
@@ -626,7 +636,7 @@ showweapons(1);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="710" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTDEATHSBYWEAPONSINGLEMATCH}</td>
@@ -648,7 +658,7 @@ showweapons(2);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="710" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTDEATHSHOLDINGWEAPONSINGLEMATCH}</td>
@@ -670,7 +680,7 @@ showweapons(3);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="710" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTSUICIDESFROMSINGLEMATCH}</td>

@@ -20,10 +20,17 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+$player_cache = array();
+
 function getplayer($plr)
 {
   global $link, $dbpre;
   global $LANG_PLAYERDATABASEERROR;
+  global $player_cache;
+
+  if (array_key_exists($plr, $player_cache)) {
+    return $player_cache[$plr];
+  }
 
   $result = sql_queryn($link, "SELECT pnum,plr_name,plr_bot FROM {$dbpre}players WHERE pnum=$plr LIMIT 1");
   if (!$result) {
@@ -41,6 +48,8 @@ function getplayer($plr)
   else
     $gpplayer = "&nbsp;";
   sql_free_result($result);
+
+  $player_cache[$plr] = $gpplayer;
 
   return $gpplayer;
 }
@@ -99,7 +108,7 @@ function showweapons($group)
       $wpdesc = $weapons[0][$i];
       if (strcmp($wpdesc, "None")) {
         $player = getplayer($weapons[$group * 4 - 2][$i]);
-        $time = sprintf("%0.1f", $weapons[$group * 4 - 1][$i] / 360000);
+        $time = displayTimeMins($weapons[$group * 4 - 1][$i] / 6000);
         $games = $weapons[$group * 4][$i];
 
         echo <<< EOF
@@ -140,8 +149,8 @@ while (list ($key, $val) = each ($row))
 //=============================================================================
 
 $frags = $tl_kills - $tl_suicides;
-$ghours = sprintf("%0.1f", $tl_gametime / 360000);
-$phours = sprintf("%0.1f", $tl_playertime / 360000);
+$ghours = displayTimeMins($tl_gametime / 6000);
+$phours = displayTimeMins($tl_playertime / 6000);
 
 echo <<<EOF
 <center>
@@ -182,7 +191,7 @@ if (!$result) {
 }
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" class="box">
   <tr>
     <td class="heading" colspan="4" align="center">{$LANG_TOTALMATCHESPLAYEDBYTYPE}</td>
@@ -204,8 +213,8 @@ while ($row = sql_fetch_array($result)) {
 
   if ($tp_played > 0) {
     $tot_played += $tp_played;
-    $ghours = sprintf("%0.1f", $tp_gtime / 360000);
-    $phours = sprintf("%0.1f", $tp_ptime / 360000);
+    $ghours = displayTimeMins($tp_gtime / 6000);
+    $phours = displayTimeMins($tp_ptime / 6000);
     $tot_gtime += $tp_gtime;
     $tot_ptime += $tp_ptime;
 
@@ -221,8 +230,8 @@ EOF;
 }
 sql_free_result($result);
 
-$ghours = sprintf("%0.1f", $tot_gtime / 360000);
-$phours = sprintf("%0.1f", $tot_ptime / 360000);
+$ghours = displayTimeMins($tot_gtime / 6000);
+$phours = displayTimeMins($tot_ptime / 6000);
 echo <<<EOF
   <tr>
     <td class="dark" align="center">{$LANG_TOTALS}</td>
@@ -239,73 +248,73 @@ EOF;
 //=============================================================================
 
 $fragsplayer = getplayer($tl_chfrags_plr);
-$fragstime = sprintf("%0.1f", $tl_chfrags_tm / 360000);
+$fragstime = displayTimeMins($tl_chfrags_tm / 6000);
 $killsplayer = getplayer($tl_chkills_plr);
-$killstime = sprintf("%0.1f", $tl_chkills_tm / 360000);
+$killstime = displayTimeMins($tl_chkills_tm / 6000);
 $deathsplayer = getplayer($tl_chdeaths_plr);
-$deathstime = sprintf("%0.1f", $tl_chdeaths_tm / 360000);
+$deathstime = displayTimeMins($tl_chdeaths_tm / 6000);
 $suicidesplayer = getplayer($tl_chsuicides_plr);
-$suicidestime = sprintf("%0.1f", $tl_chsuicides_tm / 360000);
+$suicidestime = displayTimeMins($tl_chsuicides_tm / 6000);
 $headshotsplayer = getplayer($tl_chheadshots_plr);
-$headshotstime = sprintf("%0.1f", $tl_chheadshots_tm / 360000);
+$headshotstime = displayTimeMins($tl_chheadshots_tm / 6000);
 $firstbloodplayer = getplayer($tl_chfirstblood_plr);
-$firstbloodtime = sprintf("%0.1f", $tl_chfirstblood_tm / 360000);
+$firstbloodtime = displayTimeMins($tl_chfirstblood_tm / 6000);
 $multi1player = getplayer($tl_chmulti1_plr);
-$multi1time = sprintf("%0.1f", $tl_chmulti1_tm / 360000);
+$multi1time = displayTimeMins($tl_chmulti1_tm / 6000);
 $multi2player = getplayer($tl_chmulti2_plr);
-$multi2time = sprintf("%0.1f", $tl_chmulti2_tm / 360000);
+$multi2time = displayTimeMins($tl_chmulti2_tm / 6000);
 $multi3player = getplayer($tl_chmulti3_plr);
-$multi3time = sprintf("%0.1f", $tl_chmulti3_tm / 360000);
+$multi3time = displayTimeMins($tl_chmulti3_tm / 6000);
 $multi4player = getplayer($tl_chmulti4_plr);
-$multi4time = sprintf("%0.1f", $tl_chmulti4_tm / 360000);
+$multi4time = displayTimeMins($tl_chmulti4_tm / 6000);
 $multi5player = getplayer($tl_chmulti5_plr);
-$multi5time = sprintf("%0.1f", $tl_chmulti5_tm / 360000);
+$multi5time = displayTimeMins($tl_chmulti5_tm / 6000);
 $multi6player = getplayer($tl_chmulti6_plr);
-$multi6time = sprintf("%0.1f", $tl_chmulti6_tm / 360000);
+$multi6time = displayTimeMins($tl_chmulti6_tm / 6000);
 $multi7player = getplayer($tl_chmulti7_plr);
-$multi7time = sprintf("%0.1f", $tl_chmulti7_tm / 360000);
+$multi7time = displayTimeMins($tl_chmulti7_tm / 6000);
 $spree1player = getplayer($tl_chspree1_plr);
-$spree1time = sprintf("%0.1f", $tl_chspree1_tm / 360000);
+$spree1time = displayTimeMins($tl_chspree1_tm / 6000);
 $spree2player = getplayer($tl_chspree2_plr);
-$spree2time = sprintf("%0.1f", $tl_chspree2_tm / 360000);
+$spree2time = displayTimeMins($tl_chspree2_tm / 6000);
 $spree3player = getplayer($tl_chspree3_plr);
-$spree3time = sprintf("%0.1f", $tl_chspree3_tm / 360000);
+$spree3time = displayTimeMins($tl_chspree3_tm / 6000);
 $spree4player = getplayer($tl_chspree4_plr);
-$spree4time = sprintf("%0.1f", $tl_chspree4_tm / 360000);
+$spree4time = displayTimeMins($tl_chspree4_tm / 6000);
 $spree5player = getplayer($tl_chspree5_plr);
-$spree5time = sprintf("%0.1f", $tl_chspree5_tm / 360000);
+$spree5time = displayTimeMins($tl_chspree5_tm / 6000);
 $spree6player = getplayer($tl_chspree6_plr);
-$spree6time = sprintf("%0.1f", $tl_chspree6_tm / 360000);
+$spree6time = displayTimeMins($tl_chspree6_tm / 6000);
 $fph = sprintf("%0.1f", $tl_chfph);
 $fphplayer = getplayer($tl_chfph_plr);
-$fphtime = sprintf("%0.1f", $tl_chfph_tm / 360000);
+$fphtime = displayTimeMins($tl_chfph_tm / 6000);
 $winsplayer = getplayer($tl_chwins_plr);
-$winstime = sprintf("%0.1f", $tl_chwins_tm / 360000);
+$winstime = displayTimeMins($tl_chwins_tm / 6000);
 $teamwinsplayer = getplayer($tl_chteamwins_plr);
-$teamwinstime = sprintf("%0.1f", $tl_chteamwins_tm / 360000);
+$teamwinstime = displayTimeMins($tl_chteamwins_tm / 6000);
 $flagcaptureplayer = getplayer($tl_chflagcapture_plr);
-$flagcapturetime = sprintf("%0.1f", $tl_chflagcapture_tm / 360000);
+$flagcapturetime = displayTimeMins($tl_chflagcapture_tm / 6000);
 $flagreturnplayer = getplayer($tl_chflagreturn_plr);
-$flagreturntime = sprintf("%0.1f", $tl_chflagreturn_tm / 360000);
+$flagreturntime = displayTimeMins($tl_chflagreturn_tm / 6000);
 $flagkillplayer = getplayer($tl_chflagkill_plr);
-$flagkilltime = sprintf("%0.1f", $tl_chflagkill_tm / 360000);
+$flagkilltime = displayTimeMins($tl_chflagkill_tm / 6000);
 $cpcaptureplayer = getplayer($tl_chcpcapture_plr);
-$cpcapturetime = sprintf("%0.1f", $tl_chcpcapture_tm / 360000);
+$cpcapturetime = displayTimeMins($tl_chcpcapture_tm / 6000);
 $bombcarriedplayer = getplayer($tl_chbombcarried_plr);
-$bombcarriedtime = sprintf("%0.1f", $tl_chbombcarried_tm / 360000);
+$bombcarriedtime = displayTimeMins($tl_chbombcarried_tm / 6000);
 $bombtossedplayer = getplayer($tl_chbombtossed_plr);
-$bombtossedtime = sprintf("%0.1f", $tl_chbombtossed_tm / 360000);
+$bombtossedtime = displayTimeMins($tl_chbombtossed_tm / 6000);
 $bombkillplayer = getplayer($tl_chbombkill_plr);
-$bombkilltime = sprintf("%0.1f", $tl_chbombkill_tm / 360000);
+$bombkilltime = displayTimeMins($tl_chbombkill_tm / 6000);
 $nodeconstructedplayer = getplayer($tl_chnodeconstructed_plr);
-$nodeconstructedtime = sprintf("%0.1f", $tl_chnodeconstructed_tm / 360000);
+$nodeconstructedtime = displayTimeMins($tl_chnodeconstructed_tm / 6000);
 $nodedestroyedplayer = getplayer($tl_chnodedestroyed_plr);
-$nodedestroyedtime = sprintf("%0.1f", $tl_chnodedestroyed_tm / 360000);
+$nodedestroyedtime = displayTimeMins($tl_chnodedestroyed_tm / 6000);
 $nodeconstdestroyedplayer = getplayer($tl_chnodeconstdestroyed_plr);
-$nodeconstdestroyedtime = sprintf("%0.1f", $tl_chnodeconstdestroyed_tm / 360000);
+$nodeconstdestroyedtime = displayTimeMins($tl_chnodeconstdestroyed_tm / 6000);
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>
     <td class="heading" colspan="5" align="center">{$LANG_CAREERHIGHS}</td>
@@ -377,7 +386,7 @@ echo <<<EOF
 EOF;
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>
     <td class="heading" colspan="5" align="center">{$LANG_MOSTSPECIALS}</td>
@@ -399,7 +408,7 @@ if (!$result) {
 
 while ($row = sql_fetch_row($result)) {
   $p = getplayer($row[2]);
-  $t = sprintf("%0.1f", $row[5] / 360000);
+  $t = displayTimeMins($row[5] / 6000);
 
   echo <<<EOF
   <tr>
@@ -415,7 +424,7 @@ EOF;
 sql_free_result($result);
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>
     <td class="heading" colspan="5" align="center">{$LANG_MULTIKILLS}</td>
@@ -477,7 +486,7 @@ echo <<<EOF
     <td class="grey" align="center">$multi7time</td>
   </tr>
 </table>
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>
     <td class="heading" colspan="5" align="center">{$LANG_KILLINGSPREES}</td>
@@ -532,7 +541,7 @@ echo <<<EOF
     <td class="grey" align="center">$spree6time</td>
   </tr>
 </table>
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="580" class="box">
   <tr>
     <td class="heading" colspan="5" align="center">{$LANG_GAMETYPESPECIFIC}</td>
@@ -726,7 +735,7 @@ sql_free_result($result);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="550" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTCAREERKILLSWITHAWEAPON}</td>
@@ -747,7 +756,7 @@ showweapons(1);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="550" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTCAREERDEATHSBYAWEAPON}</td>
@@ -768,7 +777,7 @@ showweapons(2);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="550" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTCAREERDEATHSWHILEHOLDING}</td>
@@ -789,7 +798,7 @@ showweapons(3);
 //=============================================================================
 
 echo <<<EOF
-<font size="1"><br /></font>
+<br/>
 <table cellpadding="1" cellspacing="2" border="0" width="550" class="box">
   <tr>
     <td class="heading" colspan="6" align="center">{$LANG_MOSTCAREERSUICIDES}</td>
