@@ -40,13 +40,17 @@ $link = sql_connect();
 $result = sql_queryn($link, "SELECT m.*, 
                                tp_num,tp_desc,tp_type,tp_team,
                                mp_name,
-                               sv_name,sv_shortname,sv_admin,sv_email 
+                               sv_name,sv_shortname,sv_admin,sv_email,
+                               p.*, coalesce(plr_name, 'Player ' || p.gp_num) as plr_name
                              FROM {$dbpre}matches m
                                LEFT JOIN {$dbpre}type ON tp_num=gm_type
                                LEFT JOIN {$dbpre}maps ON mp_num=gm_map
                                LEFT JOIN {$dbpre}servers ON sv_num=gm_server
+                               LEFT JOIN {$dbpre}gplayers p ON p.gp_match=gm_num AND p.gp_num=$plr
+                               LEFT JOIN {$dbpre}players ON pnum=gp_pnum
                              WHERE gm_num=$matchnum 
                              LIMIT 1");
+
 if (!$result) {
   echo "Match database error.<br />\n";
   exit;
@@ -77,38 +81,13 @@ $delay = $start - strtotime($gm_init);
 $matchdate = formatdate($start, 1);
 $matchinit = formatdate($init, 1);
 
-// Load Player
-$result = sql_queryn($link, "SELECT * FROM {$dbpre}gplayers WHERE gp_match=$matchnum AND gp_num=$plr LIMIT 1");
-if (!$result) {
-  echo "Match player list database error.<br />\n";
-  exit;
-}
-$row = sql_fetch_assoc($result);
-sql_free_result($result);
-if (!$row) {
-  echo "Invalid player number for match.<br />\n";
-  exit;
-}
-while (list ($key, $val) = each ($row))
-  ${$key} = $val;
+$gp_name = stripspecialchars($plr_name);
 
 $kills = $gp_kills0 + $gp_kills1 + $gp_kills2 + $gp_kills3;
 $deaths = $gp_deaths0 + $gp_deaths1 + $gp_deaths2 + $gp_deaths3;
 $suicides = $gp_suicides0 + $gp_suicides1 + $gp_suicides2 + $gp_suicides3;
 $frags = $kills - $suicides;
 $ptime = floatval(($gp_time0 + $gp_time1 + $gp_time2 + $gp_time3) / $gm_timeoffset);
-
-// Get current player name
-$result = sql_queryn($link, "SELECT plr_name FROM {$dbpre}players WHERE pnum=$gp_pnum LIMIT 1");
-if (!$result)
-  $gp_name = "Player $gp_num"; // Player not found
-else {
-  if ($row = sql_fetch_row($result))
-    $gp_name = stripspecialchars($row[0]);
-  else
-    $gp_name = "Player $gp_num"; // Player not found
-}
-sql_free_result($result);
 
 $pw = (isset($password) && $password) ? "{$LANG_ENABLED}" : "{$LANG_DISABLED}";
 $stats = (isset($gamestats) && $gamestats) ? "{$LANG_ENABLED}" : "{$LANG_DISABLED}";
@@ -460,7 +439,11 @@ EOF;
 //========== Special Events ===================================================
 //=============================================================================
 if ($gametval != 9) {
-  $result = sql_queryn($link, "SELECT se_num,se_title,se_desc,gs_total FROM {$dbpre}special LEFT JOIN {$dbpre}gspecials ON gs_stype=se_num WHERE gs_match=$matchnum AND gs_player=$gp_pnum ORDER BY se_num");
+  $result = sql_queryn($link, "SELECT se_num,se_title,se_desc,gs_total 
+                               FROM {$dbpre}special 
+                                 LEFT JOIN {$dbpre}gspecials ON gs_stype=se_num 
+                               WHERE gs_match=$matchnum AND gs_player=$gp_pnum 
+                               ORDER BY se_num");
   if (!$result) {
     echo "Player database error.<br />\n";
     exit;
