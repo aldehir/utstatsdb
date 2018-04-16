@@ -85,29 +85,17 @@ EOF;
 
   // Load Last Match
   $matches = 0;
-  $result = sql_query("SELECT MAX(gm_start) FROM {$dbpre}matches");
-  if (!$result) {
-    echo "{$LANG_MATCHDATABASEERROR} (main).<br />\n";
-    exit;
-  }
-  if (!list($recent) = sql_fetch_row($result)) {
-    echo "{$LANG_MATCHDATABASEERROR} (main).<br />\n";
-    exit;
-  }
-  $result = sql_query("SELECT gm_num,gm_map,gm_start FROM {$dbpre}matches WHERE gm_start='$recent' LIMIT 1");
-  if (list($gm_num,$gm_map,$gm_start) = sql_fetch_row($result)) {
+  $result = sql_query("SELECT gm_num,gm_map,gm_start,mp_name
+                       FROM {$dbpre}matches
+                         INNER JOIN {$dbpre}maps ON mp_num=gm_map
+                       ORDER BY gm_start DESC 
+                       LIMIT 1");
+  if (list($gm_num,$gm_map,$gm_start,$mapname) = sql_fetch_row($result)) {
     sql_free_result($result);
     $map = intval($gm_map);
     $start = strtotime($gm_start);
     $matchdate = formatdate($start, 1);
     $link = "matchstats.php?match=$gm_num";
-    $result = sql_query("SELECT mp_name FROM {$dbpre}maps WHERE mp_num=$map LIMIT 1");
-    if (!$result) {
-      echo "{$LANG_MAPDATABASEERROR} (main).<br />\n";
-      exit;
-    }
-    $row = sql_fetch_row($result);
-    $mapname = $row[0];
 
     $mapimage = strtolower($mapname).".jpg";
     if (file_exists("mapimages/$mapimage")) {
@@ -152,7 +140,7 @@ EOF;
   if ($title_msg == "")
     $title_msg = "&nbsp;";
   echo <<<EOF
-<font size="1"><br /></font>
+<br />
 <table cellpadding="1" cellspacing="2" border="0" width="600">
   <tr>
     <td colspan="10" align="center" class="titlemsg">$title_msg</td>
