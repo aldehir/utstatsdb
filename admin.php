@@ -295,8 +295,6 @@ exit;
 //========== Main Menu ========================================================
 //=============================================================================
 function mainpage() {
-  global $AdmPass;
-
   menu_top();
   echo "<div class=\"header\">Select an action on the left.</div>\n";
   menu_bottom();
@@ -339,7 +337,7 @@ function version_check() {
 }
 
 function menu_top() {
-  global $dbpre, $adminver, $Mode, $updatereq, $vermajor, $verminor, $verextra;
+  global $Mode, $updatereq;
 
   if ($Mode != "Initialize")
     $versioncheck = version_check();
@@ -405,21 +403,15 @@ EOF;
 }
 
 function menu_bottom() {
-  global $ver;
-
   echo <<<EOF
       </div>
     <div class="corner-br">&nbsp;</div>
     <div class="corner-bl">&nbsp;</div>
   </div>
 
-  <div id="footer">
-    Visit the <a href="http://www.utstatsdb.com">UTStatsDB</a> website.
-  </div>
-</body>
-</html>
-
 EOF;
+
+  require("includes/footer.inc.php");
 }
 
 //=============================================================================
@@ -430,7 +422,6 @@ function updatedb() {
 
   $ver = currentver();
   if ($ver == -1) {
-    $versioncheck = "Version check error!<br />\n";
     menu_bottom();
     exit;
   }
@@ -443,7 +434,6 @@ function updatedb() {
 
   $ver = currentver();
   if ($ver == -1) {
-    $versioncheck = "Version check error!<br />\n";
     menu_bottom();
     exit;
   }
@@ -456,7 +446,6 @@ function updatedb() {
 
   $ver = currentver();
   if ($ver == -1) {
-    $versioncheck = "Version check error!<br />\n";
     menu_bottom();
     exit;
   }
@@ -497,7 +486,7 @@ function currentver() {
 //========== Load Pass ========================================================
 //=============================================================================
 function loadpass() {
-  global $SQLdb, $dbtype, $dbpre, $AdmPass;
+  global $dbpre, $AdmPass;
 
   $result = sql_query("SELECT value FROM {$dbpre}config WHERE conf='AdminPass' LIMIT 1");
   if ($result) {

@@ -348,60 +348,78 @@ function tag_gv ($i, $data)
     map_vote($time, $plr, $game, $votes, 5);
 }
 
-// Item Pickup
-function tag_i ($i, $data)
-{
-  global $link, $dbpre, $match, $pickups, $break;
 
-  if ($i < 4 || $match->ended || !$match->started)
-    return;
+$item_cache = array();
 
-  // Remove OLTeams prefix from pickups
-  if (strlen($data[3]) > 7 && substr($data[3], 0, 7) == "OLTeams")
-    $item = sql_addslashes(substr($data[3], 7, 40));
-  else
-    $item = sql_addslashes(substr($data[3], 0, 40));
+function load_item_number($item) {
+  global $link, $dbpre;
+  global $item_cache;
 
-  $plr = check_player($data[2]);
-  if ($plr < 0)
-    return;
+  if (array_key_exists($item, $item_cache)) {
+    return $item_cache[$item];
+  }
 
   // Get Item Number
   $result = sql_queryn($link, "SELECT it_num FROM {$dbpre}items WHERE it_type='$item' LIMIT 1");
   if (!$result) {
-    echo "Error reading items table.{$break}\n";
+    echo "Error reading items table.\n";
     exit;
   }
   $row = sql_fetch_row($result);
   sql_free_result($result);
+
   if ($row) {
     $num = $row[0];
-    if (isset($pickups[$plr][$num]))
-      $pickups[$plr][$num]++;
-    else
-      $pickups[$plr][$num] = 1;
-  }
-  else { // Add new item
-    if (strlen($item) > 7 && strtolower(substr($item, -7)) == "_pickup")
+  } else { // Add new item
+    if (strlen($item) > 7 && strtolower(substr($item, -7)) == "_pickup") {
       $itemdesc = substr($item, 0, -7);
-    else if (strlen($item) > 6 && strtolower(substr($item, -6)) == "pickup")
+    } else if (strlen($item) > 6 && strtolower(substr($item, -6)) == "pickup") {
       $itemdesc = substr($item, 0, -6);
-    else
+    } else {
       $itemdesc = $item;
+    }
 
     $result = sql_queryn($link, "INSERT INTO {$dbpre}items (it_type,it_desc) VALUES('$item','$itemdesc')");
     if (!$result) {
-      echo "Error saving new item.{$break}\n";
+      echo "Error saving new item.\n";
       exit;
     }
     $num = sql_insert_id($link);
-    if (isset($pickups[$plr][$num]))
-      $pickups[$plr][$num]++;
-    else
-      $pickups[$plr][$num] = 1;
   }
-  if ($num > $match->maxpickups)
+
+  $item_cache[$item] = $num;
+
+  return $num;
+}
+
+// Item Pickup
+function tag_i ($i, $data)
+{
+  global $match, $pickups;
+
+  if ($i < 4 || $match->ended || !$match->started) return;
+
+  $plr = check_player($data[2]);
+  if ($plr < 0) return;
+
+  // Remove OLTeams prefix from pickups
+  if (strlen($data[3]) > 7 && substr($data[3], 0, 7) == "OLTeams") {
+    $item = sql_addslashes(substr($data[3], 7, 40));
+  } else {
+    $item = sql_addslashes(substr($data[3], 0, 40));
+  }
+
+  // Get Item Number
+  $num = load_item_number($item);
+  if (isset($pickups[$plr][$num])) {
+    $pickups[$plr][$num]++;
+  } else {
+    $pickups[$plr][$num] = 1;
+  }
+
+  if ($num > $match->maxpickups) {
     $match->maxpickups = $num;
+  }
 }
 
 ?>

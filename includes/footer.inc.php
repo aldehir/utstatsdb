@@ -1,5 +1,7 @@
 <?php
 
+global $showStats, $pageStats;
+
 $version = file_get_contents("VERSION.txt");
 
 $stats = "";

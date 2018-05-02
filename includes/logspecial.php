@@ -219,9 +219,16 @@ function ctime($tm)
   return intval(floatval($tm) * 100);
 }
 
+$weapon_cache = array();
+
 function get_weapon($weapon, $monster)
 {
   global $link, $dbpre, $match, $config, $break;
+  global $weapon_cache;
+
+  if (array_key_exists($weapon . $monster, $weapon_cache)) {
+    return $weapon_cache[$weapon . $monster];
+  }
 
   // Remove custom prefixes
   if (strlen($weapon) > 8 && strtolower(substr($weapon, 0, 8)) == "ut2vweap")
@@ -273,7 +280,11 @@ function get_weapon($weapon, $monster)
     $weaponnum = sql_insert_id($link);
     $weaptype = $weapsec = 0;
   }
+
   $ret = array($weaponnum,$weaptype,$weapsec);
+
+  $weapon_cache[$weapon . $monster] = $ret;
+
   return $ret;
 }
 

@@ -27,9 +27,18 @@ if (preg_match("/logsave.php/i", $_SERVER["PHP_SELF"])) {
 
 require("logranks.php");
 
+$player_weapon_cache = array();
+$map_weapon_cache = array();
+$match_player_weapon_cache = array();
+
 function findpwk($player, $weapon) // Player, Weapon
 {
   global $nohtml, $link, $dbpre;
+  global $player_weapon_cache;
+
+  if (array_key_exists($player . $weapon, $player_weapon_cache)) {
+    return $player_weapon_cache[$player . $weapon];
+  }
 
   if ($nohtml)
     $break = "";
@@ -53,12 +62,20 @@ function findpwk($player, $weapon) // Player, Weapon
     }
     $pwk = sql_insert_id($link);
   }
+
+  $player_weapon_cache[$player . $weapon] = $pwk;
+
   return $pwk;
 }
 
 function findmwk($map, $weapon) // Map, Weapon
 {
   global $nohtml, $link, $dbpre;
+  global $map_weapon_cache;
+
+  if (array_key_exists($map . $weapon, $map_weapon_cache)) {
+    return $map_weapon_cache[$map . $weapon];
+  }
 
   if ($nohtml)
     $break = "";
@@ -82,12 +99,20 @@ function findmwk($map, $weapon) // Map, Weapon
     }
     $mwk = sql_insert_id($link);
   }
+
+  $map_weapon_cache[$map . $weapon] = $mwk;
+
   return $mwk;
 }
 
 function findgwa($match, $player, $weapon) // Match, Player, Weapon
 {
   global $nohtml, $link, $dbpre;
+  global $match_player_weapon_cache;
+
+  if (array_key_exists($match . $player . $weapon, $match_player_weapon_cache)) {
+    return $match_player_weapon_cache[$match . $player . $weapon];
+  }
 
   if ($nohtml)
     $break = "";
@@ -111,6 +136,9 @@ function findgwa($match, $player, $weapon) // Match, Player, Weapon
     }
     $gwa = sql_insert_id($link);
   }
+
+  $match_player_weapon_cache[$match . $player . $weapon] = $gwa;
+
   return $gwa;
 }
 

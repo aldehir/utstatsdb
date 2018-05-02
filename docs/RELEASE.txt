@@ -9,7 +9,9 @@ Version 3.09 (Work in Progress)
   Clean out upgrade code for versions < 3.07.
   Add better time/duration display/format (eg. 15 minutes shows as "15m", rather than "0.25").
   Consolidate and optimise several SQL queries using JOINs, rather than multiple repeat lookups.
-  In some cases, don't display stats section where no data is present (eg. "Vehicle and Turret Specific Information")
+  In some cases, don't display stats section where no data is present (eg. "Vehicle and Turret Specific Information").
+  Cache (in-memory) several query results for faster execution (currently reduce query count for log parsing by ~15%).
+  Use standard footer in admin pages.
 
 Version 3.08
   Rewrite DB interface to use PDO, rather than mysql/sqlite/mssql directly.
