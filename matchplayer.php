@@ -448,6 +448,7 @@ if ($gametval != 9) {
     echo "Player database error.<br />\n";
     exit;
   }
+  $special = array();
   $numspec = 0;
   while ($row = sql_fetch_row($result)) {
     $special[$numspec]["title"] = $row[1];
@@ -840,7 +841,40 @@ EOF;
 //========== Vehicle and Turret Specific Information ==========================
 //=============================================================================
 if ($gm_logger == 1) {
-  echo <<<EOF
+  $wasStats = false;
+  if ($numweapons > 0) {
+    // Sort by frags,kills,secondary kills,road kills,deaths in,deaths from,suicides,description,type
+    array_multisort($wskills[6], SORT_DESC, SORT_NUMERIC,
+                    $wskills[0], SORT_DESC, SORT_NUMERIC,
+                    $wskills[1], SORT_DESC, SORT_NUMERIC,
+                    $wskills[8], SORT_DESC, SORT_NUMERIC,
+                    $wskills[3], SORT_ASC, SORT_NUMERIC,
+                    $wskills[2], SORT_ASC, SORT_NUMERIC,
+                    $wskills[4], SORT_ASC, SORT_NUMERIC,
+                    $wskills[5], SORT_ASC, SORT_STRING,
+                    $wskills[7], SORT_ASC, SORT_NUMERIC);
+
+    for ($i = 0; $i < $numweapons; $i++) {
+      if ($wskills[7][$i] < 1 || $wskills[7][$i] > 2) continue;
+      $weapon = $wskills[5][$i];
+      $kills = $wskills[0][$i];
+      $skills = $wskills[1][$i];
+      $deaths = $wskills[2][$i];
+      $held = $wskills[3][$i];
+      $suic = $wskills[4][$i];
+      $frags = $wskills[6][$i];
+      $roadkills = $wskills[8][$i];
+
+      if ($kills || $skills || $roadkills || $deaths || $held) {
+        if ($kills + $skills + $roadkills + $held + $suic == 0) {
+          $eff = "0.0";
+        } else {
+          $eff = sprintf("%0.1f", (($kills + $skills + $roadkills) / ($kills + $skills + $roadkills + $held + $suic)) * 100.0);
+        }
+
+        if (!$wasStats) { // print headers on first iteration
+          $wasStats = true;
+          echo <<<EOF
 <br />
 <table cellpadding="1" cellspacing="2" border="0" width="660">
   <tr>
@@ -857,40 +891,10 @@ if ($gm_logger == 1) {
     <td class="smheading" align="center" width="55">Suicides</td>
     <td class="smheading" align="center" width="55">Eff.</td>
   </tr>
-
 EOF;
+        }
 
-  if ($numweapons > 0) {
-    // Sort by frags,kills,secondary kills,road kills,deaths in,deaths from,suicides,description,type
-    array_multisort($wskills[6], SORT_DESC, SORT_NUMERIC,
-                    $wskills[0], SORT_DESC, SORT_NUMERIC,
-                    $wskills[1], SORT_DESC, SORT_NUMERIC,
-                    $wskills[8], SORT_DESC, SORT_NUMERIC,
-                    $wskills[3], SORT_ASC, SORT_NUMERIC,
-                    $wskills[2], SORT_ASC, SORT_NUMERIC,
-                    $wskills[4], SORT_ASC, SORT_NUMERIC,
-                    $wskills[5], SORT_ASC, SORT_STRING,
-                    $wskills[7], SORT_ASC, SORT_NUMERIC);
-
-    for ($i = 0; $i < $numweapons; $i++) {
-      if ($wskills[7][$i] < 1 || $wskills[7][$i] > 2)
-        continue;
-      $weapon = $wskills[5][$i];
-      $kills = $wskills[0][$i];
-      $skills = $wskills[1][$i];
-      $deaths = $wskills[2][$i];
-      $held = $wskills[3][$i];
-      $suic = $wskills[4][$i];
-      $frags = $wskills[6][$i];
-      $roadkills = $wskills[8][$i];
-
-      if ($kills || $skills || $roadkills || $deaths || $held) {
-        if ($kills + $skills + $roadkills + $held + $suic == 0)
-          $eff = "0.0";
-        else
-          $eff = sprintf("%0.1f", (($kills + $skills + $roadkills) / ($kills + $skills + $roadkills + $held + $suic)) * 100.0);
-
-        echo <<< EOF
+        echo <<<EOF
   <tr>
     <td class="dark" align="center">$weapon</td>
     <td class="grey" align="center">$frags</td>
@@ -902,23 +906,42 @@ EOF;
     <td class="grey" align="center">$suic</td>
     <td class="grey" align="center">$eff%</td>
   </tr>
-
 EOF;
       }
     }
-  }
-  else {
-    echo <<< EOF
-  <tr>
-    <td class="grey" align="center" colspan="8">No Vehicle/Turret Kills or Deaths</td>
-  </tr>
 
-EOF;
+    if ($wasStats) echo "</table>";
   }
-  echo "</table>\n";
-}
-else {
-  echo <<<EOF
+} else {
+
+  if ($numweapons > 0) {
+    // Sort by frags,kills,secondary kills,deaths from,suicides,description,deaths holding,type,road kills
+    array_multisort($wskills[6], SORT_DESC, SORT_NUMERIC,
+                    $wskills[0], SORT_DESC, SORT_NUMERIC,
+                    $wskills[1], SORT_DESC, SORT_NUMERIC,
+                    $wskills[2], SORT_ASC, SORT_NUMERIC,
+                    $wskills[4], SORT_ASC, SORT_NUMERIC,
+                    $wskills[5], SORT_ASC, SORT_STRING,
+                    $wskills[7], SORT_ASC, SORT_NUMERIC,
+                    $wskills[3], SORT_ASC, SORT_NUMERIC,
+                    $wskills[8], SORT_ASC, SORT_NUMERIC);
+
+    $wasStats = false;
+    for ($i = 0; $i < $numweapons; $i++) {
+      if ($wskills[7][$i] < 1 || $wskills[7][$i] > 2) continue;
+      $weapon = $wskills[5][$i];
+      $kills = $wskills[0][$i];
+      $skills = $wskills[1][$i];
+      $deaths = $wskills[2][$i];
+      $suic = $wskills[4][$i];
+      $frags = $wskills[6][$i];
+      $roadkills = $wskills[8][$i];
+
+      if ($kills || $skills || $roadkills || $deaths) {
+
+        if (!$wasStats) { // print headers on first iteration
+          $wasStats = true;
+          echo <<<EOF
 <br />
 <table cellpadding="1" cellspacing="2" border="0" width="560">
   <tr>
@@ -933,33 +956,9 @@ else {
     <td class="smheading" align="center" width="55">Deaths From</td>
     <td class="smheading" align="center" width="55">Suicides</td>
   </tr>
-
 EOF;
+        }
 
-  if ($numweapons > 0) {
-    // Sort by frags,kills,secondary kills,deaths from,suicides,description,deaths holding,type,road kills
-    array_multisort($wskills[6], SORT_DESC, SORT_NUMERIC,
-                    $wskills[0], SORT_DESC, SORT_NUMERIC,
-                    $wskills[1], SORT_DESC, SORT_NUMERIC,
-                    $wskills[2], SORT_ASC, SORT_NUMERIC,
-                    $wskills[4], SORT_ASC, SORT_NUMERIC,
-                    $wskills[5], SORT_ASC, SORT_STRING,
-                    $wskills[7], SORT_ASC, SORT_NUMERIC,
-                    $wskills[3], SORT_ASC, SORT_NUMERIC,
-                    $wskills[8], SORT_ASC, SORT_NUMERIC);
-
-    for ($i = 0; $i < $numweapons; $i++) {
-      if ($wskills[7][$i] < 1 || $wskills[7][$i] > 2)
-        continue;
-      $weapon = $wskills[5][$i];
-      $kills = $wskills[0][$i];
-      $skills = $wskills[1][$i];
-      $deaths = $wskills[2][$i];
-      $suic = $wskills[4][$i];
-      $frags = $wskills[6][$i];
-      $roadkills = $wskills[8][$i];
-
-      if ($kills || $skills || $roadkills || $deaths) {
         echo <<< EOF
   <tr>
     <td class="dark" align="center">$weapon</td>
@@ -970,20 +969,12 @@ EOF;
     <td class="grey" align="center">$roadkills</td>
     <td class="grey" align="center">$suic</td>
   </tr>
-
 EOF;
       }
     }
-  }
-  else {
-    echo <<< EOF
-  <tr>
-    <td class="grey" align="center" colspan="6">No Vehicle/Turret Kills or Deaths</td>
-  </tr>
 
-EOF;
+    if ($wasStats) echo "</table>";
   }
-  echo "</table>\n";
 }
 
 //=============================================================================
