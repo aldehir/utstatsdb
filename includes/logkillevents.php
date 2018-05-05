@@ -109,28 +109,37 @@ function tag_k ($i, $data)
     else
       $killmatch[$killer][$victim] = 1;
 
-    // Check for special event
+    // Check for weapon-based special events
     for ($i = 0; $i < $numspectypes; $i++) {
 
+      // found the damage type, and the type has a greater than 0 trigger count
       if (stristr($killweapon, $specialtypes[$i][0]) && $specialtypes[$i][2] > 0) {
+
+        // if add special count to this player, set it up if it doesn't exist yet
         if (!array_key_exists($specialtypes[$i][1], $player[$killer]->specialcount)) {
           $player[$killer]->specialcount[$specialtypes[$i][1]] = 1;
         } else {
           $player[$killer]->specialcount[$specialtypes[$i][1]]++;
         }
 
+        // if the special count is equal to the trigger count, add a special event (head hunter, flak master, etc)
         if ($player[$killer]->specialcount[$specialtypes[$i][1]] == $specialtypes[$i][2]) {
           if (!array_key_exists($specialtypes[$i][1], $player[$killer]->specialevents)) {
             $player[$killer]->specialevents[$specialtypes[$i][1]] = 1;
           } else {
             $player[$killer]->specialevents[$specialtypes[$i][1]]++;
           }
+
+          // add the special event to the match stats as well
           if (!array_key_exists($specialtypes[$i][1], $match->specialevents)) {
             $match->specialevents[$specialtypes[$i][1]] = 1;
           } else {
             $match->specialevents[$specialtypes[$i][1]]++;
           }
+
           weaponspecial($killtime, $killer, $specialtypes[$i][1], 0);
+
+          // reset the count so we can count towards the next event again
           $player[$killer]->specialcount[$specialtypes[$i][1]] = 0;
         }
       }
@@ -139,17 +148,18 @@ function tag_k ($i, $data)
     // Check for road kill
     if ($killweapsec == 4) {
       for ($i = 0, $roadkill = -1; $i < $numspectypes; $i++) {
-        if (stristr("Road Kill", $specialtypes[$i][0]) && $specialtypes[$i][3] == 2) {
+        if (stristr("Road Kill", $special[$i][0]) && $special[$i][3] == 2) {
           $roadkill = $i;
           break;
         }
       }
 
-      if ($roadkill >= 0)
+      if ($roadkill >= 0) {
         $player[$killer]->specialcount[$specialtypes[$roadkill][0]]++; // roadkills++;
+      }
 
       // Check for road rampage
-      if ($player[$killer]->roadkills >= 15 && !$player[$killer]->roadrampage) {
+      if ($player[$killer]->roadkills >= $roadkill[3] && !$player[$killer]->roadrampage) {
         $player[$killer]->roadrampage = 1;
         weaponspecial($killtime, $killer, 5, 0);
       }

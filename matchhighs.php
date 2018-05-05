@@ -27,9 +27,10 @@ function getplayer($plr)
 {
   global $link, $dbpre;
   global $LANG_PLAYERDATABASEERROR;
-  global $player_cache;
+  global $pageStats, $player_cache;
 
-  if (array_key_exists($plr, $player_cache)) {
+  if ($player_cache != null && array_key_exists($plr, $player_cache)) {
+    $pageStats["cachehits"]++;
     return $player_cache[$plr];
   }
 
@@ -58,9 +59,10 @@ function getplayer($plr)
 function getmap($map) {
   global $link, $dbpre;
   global $LANG_MAPDATABASEERRORP;
-  global $map_cache;
+  global $pageStats, $map_cache;
 
-  if (array_key_exists($map, $map_cache)) {
+  if ($map_cache != null && array_key_exists($map, $map_cache)) {
+    $pageStats["cachehits"]++;
     return $map_cache[$map];
   }
 

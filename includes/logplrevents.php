@@ -25,6 +25,8 @@ if (preg_match("/logplrevents.php/i", $_SERVER["PHP_SELF"])) {
   die();
 }
 
+$item_cache = array();
+
 // Player Connect
 function tag_c ($i, $data)
 {
@@ -348,14 +350,12 @@ function tag_gv ($i, $data)
     map_vote($time, $plr, $game, $votes, 5);
 }
 
-
-$item_cache = array();
-
 function load_item_number($item) {
   global $link, $dbpre;
-  global $item_cache;
+  global $pageStats, $item_cache;
 
-  if (array_key_exists($item, $item_cache)) {
+  if ($item_cache != null && array_key_exists($item, $item_cache)) {
+    $pageStats["cachehits"]++;
     return $item_cache[$item];
   }
 

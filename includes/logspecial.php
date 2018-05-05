@@ -25,6 +25,10 @@ if (preg_match("/logspecial.php/i", $_SERVER["PHP_SELF"])) {
   die();
 }
 
+define("SE_HATTRICK", 10);
+
+$weapon_cache = array();
+
 function add_player($time, $plr)
 {
   global $player, $spree, $multi, $tchange, $assist, $relog, $flagstatus, $killmatch;
@@ -219,14 +223,13 @@ function ctime($tm)
   return intval(floatval($tm) * 100);
 }
 
-$weapon_cache = array();
-
 function get_weapon($weapon, $monster)
 {
   global $link, $dbpre, $match, $config, $break;
-  global $weapon_cache;
+  global $pageStats, $weapon_cache;
 
-  if (array_key_exists($weapon . $monster, $weapon_cache)) {
+  if ($weapon_cache != null && array_key_exists($weapon . $monster, $weapon_cache)) {
+    $pageStats["cachehits"]++;
     return $weapon_cache[$weapon . $monster];
   }
 

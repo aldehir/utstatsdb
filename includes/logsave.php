@@ -34,9 +34,10 @@ $match_player_weapon_cache = array();
 function findpwk($player, $weapon) // Player, Weapon
 {
   global $nohtml, $link, $dbpre;
-  global $player_weapon_cache;
+  global $pageStats, $player_weapon_cache;
 
-  if (array_key_exists($player . $weapon, $player_weapon_cache)) {
+  if ($player_weapon_cache != null && array_key_exists($player . $weapon, $player_weapon_cache)) {
+    $pageStats["cachehits"]++;
     return $player_weapon_cache[$player . $weapon];
   }
 
@@ -71,9 +72,10 @@ function findpwk($player, $weapon) // Player, Weapon
 function findmwk($map, $weapon) // Map, Weapon
 {
   global $nohtml, $link, $dbpre;
-  global $map_weapon_cache;
+  global $pageStats, $map_weapon_cache;
 
-  if (array_key_exists($map . $weapon, $map_weapon_cache)) {
+  if ($map_weapon_cache != null && array_key_exists($map . $weapon, $map_weapon_cache)) {
+    $pageStats["cachehits"]++;
     return $map_weapon_cache[$map . $weapon];
   }
 
@@ -108,9 +110,10 @@ function findmwk($map, $weapon) // Map, Weapon
 function findgwa($match, $player, $weapon) // Match, Player, Weapon
 {
   global $nohtml, $link, $dbpre;
-  global $match_player_weapon_cache;
+  global $pageStats, $match_player_weapon_cache;
 
-  if (array_key_exists($match . $player . $weapon, $match_player_weapon_cache)) {
+  if ($match_player_weapon_cache != null && array_key_exists($match . $player . $weapon, $match_player_weapon_cache)) {
+    $pageStats["cachehits"]++;
     return $match_player_weapon_cache[$match . $player . $weapon];
   }
 
@@ -1291,6 +1294,12 @@ $tl_chnodedestroyedsg,$tl_chnodedestroyedsg_plr,$tl_chnodedestroyedsg_tm,$tl_chn
   }
 
   // Load Weapon Highs
+  $allWeapons = array();
+  foreach ($gkills as $kill) {
+    if (array_key_exists(3, $kill) && !in_array($kill[3], $allWeapons)) $allWeapons[] = $kill[3];
+    if (array_key_exists(4, $kill) && !in_array($kill[4], $allWeapons)) $allWeapons[] = $kill[4];
+  }
+
   $result = sql_queryn($link, "SELECT wp_num,wp_desc,
     wp_chkills,wp_chkills_plr,wp_chkills_gms,wp_chkills_tm,
     wp_chdeaths,wp_chdeaths_plr,wp_chdeaths_gms,wp_chdeaths_tm,
@@ -1301,18 +1310,16 @@ $tl_chnodedestroyedsg,$tl_chnodedestroyedsg_plr,$tl_chnodedestroyedsg_tm,$tl_chn
     wp_chdeathssg_map,wp_chdeathssg_dt,wp_chdeathshldsg,wp_chdeathshldsg_plr,
     wp_chdeathshldsg_tm,wp_chdeathshldsg_map,wp_chdeathshldsg_dt,wp_chsuicidessg,
     wp_chsuicidessg_plr,wp_chsuicidessg_tm,wp_chsuicidessg_map,wp_chsuicidessg_dt
-    FROM {$dbpre}weapons");
+    FROM {$dbpre}weapons 
+    WHERE wp_num IN (" . implode(",", $allWeapons) . ")");
   if (!$result) {
     echo "Error loading weapons data.{$break}\n";
     exit;
   }
-  $maxweapon = 0;
+
   $weapsg = array();
   while($row = sql_fetch_assoc($result)) {
-  	$num = $row["wp_num"];
-    if ($num > $maxweapon)
-      $maxweapon = $num;
-    $weapsg[$num] = $row;
+    $weapsg[$row["wp_num"]] = $row;
   }
   sql_free_result($result);
 
@@ -1348,20 +1355,18 @@ $tl_chnodedestroyedsg,$tl_chnodedestroyedsg_plr,$tl_chnodedestroyedsg_tm,$tl_chn
       }
     }
   }
-  for ($wpn = 0; $wpn <= $maxweapon; $wpn++) {
-    if (isset($weapsg[$wpn])) {
-      for ($i = 0; $i <= $match->maxplayer; $i++) {
-        if (isset($player[$i]) && $player[$i]->name != "") {
-          $sweap = sql_addslashes($weapsg[$wpn]['wp_desc']);
-          if (strtolower($dbtype) == "sqlite")
-            $result = sql_queryn($link, "INSERT INTO temp_wtkills (wt_plr,wt_desc,wt_num,wt_intnum) VALUES ($i,'$sweap',{$weapsg[$wpn]['wp_num']},$wpn)");
-          else if (strtolower($dbtype) == "mssql")
-            $result = sql_queryn($link, "IF NOT EXISTS (SELECT * FROM #temp_wtkills WHERE wt_plr=$i AND wt_desc='$sweap') INSERT INTO #temp_wtkills(wt_plr,wt_desc,wt_num,wt_intnum) VALUES ($i,'$sweap',{$weapsg[$wpn]['wp_num']},$wpn)");
-          else
-            $result = sql_queryn($link, "INSERT IGNORE INTO temp_wtkills (wt_plr,wt_desc,wt_num,wt_intnum) VALUES ($i,'$sweap',{$weapsg[$wpn]['wp_num']},$wpn)");
-          if (!$result)
-            echo "Error inserting into temp table for weapon specific per player totals.{$break}\n";
-        }
+  foreach ($weapsg as $wpn) {
+    for ($i = 0; $i <= $match->maxplayer; $i++) {
+      if (isset($player[$i]) && $player[$i]->name != "") {
+        $sweap = sql_addslashes($wpn['wp_desc']);
+        if (strtolower($dbtype) == "sqlite")
+          $result = sql_queryn($link, "INSERT INTO temp_wtkills (wt_plr,wt_desc,wt_num,wt_intnum) VALUES ($i,'$sweap',{$wpn['wp_num']},{$wpn['wp_num']})");
+        else if (strtolower($dbtype) == "mssql")
+          $result = sql_queryn($link, "IF NOT EXISTS (SELECT * FROM #temp_wtkills WHERE wt_plr=$i AND wt_desc='$sweap') INSERT INTO #temp_wtkills(wt_plr,wt_desc,wt_num,wt_intnum) VALUES ($i,'$sweap',{$wpn['wp_num']},{$wpn['wp_num']})");
+        else
+          $result = sql_queryn($link, "INSERT IGNORE INTO temp_wtkills (wt_plr,wt_desc,wt_num,wt_intnum) VALUES ($i,'$sweap',{$wpn['wp_num']},{$wpn['wp_num']})");
+        if (!$result)
+          echo "Error inserting into temp table for weapon specific per player totals.{$break}\n";
       }
     }
   }
@@ -1604,108 +1609,106 @@ $tl_chnodedestroyedsg,$tl_chnodedestroyedsg_plr,$tl_chnodedestroyedsg_tm,$tl_chn
   $matchlength = $match->length / ($match->timeoffset / 100.0);
 
   // Update Single Game and Career High Weapon Totals
-  for ($wpn = 0; $wpn <= $maxweapon; $wpn++) {
-  	if (isset($weapsg[$wpn])) {
-      for ($i = 0; $i <= $match->maxplayer; $i++) {
-        if (isset($player[$i]) && $player[$i]->name != "" && ($config["bothighs"] || !$player[$i]->is_bot())) {
-          $pnum = $player[$i]->num;
-          $sweap = sql_addslashes($weapsg[$wpn]['wp_desc']);
+  foreach ($weapsg as $wpn) {
+    for ($i = 0; $i <= $match->maxplayer; $i++) {
+      if (isset($player[$i]) && $player[$i]->name != "" && ($config["bothighs"] || !$player[$i]->is_bot())) {
+        $pnum = $player[$i]->num;
+        $sweap = sql_addslashes($wpn['wp_desc']);
 
-          // Weapon Single Game Highs
-          if (strtolower($dbtype) == "mssql")
-            $result = sql_queryn($link, "SELECT wt_num,wt_intnum,wt_kills,wt_deaths,wt_held,wt_suicides FROM #temp_wtkills WHERE wt_plr=$i AND wt_desc='$sweap' LIMIT 1");
+        // Weapon Single Game Highs
+        if (strtolower($dbtype) == "mssql")
+          $result = sql_queryn($link, "SELECT wt_num,wt_intnum,wt_kills,wt_deaths,wt_held,wt_suicides FROM #temp_wtkills WHERE wt_plr=$i AND wt_desc='$sweap' LIMIT 1");
+        else
+          $result = sql_queryn($link, "SELECT wt_num,wt_intnum,wt_kills,wt_deaths,wt_held,wt_suicides FROM temp_wtkills WHERE wt_plr=$i AND wt_desc='$sweap' LIMIT 1");
+        if (!$result) {
+          echo "Database error during weapon single game kill highs.{$break}\n";
+          exit;
+        }
+        if (list($wtnum,$wtintnum,$wtkills,$wtdeaths,$wtheld,$wtsuicides) = sql_fetch_row($result)) {
+          sql_free_result($result);
+
+          // Kills
+          if ($wtkills > $wpn["wp_chkillssg"]) {
+            $wpn["wp_chkillssg"] = $wtkills;
+            $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chkillssg=$wtkills,wp_chkillssg_plr=$pnum,wp_chkillssg_tm={$matchlength},wp_chkillssg_map={$match->mapnum},wp_chkillssg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
+            if (!$result) {
+              echo "Error saving weapon single game kill highs.{$break}\n";
+              exit;
+            }
+          }
+
+          // Deaths
+          if ($wtdeaths > $wpn["wp_chdeathssg"]) {
+            $wpn["wp_chdeathssg"] = $wtdeaths;
+            $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeathssg=$wtdeaths,wp_chdeathssg_plr=$pnum,wp_chdeathssg_tm={$matchlength},wp_chdeathssg_map={$match->mapnum},wp_chdeathssg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
+            if (!$result) {
+              echo "Error saving weapon single game death highs.{$break}\n";
+              exit;
+            }
+          }
+
+          // Suicides
+          if ($wtsuicides > $wpn["wp_chsuicidessg"]) {
+            $wpn["wp_chsuicidessg"] = $wtsuicides;
+            $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chsuicidessg=$wtsuicides,wp_chsuicidessg_plr=$pnum,wp_chsuicidessg_tm={$matchlength},wp_chsuicidessg_map={$match->mapnum},wp_chsuicidessg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
+            if (!$result) {
+              echo "Error saving weapon single game suicide highs.{$break}\n";
+              exit;
+            }
+          }
+
+          // Held
+          if ($wtheld > $wpn["wp_chdeathshldsg"]) {
+            $wpn["wp_chdeathshldsg"] = $wtheld;
+            $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeathshldsg=$wtheld,wp_chdeathshldsg_plr=$pnum,wp_chdeathshldsg_tm={$matchlength},wp_chdeathshldsg_map={$match->mapnum},wp_chdeathshldsg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
+            if (!$result) {
+              echo "Error saving weapon single game held death highs.{$break}\n";
+              exit;
+            }
+          }
+        }
+
+        // Weapon Career Highs
+        if ($plr_matches >= $config["minchmatches"] && $plr_time >= $config["minchtime"]) {
+          // Load Player Weapon Kills for current player
+          $pwkresult = sql_queryn($link, "SELECT pwk_kills,pwk_deaths,pwk_held,pwk_suicides FROM {$dbpre}pwkills WHERE pwk_player=$pnum AND pwk_weapon={$wpn['wp_num']}");
+          if (list($pwkkills,$pwkdeaths,$pwkheld,$pwksuicides) = sql_fetch_row($pwkresult)) {
+            sql_free_result($pwkresult);
+            if ($pwkkills > $wpn["wp_chkills"]) {
+              $wpn["wp_chkills"] = $pwkkills;
+              $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chkills=$pwkkills, wp_chkills_plr=$pnum, wp_chkills_gms=$plr_matches, wp_chkills_tm=$plr_time WHERE wp_num={$wpn['wp_num']} LIMIT 1");
+              if (!$pwkresult) {
+                echo "Error updating weapon entry [1].<br />\n";
+                exit;
+              }
+            }
+            if ($pwkdeaths > $wpn["wp_chdeaths"]) {
+              $wpn["wp_chdeaths"] = $pwkdeaths;
+              $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeaths=$pwkdeaths, wp_chdeaths_plr=$pnum, wp_chdeaths_gms=$plr_matches, wp_chdeaths_tm=$plr_time WHERE wp_num={$wpn['wp_num']} LIMIT 1");
+              if (!$pwkresult) {
+                echo "Error updating weapon entry [2].<br />\n";
+                exit;
+              }
+            }
+            if ($pwkheld > $wpn["wp_chdeathshld"]) {
+              $wpn["wp_chdeathshld"] = $pwkheld;
+              $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeathshld=$pwkheld, wp_chdeathshld_plr=$pnum, wp_chdeathshld_gms=$plr_matches, wp_chdeathshld_tm=$plr_time WHERE wp_num={$wpn['wp_num']} LIMIT 1");
+              if (!$pwkresult) {
+                echo "Error updating weapon entry [3].<br />\n";
+                exit;
+              }
+            }
+            if ($pwksuicides > $wpn["wp_chsuicides"]) {
+              $wpn["wp_chsuicides"] = $pwksuicides;
+              $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chsuicides=$pwksuicides, wp_chsuicides_plr=$pnum, wp_chsuicides_gms=$plr_matches, wp_chsuicides_tm=$plr_time WHERE wp_num={$wpn['wp_num']} LIMIT 1");
+              if (!$pwkresult) {
+                echo "Error updating weapon entry [4].<br />\n";
+                exit;
+              }
+            }
+          }
           else
-            $result = sql_queryn($link, "SELECT wt_num,wt_intnum,wt_kills,wt_deaths,wt_held,wt_suicides FROM temp_wtkills WHERE wt_plr=$i AND wt_desc='$sweap' LIMIT 1");
-          if (!$result) {
-            echo "Database error during weapon single game kill highs.{$break}\n";
-            exit;
-          }
-          if (list($wtnum,$wtintnum,$wtkills,$wtdeaths,$wtheld,$wtsuicides) = sql_fetch_row($result)) {
-            sql_free_result($result);
-
-            // Kills
-            if ($wtkills > $weapsg[$wtintnum]["wp_chkillssg"]) {
-              $weapsg[$wtintnum]["wp_chkillssg"] = $wtkills;
-              $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chkillssg=$wtkills,wp_chkillssg_plr=$pnum,wp_chkillssg_tm={$matchlength},wp_chkillssg_map={$match->mapnum},wp_chkillssg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
-              if (!$result) {
-                echo "Error saving weapon single game kill highs.{$break}\n";
-                exit;
-              }
-            }
-
-            // Deaths
-            if ($wtdeaths > $weapsg[$wtintnum]["wp_chdeathssg"]) {
-              $weapsg[$wtintnum]["wp_chdeathssg"] = $wtdeaths;
-              $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeathssg=$wtdeaths,wp_chdeathssg_plr=$pnum,wp_chdeathssg_tm={$matchlength},wp_chdeathssg_map={$match->mapnum},wp_chdeathssg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
-              if (!$result) {
-                echo "Error saving weapon single game death highs.{$break}\n";
-                exit;
-              }
-            }
-
-            // Suicides
-            if ($wtsuicides > $weapsg[$wtintnum]["wp_chsuicidessg"]) {
-              $weapsg[$wtintnum]["wp_chsuicidessg"] = $wtsuicides;
-              $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chsuicidessg=$wtsuicides,wp_chsuicidessg_plr=$pnum,wp_chsuicidessg_tm={$matchlength},wp_chsuicidessg_map={$match->mapnum},wp_chsuicidessg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
-              if (!$result) {
-                echo "Error saving weapon single game suicide highs.{$break}\n";
-                exit;
-              }
-            }
-
-            // Held
-            if ($wtheld > $weapsg[$wtintnum]["wp_chdeathshldsg"]) {
-              $weapsg[$wtintnum]["wp_chdeathshldsg"] = $wtheld;
-              $result = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeathshldsg=$wtheld,wp_chdeathshldsg_plr=$pnum,wp_chdeathshldsg_tm={$matchlength},wp_chdeathshldsg_map={$match->mapnum},wp_chdeathshldsg_dt='$sd' WHERE wp_num=$wtnum LIMIT 1");
-              if (!$result) {
-                echo "Error saving weapon single game held death highs.{$break}\n";
-                exit;
-              }
-            }
-          }
-
-          // Weapon Career Highs
-          if ($plr_matches >= $config["minchmatches"] && $plr_time >= $config["minchtime"]) {
-            // Load Player Weapon Kills for current player
-            $pwkresult = sql_queryn($link, "SELECT pwk_kills,pwk_deaths,pwk_held,pwk_suicides FROM {$dbpre}pwkills WHERE pwk_player=$pnum AND pwk_weapon=$wpn");
-            if (list($pwkkills,$pwkdeaths,$pwkheld,$pwksuicides) = sql_fetch_row($pwkresult)) {
-              sql_free_result($pwkresult);
-              if ($pwkkills > $weapsg[$wpn]["wp_chkills"]) {
-                $weapsg[$wpn]["wp_chkills"] = $pwkkills;
-                $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chkills=$pwkkills, wp_chkills_plr=$pnum, wp_chkills_gms=$plr_matches, wp_chkills_tm=$plr_time WHERE wp_num=$wpn LIMIT 1");
-                if (!$pwkresult) {
-                  echo "Error updating weapon entry [1].<br />\n";
-                  exit;
-                }
-              }
-              if ($pwkdeaths > $weapsg[$wpn]["wp_chdeaths"]) {
-                $weapsg[$wpn]["wp_chdeaths"] = $pwkdeaths;
-                $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeaths=$pwkdeaths, wp_chdeaths_plr=$pnum, wp_chdeaths_gms=$plr_matches, wp_chdeaths_tm=$plr_time WHERE wp_num=$wpn LIMIT 1");
-                if (!$pwkresult) {
-                  echo "Error updating weapon entry [2].<br />\n";
-                  exit;
-                }
-              }
-              if ($pwkheld > $weapsg[$wpn]["wp_chdeathshld"]) {
-                $weapsg[$wpn]["wp_chdeathshld"] = $pwkheld;
-                $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chdeathshld=$pwkheld, wp_chdeathshld_plr=$pnum, wp_chdeathshld_gms=$plr_matches, wp_chdeathshld_tm=$plr_time WHERE wp_num=$wpn LIMIT 1");
-                if (!$pwkresult) {
-                  echo "Error updating weapon entry [3].<br />\n";
-                  exit;
-                }
-              }
-              if ($pwksuicides > $weapsg[$wpn]["wp_chsuicides"]) {
-                $weapsg[$wpn]["wp_chsuicides"] = $pwksuicides;
-                $pwkresult = sql_queryn($link, "UPDATE {$dbpre}weapons SET wp_chsuicides=$pwksuicides, wp_chsuicides_plr=$pnum, wp_chsuicides_gms=$plr_matches, wp_chsuicides_tm=$plr_time WHERE wp_num=$wpn LIMIT 1");
-                if (!$pwkresult) {
-                  echo "Error updating weapon entry [4].<br />\n";
-                  exit;
-                }
-              }
-            }
-            else
-              sql_free_result($pwkresult);
-          }
+            sql_free_result($pwkresult);
         }
       }
     }

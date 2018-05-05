@@ -38,6 +38,12 @@ function update309() {
     exit;
   }
 
+  $result = sql_queryn($link, "UPDATE {$dbpre}special SET se_trigtype=10 WHERE se_title='Hat Trick'");
+  if (!$result) {
+    echo "<br />Error updating special events.{$break}\n";
+    exit;
+  }
+
   echo "Updating version....<br />\n";
   $result = sql_queryn($link, "UPDATE {$dbpre}config SET value='3.09' WHERE conf='Version'");
   if (!$result) {
