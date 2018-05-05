@@ -24,7 +24,8 @@ if (!isset($pageStats)) {
   $pageStats = array(
     "pagestart" => microtime(true),
     "querytime" => 0.0,
-    "querycount" => 0
+    "querycount" => 0,
+    "cachehits" => 0
   );
 }
 

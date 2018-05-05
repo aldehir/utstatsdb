@@ -8,6 +8,7 @@ $stats = "";
 if ($showStats) {
   $stats = " &#8729; Total SQL Query Time: " . round($pageStats["querytime"], 4)
           . "s; SQL Query Count: " . $pageStats["querycount"]
+          . "; Cache Hits: " . $pageStats["cachehits"]
           . "; Total Page Time: " . round(microtime(true) - $pageStats["pagestart"], 4) . "s";
 }
 

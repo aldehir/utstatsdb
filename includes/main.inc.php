@@ -23,7 +23,8 @@
 $pageStats = array(
   "pagestart" => microtime(true),
   "querytime" => 0.0,
-  "querycount" => 0
+  "querycount" => 0,
+  "cachehits" => 0
 );
 
 require("statsdb.inc.php"); // Set to the location of your account settings file
