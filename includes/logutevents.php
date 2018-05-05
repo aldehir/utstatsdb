@@ -1021,7 +1021,7 @@ function tagut_flag_returned_timeout($i, $data)
 // Flag Captured
 function tagut_flag_captured($i, $data)
 {
-  global $match, $player, $gscores, $assist;
+  global $match, $player, $gscores, $assist, $special;
 
   if ($i < 4 || $match->ended)
     return;
@@ -1047,6 +1047,38 @@ function tagut_flag_captured($i, $data)
   teamscore($time, $tm, 1, 2);
 
   $player[$plr]->capcarry[$tm]++;
+
+  // check for flag capture related special events
+  foreach ($special as $se) {
+
+    // check for hat tricks
+    if ($se[2] == SE_HATTRICK) {
+      if (!array_key_exists($se[0], $player[$plr]->specialcount)) {
+        $player[$plr]->specialcount[$se[0]] = 1;
+      } else {
+        $player[$plr]->specialcount[$se[0]]++;
+      }
+
+      // if the special count is equal to the trigger count, add a special event
+      if ($player[$plr]->specialcount[$se[0]] == $se[3]) {
+        if (!array_key_exists($se[1], $player[$plr]->specialevents)) {
+          $player[$plr]->specialevents[$se[0]] = 1;
+        } else {
+          $player[$plr]->specialevents[$se[0]]++;
+        }
+
+        // add the special event to the match stats as well
+        if (!array_key_exists($se[0], $match->specialevents)) {
+          $match->specialevents[$se[0]] = 1;
+        } else {
+          $match->specialevents[$se[0]]++;
+        }
+
+        $player[$plr]->specialcount[$se[0]] = 0;
+      }
+    }
+  }
+
   reset($player);
   $playerc = current($player);
 

@@ -28,7 +28,7 @@ if (preg_match("/loggameevents.php/i", $_SERVER["PHP_SELF"])) {
 // Game Event
 function tag_g ($i, $data)
 {
-  global $link, $dbpre, $match, $player, $assist, $relog;
+  global $link, $dbpre, $match, $player, $assist, $relog, $special;
 
   if ($i < 3)
     return;
@@ -146,6 +146,37 @@ function tag_g ($i, $data)
 
       $player[$plr]->capcarry[$tm]++;
 
+      // check for flag capture related special events
+      foreach ($special as $se) {
+
+        // check for hat tricks
+        if ($se[2] == SE_HATTRICK) {
+          if (!array_key_exists($se[0], $player[$plr]->specialcount)) {
+            $player[$plr]->specialcount[$se[0]] = 1;
+          } else {
+            $player[$plr]->specialcount[$se[0]]++;
+          }
+
+          // if the special count is equal to the trigger count, add a special event
+          if ($player[$plr]->specialcount[$se[0]] == $se[3]) {
+            if (!array_key_exists($se[0], $player[$plr]->specialevents)) {
+              $player[$plr]->specialevents[$se[0]] = 1;
+            } else {
+              $player[$plr]->specialevents[$se[0]]++;
+            }
+
+            // add the special event to the match stats as well
+            if (!array_key_exists($se[0], $match->specialevents)) {
+              $match->specialevents[$se[0]] = 1;
+            } else {
+              $match->specialevents[$se[0]]++;
+            }
+
+            $player[$plr]->specialcount[$se[0]] = 0;
+          }
+        }
+      }
+
       // Check for assists
       reset($player);
       $playerc = current($player);
@@ -209,7 +240,7 @@ function tag_g ($i, $data)
         // Check for existing objective
         $result = sql_queryn($link, "SELECT obj_num FROM {$dbpre}objectives WHERE obj_desc='$obj_desc' LIMIT 1");
         if (!$result) {
-          echo "Error reading objectives table.{$break}\n";
+          echo "Error reading objectives table.\n";
           exit;
         }
         $row = sql_fetch_row($result);
@@ -219,7 +250,7 @@ function tag_g ($i, $data)
         else { // Add new objective
           $result = sql_queryn($link, "INSERT INTO {$dbpre}objectives (obj_map,obj_priority,obj_desc) VALUES({$match->mapnum},$obj_pri,'$obj_desc')");
           if (!$result) {
-            echo "Error saving new objective.{$break}\n";
+            echo "Error saving new objective.\n";
             exit;
           }
           $obj_num = sql_insert_id($link);
