@@ -172,34 +172,6 @@ a[name] {
 	background-color: #fff;
 }
 
-#content > .corner-bottom { top: 0 }
-
-.corner-tl, .corner-tr, .corner-bl, .corner-br {
-	background-color: #d0d0d0;
-	position: relative;
-	width: 19px;
-	height: 19px;
-	display: none;
-}
-
-.corner-tl, .corner-bl { float: left; left: 0px; }
-.corner-tr, .corner-br { float: right; right: 0px; }
-.corner-tl, .corner-tr { top: 0px; }
-.corner-bl, .corner-br { bottom: 0px; margin-top: -19px; top: -18px;}
-
-html>body .corner-tl { background: #d0d0d0 url("corner-tl.png") no-repeat left top; }
-html>body .corner-tr { background: #d0d0d0 url("corner-tr.png") no-repeat right top; }
-html>body .corner-bl { background: #d0d0d0 url("corner-bl.png") no-repeat left bottom; }
-html>body .corner-br { background: #d0d0d0 url("corner-br.png") no-repeat right bottom; }
-
-.corner-tl, .corner-tr, .corner-bl, .corner-br {
-	display: block;
-}
-
-.corner-bl, .corner-br {
-	top: 0px;
-}
-
 .content { margin: 0 1em }
 
 #sidelist {

@@ -392,8 +392,6 @@ EOF;
     </div>
 
     <div id="middle">
-      <div class="corner-tr">&nbsp;</div>
-      <div class="corner-tl">&nbsp;</div>
       <div id="content">
 
 EOF;
@@ -405,8 +403,6 @@ EOF;
 function menu_bottom() {
   echo <<<EOF
       </div>
-    <div class="corner-br">&nbsp;</div>
-    <div class="corner-bl">&nbsp;</div>
   </div>
 
 EOF;

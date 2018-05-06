@@ -133,9 +133,9 @@ function formatdate($dt, $tm)
 
   if ($tm) {
     switch ($dateformat) {
-      case 1: return date('D, M d Y \a\t G:i:s', $dt); break;
-      case 2: return date('D, d M Y \a\t G:i:s', $dt); break;
-      default: return date('D, M d Y \a\t g:i:s A', $dt);
+      case 1: return date('D, M d Y, G:i:s', $dt); break;
+      case 2: return date('D, d M Y, G:i:s', $dt); break;
+      default: return date('D, M d Y, g:i:s A', $dt);
     }
   } else {
     switch ($dateformat) {
