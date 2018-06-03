@@ -59,7 +59,7 @@ database, followed by usual usage.
 2. Usage with SQLite
 -------------------------------------------------------------------------------
 
-First, configure statsdb.inc.php with an appropriate DBN:
+First, configure statsdb.inc.php with an appropriate DSN:
 
   sqlite:/utstatsdb/db.sqlite
 

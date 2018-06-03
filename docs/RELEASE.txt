@@ -4,7 +4,7 @@ UTStatsDB
 
 Release Notes:
 
-Version 3.09 (Work in Progress)
+Version 3.09
   Clean out old resource files, remove some old styles.
   Clean out upgrade code for versions < 3.07.
   Add better time/duration display/format (eg. 15 minutes shows as "15m", rather than "0.25").

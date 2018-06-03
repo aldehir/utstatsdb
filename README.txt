@@ -49,11 +49,11 @@ Unreal Tournament 2003:
 
 Unreal Tournament 2004:
   Local logging capability is built-in, however, OLStats by OverloadUT is
-  recommended (available in the UTStatsDB downloads).
+  recommended (https://www.dr-lex.be/software/olstats.html).
 
 Unreal Tournament 3:
   A third party logging mutator is required, of which UT3Stats is the only one I
-  know of currently (available in the UTStatsDB downloads.
+  know of currently.
 
 Configuration details can be found in docs/LOGGING.txt.
 
