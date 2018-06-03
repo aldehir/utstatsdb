@@ -38,6 +38,7 @@ function update309() {
     exit;
   }
 
+  echo "Updating specials....<br />\n";
   $result = sql_queryn($link, "UPDATE {$dbpre}special SET se_trigtype=10 WHERE se_title='Hat Trick'");
   if (!$result) {
     echo "<br />Error updating special events.{$break}\n";
