@@ -70,7 +70,7 @@ if (!$row) {
   echo "Player not found in database.<br />\n";
   exit;
 }
-while (list ($key, $val) = each ($row))
+foreach ($row as $key => $val)
   ${$key} = $val;
 
 $plrname = stripspecialchars($plr_name);
@@ -122,7 +122,7 @@ if (!$result) {
 $gametypes = 0;
 while ($row = sql_fetch_assoc($result)) {
   $gametypes++;
-  while (list ($key, $val) = each ($row))
+  foreach ($row as $key => $val)
     ${$key} = $val;
 
   $time = floatval($gt_time / 100.0);
@@ -1104,7 +1104,7 @@ if (!$result) {
 }
 while ($row = sql_fetch_assoc($result)) {
   if ($matches < 10) {
-    while (list ($key, $val) = each ($row))
+    foreach ($row as $key => $val)
       ${$key} = $val;
 
     $start = strtotime($gm_start);

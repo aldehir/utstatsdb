@@ -208,7 +208,7 @@ function rawlist($conn_id, $path)
 {
   $list = ftp_nlist($conn_id, $path);
   $newlist = array();
-  while (list($row) = each($list)) {
+  foreach ($list as $row) {
     $buf="";
     if ($row[0]=='d'||$row[0]=='-') {
       $buf = substr($row, 55);

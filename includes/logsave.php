@@ -204,7 +204,7 @@ function storedata()
   $result = sql_queryn($link, "SELECT * FROM {$dbpre}totals LIMIT 1");
   $row = sql_fetch_assoc($result);
   sql_free_result($result);
-  while (list($key,$val) = each($row)) {
+  foreach ($row as $key => $val) {
     ${$key} = $val;
   }
 
@@ -256,7 +256,7 @@ function storedata()
         if (!$player[$i]->is_bot())
           $tl_players++;
       }
-      while (list($key,$val) = each($row))
+      foreach ($row as $key => $val)
         ${$key} = $val;
 
       $player[$i]->num = $pnum;
@@ -418,7 +418,7 @@ function storedata()
         $row = sql_fetch_assoc($result);
         sql_free_result($result);
       }
-      while (list($key,$val) = each($row))
+      foreach ($row as $key => $val)
         ${$key} = $val;
 
       $gt_score += array_sum($player[$i]->tscore);

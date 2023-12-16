@@ -40,7 +40,7 @@ function player_merge($src, $dst)
     sql_close($link);
     return 0;
   }
-  while (list($key,$val) = each($row))
+  foreach ($row as $key => $val)
     ${"src_".$key} = $val;
 
   // Lookup destination player
@@ -57,7 +57,7 @@ function player_merge($src, $dst)
     sql_close($link);
     return 0;
   }
-  while (list($key,$val) = each($row2))
+  foreach ($row2 as $key => $val)
     ${"dst_".$key} = $val;
 
   echo <<<EOF
@@ -72,7 +72,7 @@ EOF;
   echo "Player stats....";
   $query = "UPDATE {$dbpre}players SET ";
   reset($row);
-  while (list($key,$val) = each($row)) {
+  foreach ($row as $key => $val) {
     if (is_numeric($val) && $val && $key != "pnum" && $key != "plr_name" && $key != "plr_bot" && $key != "plr_user" && $key != "plr_id" && $key != "plr_key" && $key != "plr_ip" && $key != "netspeed" && $key != "plr_fph" && $key != "plr_sph" && $key != "plr_eff")
       $query.="$key=$key+$val,";
   }
@@ -268,7 +268,7 @@ EOF;
   $row3 = sql_fetch_assoc($result);
   sql_free_result($result);
   $query = "UPDATE {$dbpre}totals SET ";
-  while (list($key,$val) = each($row3)) {
+  foreach ($row3 as $key => $val) {
     if ($val == $src)
       $query.="$key=$dst,";
   }

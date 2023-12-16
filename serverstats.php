@@ -46,7 +46,8 @@ if (!$row) {
   echo "Server not found in database.<br />\n";
   exit;
 }
-while (list ($key, $val) = each ($row)) ${$key} = $val;
+foreach ($row as $key => $val)
+  ${$key} = $val;
 
 if ($useshortname && $sv_shortname != "") {
   $servername = stripspecialchars($sv_shortname);
@@ -139,7 +140,7 @@ if (!$result) {
 }
 while ($row = sql_fetch_assoc($result)) {
   if ($matches < 20) {
-    while (list ($key, $val) = each ($row)) ${$key} = $val;
+    foreach ($row as $key => $val) ${$key} = $val;
 
     $gametype = $tp_desc;
     $start = strtotime($gm_start);

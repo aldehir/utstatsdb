@@ -141,7 +141,7 @@ if (!$row) {
   echo "{$LANG_NOTOTALSDATA}<br />\n";
   exit;
 }
-while (list ($key, $val) = each ($row))
+foreach ($row as $key => $val)
   ${$key} = $val;
 
 //=============================================================================
@@ -208,7 +208,7 @@ EOF;
 $tot_played = $tot_gtime = $tot_ptime = 0;
 
 while ($row = sql_fetch_array($result)) {
-  while (list ($key, $val) = each ($row))
+  foreach ($row as $key => $val)
     ${$key} = $val;
 
   if ($tp_played > 0) {
