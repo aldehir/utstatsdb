@@ -29,24 +29,16 @@ $pageStats = array(
 
 require("statsdb.inc.php"); // Set to the location of your account settings file
 require("logsql.php");
-$magicrt = get_magic_quotes_runtime();
 load_config();
 require("language/lang_{$lang}.php");
 
 function check_get(&$store, $val)
 {
-  $magic = get_magic_quotes_gpc();
   if (isset($_POST["$val"])) {
-    if ($magic)
-      $store = stripslashes($_POST["$val"]);
-    else
-      $store = $_POST["$val"];
+    $store = $_POST["$val"];
   }
   else if (isset($_GET["$val"])) {
-    if ($magic)
-      $store = stripslashes($_GET["$val"]);
-    else
-      $store = $_GET["$val"];
+    $store = $_GET["$val"];
   }
 }
 
@@ -80,7 +72,7 @@ function stripspecialchars($str)
 
 function load_config()
 {
-  global $dbpre, $menulinks, $menu_url, $menu_descr, $magicrt;
+  global $dbpre, $menulinks, $menu_url, $menu_descr;
 
   $result = sql_query("SELECT conf,value FROM {$dbpre}config");
   if (!$result) {
@@ -101,7 +93,7 @@ function load_config()
   }
   $row = sql_fetch_row($result);
   global $title_msg;
-  $title_msg = $magicrt ? stripslashes($row[0]) : $row[0];
+  $title_msg = $row[0];
   sql_free_result($result);
 
   $result = sql_query("SELECT url,descr FROM {$dbpre}configmenu");
@@ -113,8 +105,8 @@ function load_config()
   while ($row = sql_fetch_row($result))
   {
     if (strlen($row[0]) && strlen($row[1])) {
-      $menu_url[$menulinks] = htmlspecialchars($magicrt ? stripslashes($row[0]) : $row[0]);
-      $menu_descr[$menulinks++] = htmlspecialchars($magicrt ? stripslashes($row[1]) : $row[1]);
+      $menu_url[$menulinks] = htmlspecialchars($row[0]);
+      $menu_descr[$menulinks++] = htmlspecialchars($row[1]);
     }
   }
   sql_free_result($result);
