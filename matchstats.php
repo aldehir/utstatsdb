@@ -55,7 +55,7 @@ if (!$row) {
   echo "{$LANG_MATCHNOTFOUNDINDATABASE}<br />\n";
   exit;
 }
-while (list($key,$val) = each($row))
+foreach ($row as $key => $val)
   ${$key} = $val;
 
 $start = strtotime($gm_start);
@@ -420,7 +420,7 @@ EOF;
 
       if ($gplayer[$i]["gp_team"] == $tm || $gplayer[$i]["gp_tscore{$tm}"]) {
         reset($gplayer[$i]);
-        while (list ($key, $val) = each ($gplayer[$i]))
+        foreach ($gplayer[$i] as $key => $val)
           ${$key} = $val;
 
         $score = ${"gp_tscore{$tm}"};
@@ -534,7 +534,7 @@ EOF;
 
       if ($gplayer[$i]["gp_team"] == $tm || $gplayer[$i]["gp_tscore{$tm}"]) {
         reset($gplayer[$i]);
-        while (list ($key, $val) = each ($gplayer[$i]))
+        foreach ($gplayer[$i] as $key => $val)
           ${$key} = $val;
 
         $score = ${"gp_tscore{$tm}"};
@@ -643,7 +643,7 @@ EOF;
 
       if ($gplayer[$i]["gp_team"] == $tm || $gplayer[$i]["gp_tscore{$tm}"]) {
         reset($gplayer[$i]);
-        while (list ($key, $val) = each ($gplayer[$i]))
+        foreach ($gplayer[$i] as $key => $val)
           ${$key} = $val;
 
         $score = ${"gp_tscore{$tm}"};
@@ -873,7 +873,7 @@ EOF;
 
       if ($gplayer[$i]["gp_team"] == $tm || $gplayer[$i]["gp_tscore{$tm}"]) {
         reset($gplayer[$i]);
-        while (list ($key, $val) = each ($gplayer[$i]))
+        foreach ($gplayer[$i] as $key => $val)
           ${$key} = $val;
 
         $score = ${"gp_tscore{$tm}"};
@@ -1053,7 +1053,7 @@ EOF;
 
       if ($gplayer[$i]["gp_team"] == $tm || $gplayer[$i]["gp_capcarry{$tm}"]) {
         reset($gplayer[$i]);
-        while (list ($key, $val) = each ($gplayer[$i]))
+        foreach ($gplayer[$i] as $key => $val)
           ${$key} = $val;
 
         $goals = ${"gp_capcarry{$tm}"};
@@ -1161,7 +1161,7 @@ EOF;
 
       if ($gplayer[$i]["gp_team"] == $tm || $gplayer[$i]["gp_tscore{$tm}"]) {
         reset($gplayer[$i]);
-        while (list ($key, $val) = each ($gplayer[$i]))
+        foreach ($gplayer[$i] as $key => $val)
           ${$key} = $val;
 
         $score = ${"gp_tscore{$tm}"};
@@ -1288,7 +1288,7 @@ EOF;
 
       if ($gplayer[$i]["gp_team"] == $tm || $gplayer[$i]["gp_tscore{$tm}"]) {
         reset($gplayer[$i]);
-        while (list ($key, $val) = each ($gplayer[$i]))
+        foreach ($gplayer[$i] as $key => $val)
           ${$key} = $val;
 
         $teamsize++;
@@ -1542,7 +1542,7 @@ EOF;
     $i = $ranks[$r];
 
     reset($gplayer[$i]);
-    while (list ($key, $val) = each ($gplayer[$i]))
+    foreach ($gplayer[$i] as $key => $val)
       ${$key} = $val;
 
     $score = $gp_tscore0 + $gp_tscore1 + $gp_tscore2 + $gp_tscore3;
@@ -1933,7 +1933,7 @@ if ($gametval != 9 && $gametval != 18) {
     }
   }
   while ($row = sql_fetch_assoc($result)) {
-    while (list ($key, $val) = each ($row))
+    foreach ($row as $key => $val)
       ${$key} = $val;
     if ($gk_killer >= 0 && $gk_victim >= 0)
       $killmatch[$gk_killer][$gk_victim]++;
@@ -2568,7 +2568,7 @@ if ($gametval != 9 && $gametval != 18) {
   $sprees = $header = 0;
   while ($row = sql_fetch_assoc($result)) {
     if ($row["ge_quant"] >= 5) {
-      while (list ($key, $val) = each ($row))
+      foreach ($row as $key => $val)
         ${$key} = $val;
 
       if ($ge_plr >= 0 && isset($gplayer[$ge_plr]) && $gplayer[$ge_plr]["gp_name"] != "") {

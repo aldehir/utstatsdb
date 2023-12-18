@@ -23,8 +23,6 @@
 require("includes/statsdb.inc.php");
 require("includes/logsql.php");
 
-$magic = get_magic_quotes_gpc();
-$magicrt = get_magic_quotes_runtime();
 $adminver = new AdminVer;
 $adminver->major = 3;
 $adminver->minor = 9;
@@ -33,21 +31,17 @@ $updatereq = 0;
 
 function check_post($val)
 {
-  global $magic;
-
   $store = "";
   if (isset($_POST["$val"]))
-    $store = $magic ? stripslashes($_POST["$val"]) : $_POST["$val"];
+    $store = $_POST["$val"];
   return $store;
 }
 
 function check_get($val)
 {
-  global $magic;
-
   $store = "";
   if (isset($_GET["$val"]))
-    $store = $magic ? stripslashes($_GET["$val"]) : $_GET["$val"];
+    $store = $_GET["$val"];
   return $store;
 }
 
@@ -64,7 +58,7 @@ session_name("UTStatsDB");
 session_start();
 
 if (isset($_SESSION['UTStatsDBadmin']))
-  $CPass = $magic ? stripslashes($_SESSION['UTStatsDBadmin']) : $_SESSION['UTStatsDBadmin'];
+  $CPass = $_SESSION['UTStatsDBadmin'];
 else
   $CPass = "";
 

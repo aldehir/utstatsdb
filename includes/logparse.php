@@ -47,7 +47,7 @@ function parselog($file,$chatfile)
   else
     $break = "<br />";
 
-  $match = new Match;
+  $match = new GameMatch;
 
   $relog = array();
   $botstats = array(array());

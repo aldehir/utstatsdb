@@ -25,7 +25,7 @@ if (preg_match("/logclasses.php/i", $_SERVER["PHP_SELF"])) {
   die();
 }
 
-class Match {
+class GameMatch {
   var $ended = 0;
   var $started = 0;
   var $ngfound = 0;

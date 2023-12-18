@@ -142,7 +142,7 @@ if (!$result) {
   exit;
 }
 while($row = sql_fetch_assoc($result)) {
-  while (list ($key, $val) = each ($row))
+  foreach ($row as $key => $val)
     ${$key} = $val;
 
   $mapname = stripspecialchars($mp_name);

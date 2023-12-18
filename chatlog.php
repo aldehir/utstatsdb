@@ -44,7 +44,7 @@ if (!$row) {
   echo "Game not found in database.<br />\n";
   exit;
 }
-while (list ($key, $val) = each ($row))
+foreach ($row as $key => $val)
   ${$key} = $val;
 sql_free_result($result);
 

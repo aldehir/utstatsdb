@@ -221,7 +221,7 @@ function update_weapons($link)
   if (file_exists($fname)) {
     $sqldata = file($fname);
 
-    while($row = each($sqldata)) {
+    foreach ($sqldata as $row) {
       $line = trim($row[1], "\t\n\r\0;");
       $line = str_replace("\n", "", $line);
 
@@ -282,7 +282,7 @@ function update_items($link)
   if (file_exists($fname)) {
     $sqldata = file($fname);
 
-    while($row = each($sqldata)) {
+    foreach ($sqldata as $row) {
       $line = trim($row[1], "\t\n\r\0;");
       $line = str_replace("\n", "", $line);
 

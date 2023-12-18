@@ -295,7 +295,7 @@ if (!$result) {
 }
 $rank = $start + 1;
 while($row = sql_fetch_array($result)) {
-  while (list ($key, $val) = each ($row))
+  foreach ($row as $key => $val)
     ${$key} = $val;
 
   // $time = $dm_time + $tdm_time + $dd_time + $ctf_time + $br_time + $as_time + $ons_time + $mu_time + $in_time + $lm_time + $other_time;

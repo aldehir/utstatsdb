@@ -38,13 +38,8 @@ else if (preg_match("/OLSendLog.php/i", $_SERVER["PHP_SELF"])) {
 
   function check_get($val)
   {
-    global $magic;
-
     if (isset($_GET["$val"])) {
-      if ($magic)
-        $store = stripslashes($_GET["$val"]);
-      else
-        $store = $_GET["$val"];
+      $store = $_GET["$val"];
       if ($store)
         return $store;
       return 1;
@@ -60,13 +55,8 @@ else {
 
   function check_get($val)
   {
-    global $magic;
-
     if (isset($_GET["$val"])) {
-      if ($magic)
-        $store = stripslashes($_GET["$val"]);
-      else
-        $store = $_GET["$val"];
+      $store = $_GET["$val"];
       if ($store)
         return $store;
       return 1;
@@ -75,18 +65,15 @@ else {
   }
 }
 
-$magic = get_magic_quotes_gpc();
-$magicrt = get_magic_quotes_runtime();
-
 function loadconfig()
 {
-  global $dbpre, $magicrt, $config, $conflogs;
+  global $dbpre, $config, $conflogs;
 
   $link = sql_connect();
   $result = sql_querynb($link, "SELECT conf,value FROM {$dbpre}config");
   if ($result && sql_num_rows($result)) {
     while ($row = sql_fetch_row($result))
-      $config["{$row[0]}"] = $magicrt ? stripslashes($row[1]) : $row[1];
+      $config["{$row[0]}"] = $row[1];
     sql_free_result($result);
   }
   else {
@@ -100,21 +87,21 @@ function loadconfig()
     $num = 0;
     while ($row = sql_fetch_row($result)) {
       $num++;
-      $conflogs["logpath"][$num] = $magicrt ? stripslashes($row[0]) : $row[0];
-      $conflogs["backuppath"][$num] = $magicrt ? stripslashes($row[1]) : $row[1];
-      $conflogs["logprefix"][$num] = $magicrt ? stripslashes($row[2]) : $row[2];
-      $conflogs["chatprefix"][$num] = $magicrt ? stripslashes($row[3]) : $row[3];
+      $conflogs["logpath"][$num] = $row[0];
+      $conflogs["backuppath"][$num] = $row[1];
+      $conflogs["logprefix"][$num] = $row[2];
+      $conflogs["chatprefix"][$num] = $row[3];
       $conflogs["chatreq"][$num] = intval($row[4]);
       $conflogs["noport"][$num] = intval($row[5]);
-      $conflogs["ftpserver"][$num] = $magicrt ? stripslashes($row[6]) : $row[6];
-      $conflogs["ftppath"][$num] = $magicrt ? stripslashes($row[7]) : $row[7];
+      $conflogs["ftpserver"][$num] = $row[6];
+      $conflogs["ftppath"][$num] = $row[7];
       $conflogs["ftppassive"][$num] = intval($row[8]);
       $conflogs["alllogs"][$num] = intval($row[9]);
-      $conflogs["ftpuser"][$num] = $magicrt ? stripslashes($row[10]) : $row[10];
-      $conflogs["ftppass"][$num] = $magicrt ? stripslashes($row[11]) : $row[11];
+      $conflogs["ftpuser"][$num] = $row[10];
+      $conflogs["ftppass"][$num] = $row[11];
       $conflogs["deftype"][$num] = intval($row[12]);
       $conflogs["defteam"][$num] = intval($row[13]);
-      $conflogs["demoftppath"][$num] = $magicrt ? stripslashes($row[14]) : $row[14];
+      $conflogs["demoftppath"][$num] = $row[14];
       $conflogs["multicheck"][$num] = intval($row[15]);
     }
     sql_free_result($result);
@@ -221,7 +208,7 @@ function rawlist($conn_id, $path)
 {
   $list = ftp_nlist($conn_id, $path);
   $newlist = array();
-  while (list($row) = each($list)) {
+  foreach ($list as $row) {
     $buf="";
     if ($row[0]=='d'||$row[0]=='-') {
       $buf = substr($row, 55);

@@ -46,7 +46,7 @@ if (!$row) {
   echo "Map not found in database.<br />\n";
   exit;
 }
-while (list ($key, $val) = each ($row))
+foreach ($row as $key => $val)
   ${$key} = $val;
 $mapname = stripspecialchars($mp_name);
 $mapdesc = stripspecialchars($mp_desc);
@@ -186,7 +186,7 @@ EOF;
     $heading = 1;
   }
 
-  while (list($key,$val) = each($row))
+  foreach ($row as $key => $val)
     ${$key} = $val;
   $desc = stripspecialchars($obj_desc);
   $besttime = sprintf("%d:%02d", floor($obj_besttime / 6000), intval(fmod($obj_besttime, 6000)));
@@ -486,7 +486,7 @@ if (!$result) {
 }
 while ($row = sql_fetch_assoc($result)) {
   if ($matches < 20) {
-    while (list ($key, $val) = each ($row))
+    foreach ($row as $key => $val)
       ${$key} = $val;
 
     $gametype = "";

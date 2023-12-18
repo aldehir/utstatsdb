@@ -215,8 +215,10 @@ function sql_exec_file($link, $filename) {
     $sqldata = file($fname);
     $done = 0;
     $qstring = "";
-    while(!$done && $row = each($sqldata)) {
-      $qstring .= $row[1];
+    while(!$done && $row = current($sqldata)) {
+      $qstring .= $row;
+      next($sqldata);
+
       if (strstr($qstring, ";")) {
         $qstring = trim($qstring, "\t\n\r\0;");
         $qstring = str_replace("\n", "", $qstring);
@@ -234,9 +236,11 @@ function sql_exec_file($link, $filename) {
       $return["errors"]++;
     }
 
-    each($sqldata);
-    while($row = each($sqldata)) {
-      $qstring = $row[1];
+    next($sqldata);
+    while($row = current($sqldata)) {
+      $qstring = $row;
+      next($sqldata);
+
       if (strlen($qstring) > 10 && substr($qstring, 0, 1) != "#") {
         $qstring = trim($qstring, "\t\n\r\0;");
         $qstring = str_replace("\n", "", $qstring);
@@ -368,7 +372,7 @@ function sqlite_alter_table($link, $table, $alterdefs) {
     $oldcolumns = '';
     reset($newcols);
 
-    while (list($key,$val) = each($newcols)) {
+    foreach ($newcols as $key => $val) {
       $newcolumns .= ($newcolumns?', ':'').$val;
       $oldcolumns .= ($oldcolumns?', ':'').$key;
     }
@@ -459,7 +463,7 @@ function sqlite_alter_table($link, $table, $alterdefs) {
     $oldcolumns = '';
     reset($newcols);
 
-    while (list($key,$val) = each($newcols)) {
+    foreach ($newcols as $key => $val) {
       $newcolumns .= ($newcolumns?', ':'').$val;
       $oldcolumns .= ($oldcolumns?', ':'').$key;
     }

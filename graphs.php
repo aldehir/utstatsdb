@@ -23,15 +23,8 @@
 require("includes/statsdb.inc.php");
 require("includes/logsql.php");
 
-$magic = get_magic_quotes_gpc();
-if ($magic) {
-  $matchnum = intval(stripslashes($_GET["match"]));
-  $type = intval(stripslashes($_GET["type"]));
-}
-else {
-  $matchnum = intval($_GET["match"]);
-  $type = intval($_GET["type"]);
-}
+$matchnum = intval($_GET["match"]);
+$type = intval($_GET["type"]);
 
 if (!$matchnum || !$type || $type < 1 || $type > 4) {
   echo "Run from the main index program.<br>\n";

@@ -40,7 +40,7 @@ function server_merge($src, $dst)
     sql_close($link);
     return 0;
   }
-  while (list($key,$val) = each($row))
+  foreach ($row as $key => $val)
     ${"src_".$key} = $val;
 
   // Lookup destination server
@@ -57,7 +57,7 @@ function server_merge($src, $dst)
     sql_close($link);
     return 0;
   }
-  while (list($key,$val) = each($row2))
+  foreach ($row2 as $key => $val)
     ${"dst_".$key} = $val;
 
   echo <<<EOF

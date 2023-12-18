@@ -25,13 +25,8 @@ require("includes/logsql.php");
 
 function check_post($val)
 {
-  $magic = get_magic_quotes_gpc();
-
   if (isset($_POST["$val"])) {
-    if ($magic)
-      $store = stripslashes($_POST["$val"]);
-    else
-      $store = $_POST["$val"];
+    $store = $_POST["$val"];
     if ($store)
       return $store;
     return 1;
@@ -44,12 +39,11 @@ function loadstatconfig()
 {
   global $dbpre, $UpdatePass, $conflogs, $AutoParse;
 
-  $magicrt = get_magic_quotes_runtime();
   $link = sql_connect();
   $result = sql_querynb($link, "SELECT conf,value FROM {$dbpre}config WHERE conf='UpdatePass' OR conf='AutoParse'");
   if ($result && sql_num_rows($result) >= 2) {
   	while ($row = sql_fetch_row($result)) {
-      ${$row[0]} = $magicrt ? stripslashes($row[1]) : $row[1];
+      ${$row[0]} = $row[1];
     }
     sql_free_result($result);
   }
@@ -63,8 +57,8 @@ function loadstatconfig()
   if ($result && sql_num_rows($result)) {
     $num = 0;
     while ($row = sql_fetch_row($result)) {
-      $conflogs["logpath"][$num] = $magicrt ? stripslashes($row[0]) : $row[0];
-      $conflogs["logprefix"][$num++] = $magicrt ? stripslashes($row[1]) : $row[1];
+      $conflogs["logpath"][$num] = $row[0];
+      $conflogs["logprefix"][$num++] = $row[1];
     }
     sql_free_result($result);
   }

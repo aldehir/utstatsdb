@@ -61,7 +61,7 @@ if (!$row) {
   echo "Match not found in database.<br />\n";
   exit;
 }
-while (list ($key, $val) = each ($row))
+foreach ($row as $key => $val)
   ${$key} = $val;
 
 $gametype = $tp_desc;
@@ -268,7 +268,7 @@ if ($gp_bot) {
   $row = sql_fetch_assoc($result);
   sql_free_result($result);
   if ($row) {
-    while (list ($key, $val) = each ($row))
+    foreach ($row as $key => $val)
       ${$key} = $val;
 
     switch ($gb_skill) {
@@ -1208,7 +1208,7 @@ if (!$result) {
 $sprees = $header = 0;
 while ($row = sql_fetch_assoc($result)) {
   if ($row["ge_quant"] >= 5) {
-    while (list ($key, $val) = each ($row))
+    foreach ($row as $key => $val)
       ${$key} = $val;
 
     $time = displayTime(($ge_time - $ge_length - ($delay * $gm_timeoffset)), $gm_timeoffset);

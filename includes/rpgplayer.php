@@ -126,7 +126,7 @@ EOF;
   </tr>
 
 EOF;
-    while (list($abilname,$abilrank) = each($rpgabils)) {
+    foreach ($rpgabils as $abilname => $abilrank) {
       if ($loc = strpos($abilname, ".Ability"))
         $abilname = substr($abilname, $loc + 8);
       if (substr($abilname, -1) == "'")
