@@ -2,5 +2,5 @@ FROM docker.io/library/caddy:2
 
 COPY Caddyfile /etc/caddy/Caddyfile
 
-# Install resource files to serve up
-COPY resource /srv/resource
+# Install files so Caddy knows how to rewrite
+COPY . /srv
