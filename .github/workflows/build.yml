@@ -37,6 +37,7 @@ jobs:
           file: ./Containerfile
           tags: |
             ${{ env.IMAGE_TAG_PREFIX }}-app:${{ github.sha }}
+            ${{ env.IMAGE_TAG_PREFIX }}-app:${{ github.ref_name }}
           push: true
 
       - name: Build and push http image
@@ -45,4 +46,5 @@ jobs:
           file: ./Containerfile.http
           tags: |
             ${{ env.IMAGE_TAG_PREFIX }}-http:${{ github.sha }}
+            ${{ env.IMAGE_TAG_PREFIX }}-http:${{ github.ref_name }}
           push: true
