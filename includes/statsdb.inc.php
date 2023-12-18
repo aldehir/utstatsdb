@@ -12,6 +12,13 @@ $InitPass = "initpass"; // Required for initializing the database tables.
 
 $showStats = false;     // Show SQL query and page stats in the page footer.
 
+// Allow passing another file if set as an environment variable, e.g. within a
+// container.
+$additional_config_file = getenv("UTSTATSDB_CONFIG_FILE", true);
+if ($additional_config_file) {
+  require($additional_config_file);
+}
+
 // Optionally you can include the following line modified with the path to a file
 // outside of your web path with the above information in it:
 // require("/path_to_file/statsdb.inc.php");
