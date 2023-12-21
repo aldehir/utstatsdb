@@ -28,7 +28,8 @@ if (preg_match("/logspecial.php/i", $_SERVER["PHP_SELF"])) {
 define("SE_HATTRICK", 10);
 
 $weapon_cache = array();
-$tam_weapons = array(
+
+const TAM_WEAPONS = array(
   "DamType_AssaultBullet" => "DamTypeAssaultBullet",
   "DamType_AssaultGrenade" => "DamTypeAssaultGrenade",
   "DamType_BioGlob" => "DamTypeBioGlob",
@@ -268,8 +269,8 @@ function get_weapon($weapon, $monster)
     $weapon = substr($weapon, 0, -5);
 
   // Normalize TAM weapons
-  if (array_key_exists($weapon, $tam_weapons)) {
-    $weapon = $tam_weapons[$weapon];
+  if (array_key_exists($weapon, TAM_WEAPONS)) {
+    $weapon = TAM_WEAPONS[$weapon];
   }
 
   if ($match->uttype == 1 && $config["ut99weapons"])
