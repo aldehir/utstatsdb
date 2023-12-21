@@ -29,6 +29,29 @@ define("SE_HATTRICK", 10);
 
 $weapon_cache = array();
 
+const TAM_WEAPONS = array(
+  "DamType_AssaultBullet" => "DamTypeAssaultBullet",
+  "DamType_AssaultGrenade" => "DamTypeAssaultGrenade",
+  "DamType_BioGlob" => "DamTypeBioGlob",
+  "DamType_ClassicHeadshot" => "DamTypeClassicSniper",
+  "DamType_ClassicSniperShot" => "DamTypeClassicHeadshot",
+  "DamType_FlakChunk" => "DamTypeFlakChunk",
+  "DamType_FlakShell" => "DamTypeFlakShell",
+  "DamType_Headshot" => "DamTypeSniperHeadShot",
+  "DamType_LinkPlasma" => "DamTypeLinkPlasma",
+  "DamType_LinkShaft" => "DamTypeLinkShaft",
+  "DamType_MinigunAlt" => "DamTypeMinigunAlt",
+  "DamType_MinigunBullet" => "DamTypeMinigunBullet",
+  "DamType_Rocket" => "DamTypeRocket",
+  "DamType_RocketHoming" => "DamTypeRocketHoming",
+  "DamType_ShieldImpact" => "DamTypeShieldImpact",
+  "DamType_ShockBall" => "DamTypeShockBall",
+  "DamType_ShockBeam" => "DamTypeShockBeam",
+  "DamType_ShockCombo" => "DamTypeShockCombo",
+  "DamType_SniperShot" => "DamTypeSniperShot",
+  "DamType_Telefragged" => "DamTypeTelefragged",
+);
+
 function add_player($time, $plr)
 {
   global $player, $spree, $multi, $tchange, $assist, $relog, $flagstatus, $killmatch;
@@ -245,15 +268,10 @@ function get_weapon($weapon, $monster)
   else if (strlen($weapon) > 5 && substr($weapon, -5) == "_3SPN") // Team Arenamaster
     $weapon = substr($weapon, 0, -5);
 
-  // Convert improper TAM names
-  if ($weapon == "DamType_FlakChunk")
-    $weapon = "DamTypeFlakChunk";
-  else if ($weapon == "DamType_FlakShell")
-    $weapon = "DamTypeFlakShell";
-  else if ($weapon == "DamType_ShockCombo")
-    $weapon = "DamTypeShockCombo";
-  else if ($weapon == "DamType_Headshot")
-    $weapon = "DamTypeHeadshot";
+  // Normalize TAM weapons
+  if (array_key_exists($weapon, TAM_WEAPONS)) {
+    $weapon = TAM_WEAPONS[$weapon];
+  }
 
   if ($match->uttype == 1 && $config["ut99weapons"])
     $weapon = "UT99 ".$weapon;
