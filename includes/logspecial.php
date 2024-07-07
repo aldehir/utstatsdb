@@ -255,6 +255,10 @@ function get_weapon($weapon, $monster)
   else if ($weapon == "DamType_Headshot")
     $weapon = "DamTypeHeadshot";
 
+  // Remove any trailing numbers from weapons
+  if (preg_match('/\A([a-zA-Z0-9_]*[a-zA-Z_]+)[0-9]+\z/', $weapon, $regex_match))
+    $weapon = $regex_match[1];
+
   if ($match->uttype == 1 && $config["ut99weapons"])
     $weapon = "UT99 ".$weapon;
 
