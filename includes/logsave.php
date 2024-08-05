@@ -1295,6 +1295,8 @@ $tl_chnodedestroyedsg,$tl_chnodedestroyedsg_plr,$tl_chnodedestroyedsg_tm,$tl_chn
 
   // Load Weapon Highs
   $allWeapons = array();
+  $weapsg = array();
+
   foreach ($gkills as $kill) {
     if (array_key_exists(3, $kill) && !in_array($kill[3], $allWeapons)) $allWeapons[] = $kill[3];
     if (array_key_exists(4, $kill) && !in_array($kill[4], $allWeapons)) $allWeapons[] = $kill[4];
@@ -1314,14 +1316,13 @@ $tl_chnodedestroyedsg,$tl_chnodedestroyedsg_plr,$tl_chnodedestroyedsg_tm,$tl_chn
     WHERE wp_num IN (" . implode(",", $allWeapons) . ")");
   if (!$result) {
     echo "Error loading weapons data.{$break}\n";
-    exit;
+    // exit;
+  } else {
+    while($row = sql_fetch_assoc($result)) {
+      $weapsg[$row["wp_num"]] = $row;
+    }
+    sql_free_result($result);
   }
-
-  $weapsg = array();
-  while($row = sql_fetch_assoc($result)) {
-    $weapsg[$row["wp_num"]] = $row;
-  }
-  sql_free_result($result);
 
   // Create temporary weapon specific per player totals table
   if (strtolower($dbtype) == "sqlite") {
